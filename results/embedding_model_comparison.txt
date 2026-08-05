@@ -1,0 +1,37 @@
+﻿Embedding model comparison
+English, Tagalog and Indonesian retrieval quality, plus query latency
+
+========================================================================
+sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+========================================================================
+loading (downloads on first use)...
+
+  case                    kind      score
+  --------------------------------------------
+  English to English      match     +0.705
+  Indonesian to English   match     +0.723
+  Tagalog to English      match     -0.024  <-- too low to retrieve reliably
+  Taglish to English      match     +0.521
+  Tagalog to Tagalog      match     +0.369  <-- too low to retrieve reliably
+  Indonesian control      control   +0.001
+  Tagalog control         control   +0.078
+
+  dimensions        384
+  query latency     median 7 ms, p95 9 ms
+  weakest match     -0.024
+  strongest control +0.078
+  separation        -0.102   (a match must beat an unrelated sentence by a clear margin)
+
+========================================================================
+intfloat/multilingual-e5-large
+========================================================================
+loading (downloads on first use)...
+python.exe : 
+At line:3 char:1
++ & $vpy "D:\ConversaAI\scripts\benchmark_embeddings.py" 2>&1 | Tee-Obj ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Fetching 6 files:   0%|          | 0/6 [00:00<?, ?it/s]Warning: You are sending unauthenticated requests to the HF 
+Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
