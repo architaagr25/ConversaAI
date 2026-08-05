@@ -1,0 +1,45 @@
+﻿==============================================================
+Foundation check
+==============================================================
+Configuration
+--------------------------------------------------------------
+  live model     gemini-3.1-flash-lite
+  off-call model gemini-3.5-flash
+  deliberation   off
+  embeddings     gemini / gemini-embedding-001
+  retrieval      top 5, floor 0.35
+  cache          D:\ConversaAI\.cache\models
+  credentials    all present
+
+Streaming a reply
+--------------------------------------------------------------
+  connection warm-up 5599 ms  (paid once, before any call)
+  turn 1: first word after   2013 ms, whole reply   2129 ms
+  turn 2: first word after   1267 ms, whole reply   1269 ms
+  turn 3: first word after   1229 ms, whole reply   1232 ms
+
+  last reply         I don't have access to your specific policy details, so I recommend checking y
+
+Embedding a query in each market's language
+--------------------------------------------------------------
+  signature   gemini:gemini-embedding-001:768
+  English    768 dimensions
+  Taglish    768 dimensions
+  Indonesian 768 dimensions
+
+  premium question vs its Taglish form   +0.852
+  premium question vs a different topic  +0.641
+  cross-language matching works
+
+Measured latency
+--------------------------------------------------------------
+stage                     n       p50       p95       min       max
+-------------------------------------------------------------------
+llm_first_token           3    1267ms    2013ms    1229ms    2013ms
+llm_stream_total          3    1269ms    2129ms    1232ms    2129ms
+embed                     5     620ms    2010ms     509ms    2010ms
+embed_query               3     575ms     621ms     509ms     621ms
+-------------------------------------------------------------------
+end to end                4    1487ms    2129ms    1232ms    2129ms
+
+These are the floor for every call built on this foundation.
