@@ -1,0 +1,41 @@
+{
+  "lead_id": "LD-20260805-fea7a0",
+  "created_at": "2026-08-05T20:39:51+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {
+    "age": 65
+  },
+  "corrections": [
+    "age: 28 -> 65"
+  ],
+  "eligible": false,
+  "decided": true,
+  "decline_reason": "Entry age for Health Shield is 18 to 60.",
+  "decided_by_rule": "HS-AGE",
+  "requirements": [
+    "require_medical_questionnaire"
+  ],
+  "missing": [
+    "currently_admitted",
+    "residency"
+  ],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [
+    "web/health-shield-faq.html#Can I add my family?",
+    "web/health-shield-faq.html#\"This is more expensive than I expected.\"",
+    "documents/health_shield_policy_wording.pdf#5 Eligibility",
+    "web/health-shield-faq.html#How long do I have to wait before I can claim?",
+    "web/health-shield-faq.html#\"I am already covered through my employer.\"",
+    "documents/health_shield_policy_wording.pdf#Health Shield Policy Wording",
+    "rules/qualification_rules.yaml#health_ph_en.hard_rules",
+    "documents/health_shield_policy_wording.pdf#3 General exclusions",
+    "rules/qualification_rules.yaml#health_ph_en.soft_rules",
+    "documents/health_shield_policy_wording.pdf#1 Definitions"
+  ],
+  "summary": "The caller, who is 65 years old, inquired about health cover and was informed that they do not qualify for a new policy with Health Shield due to the entry age limit of 60. It was established that the caller lives in the Philippines and was made aware of the eligibility decision. The caller was offered the option to have a colleague call them back to discuss alternative options, which they may still be interested in exploring. The next step would be to follow up with the caller to discuss potential alternatives, as previously offered, while reiterating that they do not qualify for a Health Shield plan.",
+  "next_action": "Do not quote. Send the declined-applicant letter and offer the alternatives.",
+  "turns": 5,
+  "contact_held": false
+}

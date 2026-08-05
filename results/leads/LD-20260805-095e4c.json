@@ -1,0 +1,26 @@
+{
+  "lead_id": "LD-20260805-095e4c",
+  "created_at": "2026-08-05T20:52:57+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {
+    "age": 30
+  },
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [
+    "currently_admitted",
+    "residency"
+  ],
+  "escalated_to": "ESC-REQUEST",
+  "unanswered": [],
+  "citations": [],
+  "summary": "The caller is seeking information about health cover and has already been connected to a person after requesting to speak to a real person. It was established that the caller is 30 years old, but no further details were discussed as the caller requested to be transferred. The caller's eligibility for a health plan has already been determined and this decision should not be revisited. The next step is to continue the conversation with the caller, building on the information that has already been shared, and provide further guidance on the available health plan options.",
+  "next_action": "Handed to a person during the call. No callback needed.",
+  "turns": 3,
+  "contact_held": false
+}

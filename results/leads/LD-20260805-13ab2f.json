@@ -1,0 +1,38 @@
+{
+  "lead_id": "LD-20260805-13ab2f",
+  "created_at": "2026-08-05T21:03:22+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {
+    "age": 42,
+    "residency": "PH",
+    "currently_admitted": false
+  },
+  "corrections": [],
+  "eligible": true,
+  "decided": true,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [
+    "documents/health_shield_rate_table.pdf#Health Shield Rate Table",
+    "web/health-shield-plans.html#Compare plans",
+    "web/health-shield-plans.html#Who can apply",
+    "web/partners.html#Bancassurance partnerships",
+    "web/health-shield-faq.html#\"I never claim, so it is wasted money.\"",
+    "web/health-shield-faq.html#\"This is more expensive than I expected.\"",
+    "documents/health_shield_policy_wording.pdf#Health Shield Policy Wording",
+    "rules/qualification_rules.yaml#health_ph_en.soft_rules",
+    "web/health-shield-faq.html#\"I am already covered through my employer.\"",
+    "documents/health_shield_policy_wording.pdf#6 Claims",
+    "web/health-shield-faq.html#Can I add my family?",
+    "web/health-shield-faq.html#How long do I have to wait before I can claim?"
+  ],
+  "summary": "The caller is looking for a health plan and has expressed concern about the cost, but is interested in learning more about how to adjust the cover to fit their budget. It was established that the caller is 42, based in Manila, and not currently receiving treatment, making them eligible for a health plan. The caller already has insurance through their employer, but is considering a personal policy that would provide more comprehensive coverage for themselves and potentially their family. The next step is for an adviser to call the caller within one working day to provide an exact quote and discuss their options further.",
+  "next_action": "Quote from the rate table and call back within one working day.",
+  "turns": 6,
+  "contact_held": false
+}

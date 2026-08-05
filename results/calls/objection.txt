@@ -1,0 +1,49 @@
+Call: objection
+Pack: health_shield_en
+
+[  2.93s] Agent: Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?
+[ 14.31s] Caller: Yes, go ahead.
+[ 14.31s] Agent: Great. What made you look into health cover just now?
+[ 24.84s] Caller: I am 42.
+[ 24.84s] Agent: Thanks for sharing that. Are you currently living in the Philippines?
+[ 38.21s] Caller: Yes, I am based in Manila.
+[ 38.21s] Agent: That is good to know. Just to check, are you in hospital or receiving treatment right now?
+           source: documents/health_shield_rate_table.pdf#Health Shield Rate Table
+           source: web/health-shield-plans.html#Compare plans
+           source: web/health-shield-plans.html#Who can apply
+           source: web/partners.html#Bancassurance partnerships
+           source: web/health-shield-faq.html#"I never claim, so it is wasted money."
+[ 48.76s] Caller: No, I am not.
+[ 48.76s] Agent: That is good to hear. Would this be just for you, or for family as well?
+[ 73.61s] Caller: Honestly, this sounds more expensive than I was expecting.
+[ 73.61s] Agent: I understand that. Cover can be adjusted to fit your budget. Moving from Plus to Essential lowers the monthly contribution considerably, and you can also pay annually to reduce the total by about five percent. Does that sound like a better way to look at it?
+           source: web/health-shield-faq.html#"This is more expensive than I expected."
+           source: documents/health_shield_rate_table.pdf#Health Shield Rate Table
+           source: documents/health_shield_policy_wording.pdf#Health Shield Policy Wording
+           source: rules/qualification_rules.yaml#health_ph_en.soft_rules
+           source: web/health-shield-faq.html#"I never claim, so it is wasted money."
+[ 94.32s] Caller: I already have insurance through my employer anyway.
+[ 94.32s] Agent: That is common. Employer cover usually ends when your employment does, and it rarely covers dependants at the same level. A personal policy stays with you regardless of where you work. Would this be just for you, or for family as well?
+           source: web/health-shield-faq.html#"I am already covered through my employer."
+           source: documents/health_shield_policy_wording.pdf#6 Claims
+           source: web/health-shield-faq.html#"I never claim, so it is wasted money."
+           source: web/health-shield-faq.html#Can I add my family?
+           source: web/health-shield-faq.html#How long do I have to wait before I can claim?
+
+Summary
+----------------------------------------
+pack: health_shield_en
+turns: 6
+collected: {'age': 42, 'residency': 'PH', 'currently_admitted': False}
+corrections: []
+eligible: True
+decided: True
+decline_reason: 
+requirements: []
+missing: []
+escalated_to: 
+unanswered: []
+citations: ['documents/health_shield_rate_table.pdf#Health Shield Rate Table', 'web/health-shield-plans.html#Compare plans', 'web/health-shield-plans.html#Who can apply', 'web/partners.html#Bancassurance partnerships', 'web/health-shield-faq.html#"I never claim, so it is wasted money."', 'web/health-shield-faq.html#"This is more expensive than I expected."', 'documents/health_shield_policy_wording.pdf#Health Shield Policy Wording', 'rules/qualification_rules.yaml#health_ph_en.soft_rules', 'web/health-shield-faq.html#"I am already covered through my employer."', 'documents/health_shield_policy_wording.pdf#6 Claims', 'web/health-shield-faq.html#Can I add my family?', 'web/health-shield-faq.html#How long do I have to wait before I can claim?']
+barge_ins: 0
+failed_recognitions: 0
+actions: {'lead_id': 'LD-20260805-13ab2f', 'outcome': 'qualified', 'next_action': 'Quote from the rate table and call back within one working day.', 'working_copy': 'D:\\ConversaAI\\data\\leads\\LD-20260805-13ab2f.json', 'evidence_copy': 'D:\\ConversaAI\\results\\leads\\LD-20260805-13ab2f.json'}

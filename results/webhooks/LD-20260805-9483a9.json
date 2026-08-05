@@ -1,0 +1,13 @@
+{
+  "event": "escalation",
+  "lead_id": "LD-20260805-9483a9",
+  "at": "2026-08-05T20:42:39+00:00",
+  "trigger": "ESC-REQUEST",
+  "business_unit": "health_ph_en",
+  "collected": {
+    "age": 30
+  },
+  "unanswered": [],
+  "summary": "The caller is seeking information about health cover and had initiated a conversation to discuss their options. It was established that the caller is 30 years old, but they did not provide further details about their situation before requesting to speak with a different person. The caller has been transferred to you and you will have access to the information they previously shared. You can now continue the conversation with the caller to discuss their health cover needs and provide them with the necessary information and support.",
+  "next_action": "Handed to a person during the call. No callback needed."
+}

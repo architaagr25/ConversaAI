@@ -1,24 +1,23 @@
 Call: conflicting
 Pack: health_shield_en
 
-[  9.82s] Agent: Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?
-[ 22.81s] Caller: Sure, go ahead.
-[ 22.81s] Agent: Thanks. To start, what made you look into health cover just now?
-[ 32.65s] Caller: I am 28 years old.
-[ 32.65s] Agent: Got it, thanks for sharing that. What made you look into health cover just now?
-[ 45.57s] Caller: Actually sorry, I meant 65.
-[ 45.57s] Agent: Thanks for the correction. Since our entry age limit is sixty, I am afraid I cannot offer you a policy today. Are you currently living in the Philippines?
+[  7.80s] Agent: Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?
+[ 21.11s] Caller: Sure, go ahead.
+[ 21.11s] Agent: Thanks. What made you look into health cover just now?
+[ 31.58s] Caller: I am 28 years old.
+[ 31.58s] Agent: Got it, thanks for sharing that. Are you currently living in the Philippines?
+[ 46.40s] Caller: Actually sorry, I meant 65.
+[ 46.40s] Agent: I appreciate you clarifying that for me. Since our entry age limit is sixty, I’m afraid I cannot offer you a policy today. Would you like me to get a colleague to see if there is anything else we can do for you?
            source: web/health-shield-faq.html#Can I add my family?
            source: web/health-shield-faq.html#"This is more expensive than I expected."
            source: documents/health_shield_policy_wording.pdf#5 Eligibility
            source: web/health-shield-faq.html#How long do I have to wait before I can claim?
            source: web/health-shield-faq.html#"I am already covered through my employer."
-[ 58.73s] Caller: Yes, I live here.
-[ 58.73s] Agent: That is good to know. I do appreciate you sharing that with me.
-As I mentioned, our plans are for people between the ages of eighteen and sixty. Since you are sixty-five, I am afraid I cannot move forward with an application for you today. 
-Are you currently in hospital or receiving treatment right now?
-[ 74.96s] Caller: Am I still eligible for this plan?
-[ 74.96s] Agent: I am afraid that because our entry age limit is sixty, you would not be eligible for this plan. I am sorry that I cannot assist you further with an application today.
+[ 59.51s] Caller: Yes, I live here.
+[ 59.51s] Agent: Thanks for confirming that. Since our entry age limit is sixty, I am afraid I cannot offer you a policy today. Would you like me to get a colleague to see if there is anything else we can do for you?
+[ 74.69s] Caller: Am I still eligible for this plan?
+[ 74.69s] Agent: I understand you are asking about your eligibility. Because our entry age limit for this plan is sixty, I am afraid I cannot offer you a policy today. 
+Would you like me to get a colleague to see if there is anything else we can do for you?
            source: documents/health_shield_policy_wording.pdf#Health Shield Policy Wording
            source: rules/qualification_rules.yaml#health_ph_en.hard_rules
            source: documents/health_shield_policy_wording.pdf#3 General exclusions
@@ -29,16 +28,16 @@ Summary
 ----------------------------------------
 pack: health_shield_en
 turns: 5
-collected: {'age': 65, 'residency': 'PH'}
+collected: {'age': 65}
 corrections: ['age: 28 -> 65']
 eligible: False
 decided: True
 decline_reason: Entry age for Health Shield is 18 to 60.
 requirements: ['require_medical_questionnaire']
-missing: ['currently_admitted']
+missing: ['currently_admitted', 'residency']
 escalated_to: 
 unanswered: []
 citations: ['web/health-shield-faq.html#Can I add my family?', 'web/health-shield-faq.html#"This is more expensive than I expected."', 'documents/health_shield_policy_wording.pdf#5 Eligibility', 'web/health-shield-faq.html#How long do I have to wait before I can claim?', 'web/health-shield-faq.html#"I am already covered through my employer."', 'documents/health_shield_policy_wording.pdf#Health Shield Policy Wording', 'rules/qualification_rules.yaml#health_ph_en.hard_rules', 'documents/health_shield_policy_wording.pdf#3 General exclusions', 'rules/qualification_rules.yaml#health_ph_en.soft_rules', 'documents/health_shield_policy_wording.pdf#1 Definitions']
 barge_ins: 0
 failed_recognitions: 0
-actions: {'lead_id': 'LD-20260805-4937e2', 'outcome': 'declined', 'next_action': 'Do not quote. Send the declined-applicant letter and offer the alternatives.', 'working_copy': 'D:\\ConversaAI\\data\\leads\\LD-20260805-4937e2.json', 'evidence_copy': 'D:\\ConversaAI\\results\\leads\\LD-20260805-4937e2.json'}
+actions: {'lead_id': 'LD-20260805-95ea7a', 'outcome': 'declined', 'next_action': 'Do not quote. Send the declined-applicant letter and offer the alternatives.', 'working_copy': 'D:\\ConversaAI\\data\\leads\\LD-20260805-95ea7a.json', 'evidence_copy': 'D:\\ConversaAI\\results\\leads\\LD-20260805-95ea7a.json'}

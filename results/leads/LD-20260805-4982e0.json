@@ -1,0 +1,33 @@
+{
+  "lead_id": "LD-20260805-4982e0",
+  "created_at": "2026-08-05T20:55:39+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {},
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [
+    "age",
+    "currently_admitted",
+    "residency"
+  ],
+  "escalated_to": "",
+  "unanswered": [
+    "What is the capital of France?"
+  ],
+  "citations": [
+    "documents/health_shield_policy_wording.pdf#3 General exclusions",
+    "web/health-shield-faq.html#Is dental included?",
+    "web/health-shield-plans.html#What is not covered",
+    "documents/health_shield_policy_wording.pdf#6 Claims",
+    "documents/health_shield_policy_wording.pdf#5 Eligibility"
+  ],
+  "summary": "The caller is looking for information on health plans, specifically whether dental treatment is covered, and had some questions that couldn't be answered during the initial call, including a query about the capital of France. It was established that dental treatment is not covered on any of the plans, except in cases of reconstructive work following an accident. To move forward, the caller needs to be contacted again to provide additional information, such as their age, current admission status, and residency, in order to determine their eligibility for a health plan. The next step is for the adviser to follow up with the caller to gather this missing information and proceed with their inquiry.",
+  "next_action": "Call back to complete qualification. Still needed: age, currently_admitted, residency.",
+  "turns": 3,
+  "contact_held": false
+}

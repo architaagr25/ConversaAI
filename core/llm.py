@@ -192,12 +192,21 @@ class LanguageModel:
                 last = exc
                 if not is_transient(exc) or attempt == attempts - 1:
                     break
-                log.warning(
-                    "model request throttled, retrying",
-                    extra={"attempt": attempt + 1, "wait_s": delay},
-                )
-                time.sleep(delay)
-                delay *= 2
+                # On the call path a throttle goes straight to the second
+                # provider. Measured during test calls: retrying spent three
+                # seconds waiting and then failed over anyway, so the caller
+                # heard three seconds of silence to reach the same answer the
+                # fallback would have given immediately. Off the call path,
+                # where nobody is waiting, retrying is still worth it.
+                if self.deep:
+                    log.warning("model request throttled, retrying",
+                                extra={"attempt": attempt + 1, "wait_s": delay})
+                    time.sleep(delay)
+                    delay *= 2
+                    continue
+
+                log.info("throttled, switching provider rather than waiting")
+                break
 
         log.warning(
             "primary model unavailable, using fallback",

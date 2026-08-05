@@ -3,45 +3,45 @@
   "pack": "health_shield_en",
   "lines": [
     {
-      "at": 9.82,
+      "at": 7.8,
       "speaker": "agent",
       "text": "Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?"
     },
     {
-      "at": 22.81,
+      "at": 21.11,
       "speaker": "caller",
       "text": "Sure, go ahead."
     },
     {
-      "at": 22.81,
+      "at": 21.11,
       "speaker": "agent",
-      "text": "Thanks. To start, what made you look into health cover just now?",
+      "text": "Thanks. What made you look into health cover just now?",
       "grounded": false,
       "sought_knowledge": false,
       "citations": []
     },
     {
-      "at": 32.65,
+      "at": 31.58,
       "speaker": "caller",
       "text": "I am 28 years old."
     },
     {
-      "at": 32.65,
+      "at": 31.58,
       "speaker": "agent",
-      "text": "Got it, thanks for sharing that. What made you look into health cover just now?",
+      "text": "Got it, thanks for sharing that. Are you currently living in the Philippines?",
       "grounded": false,
       "sought_knowledge": false,
       "citations": []
     },
     {
-      "at": 45.57,
+      "at": 46.4,
       "speaker": "caller",
       "text": "Actually sorry, I meant 65."
     },
     {
-      "at": 45.57,
+      "at": 46.4,
       "speaker": "agent",
-      "text": "Thanks for the correction. Since our entry age limit is sixty, I am afraid I cannot offer you a policy today. Are you currently living in the Philippines?",
+      "text": "I appreciate you clarifying that for me. Since our entry age limit is sixty, I’m afraid I cannot offer you a policy today. Would you like me to get a colleague to see if there is anything else we can do for you?",
       "grounded": true,
       "sought_knowledge": true,
       "citations": [
@@ -53,27 +53,27 @@
       ]
     },
     {
-      "at": 58.73,
+      "at": 59.51,
       "speaker": "caller",
       "text": "Yes, I live here."
     },
     {
-      "at": 58.73,
+      "at": 59.51,
       "speaker": "agent",
-      "text": "That is good to know. I do appreciate you sharing that with me.\nAs I mentioned, our plans are for people between the ages of eighteen and sixty. Since you are sixty-five, I am afraid I cannot move forward with an application for you today. \nAre you currently in hospital or receiving treatment right now?",
+      "text": "Thanks for confirming that. Since our entry age limit is sixty, I am afraid I cannot offer you a policy today. Would you like me to get a colleague to see if there is anything else we can do for you?",
       "grounded": false,
       "sought_knowledge": false,
       "citations": []
     },
     {
-      "at": 74.96,
+      "at": 74.69,
       "speaker": "caller",
       "text": "Am I still eligible for this plan?"
     },
     {
-      "at": 74.96,
+      "at": 74.69,
       "speaker": "agent",
-      "text": "I am afraid that because our entry age limit is sixty, you would not be eligible for this plan. I am sorry that I cannot assist you further with an application today.",
+      "text": "I understand you are asking about your eligibility. Because our entry age limit for this plan is sixty, I am afraid I cannot offer you a policy today. \nWould you like me to get a colleague to see if there is anything else we can do for you?",
       "grounded": true,
       "sought_knowledge": true,
       "citations": [
@@ -89,8 +89,7 @@
     "pack": "health_shield_en",
     "turns": 5,
     "collected": {
-      "age": 65,
-      "residency": "PH"
+      "age": 65
     },
     "corrections": [
       "age: 28 -> 65"
@@ -102,7 +101,8 @@
       "require_medical_questionnaire"
     ],
     "missing": [
-      "currently_admitted"
+      "currently_admitted",
+      "residency"
     ],
     "escalated_to": "",
     "unanswered": [],
@@ -120,20 +120,20 @@
     ],
     "barge_ins": 0,
     "failed_recognitions": 0,
-    "transcript": "agent: Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?\ncaller: Sure, go ahead.\nagent: Thanks. To start, what made you look into health cover just now?\ncaller: I am 28 years old.\nagent: Got it, thanks for sharing that. What made you look into health cover just now?\ncaller: Actually sorry, I meant 65.\nagent: Thanks for the correction. Since our entry age limit is sixty, I am afraid I cannot offer you a policy today. Are you currently living in the Philippines?\ncaller: Yes, I live here.\nagent: That is good to know. I do appreciate you sharing that with me.\nAs I mentioned, our plans are for people between the ages of eighteen and sixty. Since you are sixty-five, I am afraid I cannot move forward with an application for you today. \nAre you currently in hospital or receiving treatment right now?\ncaller: Am I still eligible for this plan?\nagent: I am afraid that because our entry age limit is sixty, you would not be eligible for this plan. I am sorry that I cannot assist you further with an application today.\nagent: I am sorry, that means we cannot offer this plan. I will note it down and someone can talk you through the alternatives if that would help.",
+    "transcript": "agent: Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?\ncaller: Sure, go ahead.\nagent: Thanks. What made you look into health cover just now?\ncaller: I am 28 years old.\nagent: Got it, thanks for sharing that. Are you currently living in the Philippines?\ncaller: Actually sorry, I meant 65.\nagent: I appreciate you clarifying that for me. Since our entry age limit is sixty, I’m afraid I cannot offer you a policy today. Would you like me to get a colleague to see if there is anything else we can do for you?\ncaller: Yes, I live here.\nagent: Thanks for confirming that. Since our entry age limit is sixty, I am afraid I cannot offer you a policy today. Would you like me to get a colleague to see if there is anything else we can do for you?\ncaller: Am I still eligible for this plan?\nagent: I understand you are asking about your eligibility. Because our entry age limit for this plan is sixty, I am afraid I cannot offer you a policy today. \nWould you like me to get a colleague to see if there is anything else we can do for you?\nagent: I am sorry, that means we cannot offer this plan. I will note it down and someone can talk you through the alternatives if that would help.",
     "actions": {
-      "lead_id": "LD-20260805-4937e2",
+      "lead_id": "LD-20260805-95ea7a",
       "outcome": "declined",
       "next_action": "Do not quote. Send the declined-applicant letter and offer the alternatives.",
-      "working_copy": "D:\\ConversaAI\\data\\leads\\LD-20260805-4937e2.json",
-      "evidence_copy": "D:\\ConversaAI\\results\\leads\\LD-20260805-4937e2.json"
+      "working_copy": "D:\\ConversaAI\\data\\leads\\LD-20260805-95ea7a.json",
+      "evidence_copy": "D:\\ConversaAI\\results\\leads\\LD-20260805-95ea7a.json"
     }
   },
   "turn_latency_ms": [
-    1671,
-    1851,
-    2991,
-    2657,
-    3318
+    2838,
+    2540,
+    4315,
+    3029,
+    4173
   ]
 }

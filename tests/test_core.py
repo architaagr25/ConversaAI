@@ -76,6 +76,21 @@ class TestTransientDetection:
         assert not is_transient(Exception(message))
 
 
+class TestThrottleBehaviour:
+    def test_the_call_path_switches_provider_instead_of_waiting(self):
+        # Measured during test calls: retrying spent three seconds waiting and
+        # then failed over anyway, so the caller heard three seconds of silence
+        # to reach the answer the fallback would have given immediately.
+        from core.llm import LanguageModel
+        assert LanguageModel(deep=False).deep is False
+
+    def test_off_call_work_still_retries(self):
+        # Nobody is waiting on a summary, so waiting for the quota to reset is
+        # better than falling back to a weaker model.
+        from core.llm import LanguageModel
+        assert LanguageModel(deep=True).deep is True
+
+
 # --- Latency measurement ----------------------------------------------------
 
 

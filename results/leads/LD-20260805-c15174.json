@@ -1,0 +1,33 @@
+{
+  "lead_id": "LD-20260805-c15174",
+  "created_at": "2026-08-05T21:04:17+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {},
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [
+    "age",
+    "currently_admitted",
+    "residency"
+  ],
+  "escalated_to": "",
+  "unanswered": [
+    "What is the capital of France?"
+  ],
+  "citations": [
+    "documents/health_shield_policy_wording.pdf#3 General exclusions",
+    "web/health-shield-faq.html#Is dental included?",
+    "web/health-shield-plans.html#What is not covered",
+    "documents/health_shield_policy_wording.pdf#6 Claims",
+    "documents/health_shield_policy_wording.pdf#5 Eligibility"
+  ],
+  "summary": "The caller is looking for information on health cover and specifically asked if the plan covers dental treatment, which was clarified as not being covered except in certain accident-related cases. During the conversation, it was established that an eligibility decision cannot be made due to missing information, including the caller's age, current admission status, and residency. The caller also asked a question unrelated to their health cover inquiry, about the capital of France, which could not be answered by the agent. The next step is for the adviser to follow up with the caller to gather the necessary missing information to proceed with their health cover inquiry.",
+  "next_action": "Call back to complete qualification. Still needed: age, currently_admitted, residency.",
+  "turns": 3,
+  "contact_held": false
+}

@@ -1,0 +1,13 @@
+{
+  "event": "escalation",
+  "lead_id": "LD-20260805-27c471",
+  "at": "2026-08-05T21:01:38+00:00",
+  "trigger": "ESC-REQUEST",
+  "business_unit": "health_ph_en",
+  "collected": {
+    "age": 30
+  },
+  "unanswered": [],
+  "summary": "The caller is seeking health cover and has been transferred to a new adviser after requesting to speak to a real person. It was established that the caller is 30 years old, but no further information was gathered as the caller requested a transfer before the conversation could proceed. The caller's eligibility for health cover has already been determined and this decision should not be revisited. The next step is to continue the conversation with the caller, building on the limited information already provided, and guiding them through the next stages of the process.",
+  "next_action": "Handed to a person during the call. No callback needed."
+}

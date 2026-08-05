@@ -1,0 +1,156 @@
+{
+  "name": "objection",
+  "pack": "health_shield_en",
+  "lines": [
+    {
+      "at": 2.93,
+      "speaker": "agent",
+      "text": "Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?"
+    },
+    {
+      "at": 14.31,
+      "speaker": "caller",
+      "text": "Yes, go ahead."
+    },
+    {
+      "at": 14.31,
+      "speaker": "agent",
+      "text": "Great. What made you look into health cover just now?",
+      "grounded": false,
+      "sought_knowledge": false,
+      "citations": []
+    },
+    {
+      "at": 24.84,
+      "speaker": "caller",
+      "text": "I am 42."
+    },
+    {
+      "at": 24.84,
+      "speaker": "agent",
+      "text": "Thanks for sharing that. Are you currently living in the Philippines?",
+      "grounded": false,
+      "sought_knowledge": false,
+      "citations": []
+    },
+    {
+      "at": 38.21,
+      "speaker": "caller",
+      "text": "Yes, I am based in Manila."
+    },
+    {
+      "at": 38.21,
+      "speaker": "agent",
+      "text": "That is good to know. Just to check, are you in hospital or receiving treatment right now?",
+      "grounded": true,
+      "sought_knowledge": true,
+      "citations": [
+        "documents/health_shield_rate_table.pdf#Health Shield Rate Table",
+        "web/health-shield-plans.html#Compare plans",
+        "web/health-shield-plans.html#Who can apply",
+        "web/partners.html#Bancassurance partnerships",
+        "web/health-shield-faq.html#\"I never claim, so it is wasted money.\""
+      ]
+    },
+    {
+      "at": 48.76,
+      "speaker": "caller",
+      "text": "No, I am not."
+    },
+    {
+      "at": 48.76,
+      "speaker": "agent",
+      "text": "That is good to hear. Would this be just for you, or for family as well?",
+      "grounded": false,
+      "sought_knowledge": false,
+      "citations": []
+    },
+    {
+      "at": 73.61,
+      "speaker": "caller",
+      "text": "Honestly, this sounds more expensive than I was expecting."
+    },
+    {
+      "at": 73.61,
+      "speaker": "agent",
+      "text": "I understand that. Cover can be adjusted to fit your budget. Moving from Plus to Essential lowers the monthly contribution considerably, and you can also pay annually to reduce the total by about five percent. Does that sound like a better way to look at it?",
+      "grounded": true,
+      "sought_knowledge": true,
+      "citations": [
+        "web/health-shield-faq.html#\"This is more expensive than I expected.\"",
+        "documents/health_shield_rate_table.pdf#Health Shield Rate Table",
+        "documents/health_shield_policy_wording.pdf#Health Shield Policy Wording",
+        "rules/qualification_rules.yaml#health_ph_en.soft_rules",
+        "web/health-shield-faq.html#\"I never claim, so it is wasted money.\""
+      ]
+    },
+    {
+      "at": 94.32,
+      "speaker": "caller",
+      "text": "I already have insurance through my employer anyway."
+    },
+    {
+      "at": 94.32,
+      "speaker": "agent",
+      "text": "That is common. Employer cover usually ends when your employment does, and it rarely covers dependants at the same level. A personal policy stays with you regardless of where you work. Would this be just for you, or for family as well?",
+      "grounded": true,
+      "sought_knowledge": true,
+      "citations": [
+        "web/health-shield-faq.html#\"I am already covered through my employer.\"",
+        "documents/health_shield_policy_wording.pdf#6 Claims",
+        "web/health-shield-faq.html#\"I never claim, so it is wasted money.\"",
+        "web/health-shield-faq.html#Can I add my family?",
+        "web/health-shield-faq.html#How long do I have to wait before I can claim?"
+      ]
+    }
+  ],
+  "summary": {
+    "pack": "health_shield_en",
+    "turns": 6,
+    "collected": {
+      "age": 42,
+      "residency": "PH",
+      "currently_admitted": false
+    },
+    "corrections": [],
+    "eligible": true,
+    "decided": true,
+    "decline_reason": "",
+    "requirements": [],
+    "missing": [],
+    "escalated_to": "",
+    "unanswered": [],
+    "citations": [
+      "documents/health_shield_rate_table.pdf#Health Shield Rate Table",
+      "web/health-shield-plans.html#Compare plans",
+      "web/health-shield-plans.html#Who can apply",
+      "web/partners.html#Bancassurance partnerships",
+      "web/health-shield-faq.html#\"I never claim, so it is wasted money.\"",
+      "web/health-shield-faq.html#\"This is more expensive than I expected.\"",
+      "documents/health_shield_policy_wording.pdf#Health Shield Policy Wording",
+      "rules/qualification_rules.yaml#health_ph_en.soft_rules",
+      "web/health-shield-faq.html#\"I am already covered through my employer.\"",
+      "documents/health_shield_policy_wording.pdf#6 Claims",
+      "web/health-shield-faq.html#Can I add my family?",
+      "web/health-shield-faq.html#How long do I have to wait before I can claim?"
+    ],
+    "barge_ins": 0,
+    "failed_recognitions": 0,
+    "transcript": "agent: Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?\ncaller: Yes, go ahead.\nagent: Great. What made you look into health cover just now?\ncaller: I am 42.\nagent: Thanks for sharing that. Are you currently living in the Philippines?\ncaller: Yes, I am based in Manila.\nagent: That is good to know. Just to check, are you in hospital or receiving treatment right now?\ncaller: No, I am not.\nagent: That is good to hear. Would this be just for you, or for family as well?\ncaller: Honestly, this sounds more expensive than I was expecting.\nagent: I understand that. Cover can be adjusted to fit your budget. Moving from Plus to Essential lowers the monthly contribution considerably, and you can also pay annually to reduce the total by about five percent. Does that sound like a better way to look at it?\ncaller: I already have insurance through my employer anyway.\nagent: That is common. Employer cover usually ends when your employment does, and it rarely covers dependants at the same level. A personal policy stays with you regardless of where you work. Would this be just for you, or for family as well?\nagent: That is everything I need. An adviser will call you within one working day with an exact quote. Thanks for your time today.",
+    "actions": {
+      "lead_id": "LD-20260805-13ab2f",
+      "outcome": "qualified",
+      "next_action": "Quote from the rate table and call back within one working day.",
+      "working_copy": "D:\\ConversaAI\\data\\leads\\LD-20260805-13ab2f.json",
+      "evidence_copy": "D:\\ConversaAI\\results\\leads\\LD-20260805-13ab2f.json"
+    }
+  },
+  "turn_latency_ms": [
+    2446,
+    3174,
+    3776,
+    3004,
+    4309,
+    7308
+  ]
+}
