@@ -72,6 +72,19 @@ AUTHORITY_WEIGHT = {
 # excluded, but it has to be clearly better than the alternative to surface.
 CONTRADICTION_PENALTY = 0.5
 
+# Rank fusion throws away how much better a match was, only that it was better.
+# That is usually fine and occasionally wrong: asked what the Plus plan covers,
+# the comparison table was the single closest record in the corpus by a wide
+# margin and still lost to five policy clauses that merely outrank it on
+# authority. Adding the similarity back lets a large semantic gap outweigh a
+# one-step authority difference, while a small one still loses to it.
+SIMILARITY_WEIGHT = 0.05
+
+# Similarity is rescaled from this baseline rather than from zero. Unrelated
+# text scores around 0.5 with this model, so treating 0.5 as the floor is what
+# makes the remaining range meaningful.
+SIMILARITY_FLOOR = 0.50
+
 
 @dataclass
 class Result:
@@ -127,6 +140,31 @@ def load_records(retrievable_only: bool = True) -> list[dict]:
     return rows
 
 
+def describe_table(title: str, content: str) -> str:
+    """A sentence saying what a table is about.
+
+    Tables embed badly. A grid of figures is mostly numbers, so "Benefit |
+    Essential | Plus | Max" followed by twenty rows of pesos sits nowhere near
+    "what does the Plus plan cover?" in vector space, and the record that holds
+    the answer never surfaces. Naming the columns in prose gives the embedding
+    something to match against.
+    """
+    lines = [line for line in content.split("\n") if "|" in line]
+    if len(lines) < 2:
+        return ""
+
+    columns = [c.strip() for c in lines[0].split("|") if c.strip()]
+    rows = [line.split("|")[0].strip() for line in lines[1:6]]
+    rows = [r for r in rows if r]
+    if not columns:
+        return ""
+
+    described = f"{title}. A table of {', '.join(columns)}."
+    if rows:
+        described += f" Covering {', '.join(rows)}."
+    return described
+
+
 def indexable_text(record: dict) -> str:
     """What gets embedded and searched.
 
@@ -135,7 +173,13 @@ def indexable_text(record: dict) -> str:
     caller asking about their hulog has to reach a record written about
     premiums, and keyword search cannot make that leap on its own.
     """
-    parts = [record["title"], record["content"]]
+    parts = [record["title"]]
+
+    described = describe_table(record["title"], record["content"])
+    if described:
+        parts.append(described)
+
+    parts.append(record["content"])
     if record["terminology_variants"]:
         parts.append(" ".join(record["terminology_variants"]))
     return "\n".join(parts)
@@ -218,6 +262,10 @@ def rank_candidates(
         if any(f.startswith("contradicts_") for f in record["quality_flags"]):
             weight *= CONTRADICTION_PENALTY
 
+        similarity = similarities.get(record_id, 0.0)
+        headroom = max(0.0, similarity - SIMILARITY_FLOOR) / (1 - SIMILARITY_FLOOR)
+        base += SIMILARITY_WEIGHT * headroom
+
         scored.append(Result(
             record_id=record_id,
             title=record["title"],
@@ -227,7 +275,7 @@ def rank_candidates(
             business_unit=record["business_unit"],
             authority=record["authority"],
             score=base * weight,
-            similarity=similarities.get(record_id, 0.0),
+            similarity=similarity,
             keyword_rank=keyword_ranks.get(record_id),
             vector_rank=vector_ranks.get(record_id),
             flags=record["quality_flags"],

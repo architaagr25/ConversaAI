@@ -1,0 +1,12 @@
+﻿====================================================================================================
+Retrieval evaluation
+====================================================================================================
+
+id       category                  sim  rank  verdict
+----------------------------------------------------------------------------------------------------
+PROD-1   product                 0.712     1  correct  expected record ranked first
+PROD-2   product                 0.758     2  PARTIAL  expected record at position 2, not first
+POL-1    policy_rule             0.765     1  correct  expected record ranked first
+POL-2    policy_rule             0.778     1  correct  expected record ranked first
+POL-3    policy_rule             0.771     1  correct  expected record ranked first
+POL-4    policy_rule             0.807     1  correct  expected record ranked first

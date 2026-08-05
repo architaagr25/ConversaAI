@@ -14,6 +14,8 @@ import pytest
 from knowledge_base.retrieve import (
     AUTHORITY_WEIGHT,
     CONTRADICTION_PENALTY,
+    SIMILARITY_FLOOR,
+    describe_table,
     indexable_text,
     rank_candidates,
     tokenise,
@@ -181,3 +183,63 @@ class TestCitations:
         records = [a_record("a")]
         result = outcome_for(records, {"a": 0}, {"a": 0})
         assert result.results[0].citation == "src#a"
+
+
+class TestTableDescription:
+    TABLE = ("Benefit | Essential | Plus | Max\n"
+             "Annual benefit limit | PHP 250,000 | PHP 750,000 | PHP 2,000,000\n"
+             "Room and board per day | PHP 2,500 | PHP 5,000 | PHP 9,000")
+
+    def test_the_columns_are_named_in_prose(self):
+        # A grid of pesos embeds nowhere near "what does the Plus plan cover?",
+        # so the record holding the answer never surfaces.
+        described = describe_table("Compare plans", self.TABLE)
+        assert "Essential" in described and "Plus" in described and "Max" in described
+
+    def test_the_rows_are_named_too(self):
+        described = describe_table("Compare plans", self.TABLE)
+        assert "Annual benefit limit" in described
+
+    def test_ordinary_prose_is_not_described(self):
+        assert describe_table("Waiting periods",
+                              "Illnesses are covered after 30 days.") == ""
+
+    def test_a_single_line_is_not_a_table(self):
+        assert describe_table("x", "Age | Premium") == ""
+
+    def test_the_description_reaches_the_indexed_text(self):
+        record = a_record("a", title="Compare plans")
+        record["content"] = self.TABLE
+        assert "A table of" in indexable_text(record)
+
+
+class TestSimilarityInfluence:
+    def test_a_large_similarity_gap_outweighs_one_authority_step(self):
+        # The real case: the comparison table was the closest record in the
+        # corpus by a wide margin and lost to five clauses that merely outrank
+        # it on authority.
+        records = [a_record("table", authority="published"),
+                   a_record("clause", authority="binding")]
+        by_id = {r["record_id"]: r for r in records}
+        result = rank_candidates(
+            "q", {"table": 12, "clause": 21}, {"table": 0, "clause": 16},
+            {"table": 0.712, "clause": 0.631}, by_id)
+        assert result.results[0].record_id == "table"
+
+    def test_a_small_similarity_gap_still_loses_to_authority(self):
+        # Authority should break ties, not be overridden by noise.
+        records = [a_record("faq", authority="published"),
+                   a_record("policy", authority="binding")]
+        by_id = {r["record_id"]: r for r in records}
+        result = rank_candidates(
+            "q", {"faq": 0, "policy": 20}, {"faq": 4, "policy": 3},
+            {"faq": 0.655, "policy": 0.658}, by_id)
+        assert result.results[0].record_id == "policy"
+
+    def test_similarity_below_the_floor_adds_nothing(self):
+        records = [a_record("a")]
+        by_id = {r["record_id"]: r for r in records}
+        low = rank_candidates("q", {"a": 0}, {"a": 0}, {"a": 0.30}, by_id)
+        at_floor = rank_candidates("q", {"a": 0}, {"a": 0},
+                                   {"a": SIMILARITY_FLOOR}, by_id)
+        assert low.results[0].score == pytest.approx(at_floor.results[0].score)

@@ -1,0 +1,188 @@
+# Retrieval evaluation set.
+#
+# Questions a caller would actually ask, with the record that ought to answer
+# each one. Kept as data so the set can grow without touching code, and so a
+# reviewer can see what is being claimed before seeing the results.
+#
+# expect: the source_ref that should come back first. A substring is enough.
+# decline: true means the right behaviour is to admit to not knowing.
+
+- id: PROD-1
+  category: product
+  unit: health_ph_en
+  question: What does the Plus plan cover?
+  expect: "health-shield-plans.html#Compare plans"
+  why: The comparison table is the only record holding per-plan benefit limits.
+
+- id: PROD-2
+  category: product
+  unit: health_ph_en
+  question: What optional riders can I add to my health policy?
+  expect: "health-shield-plans.html#Riders"
+  why: Lists the four riders and their waiting periods.
+
+- id: POL-1
+  category: policy_rule
+  unit: health_ph_en
+  question: How long before pre-existing conditions are covered?
+  expect: "health_shield_policy_wording.pdf#2 Waiting periods"
+  why: >
+    The binding clause states twenty-four months. A campaign page claims thirty
+    days for the same thing, so this tests that authority beats wording.
+
+- id: POL-2
+  category: policy_rule
+  unit: health_ph_en
+  question: Is dental treatment covered?
+  expect: "health_shield_policy_wording.pdf#3 General exclusions"
+  why: Dental is excluded on every plan level except after a covered accident.
+
+- id: POL-3
+  category: policy_rule
+  unit: health_ph_en
+  question: What happens if I miss a premium payment?
+  expect: "grace period"
+  why: Thirty-one day grace period, then lapse. Stated in both the FAQ and the wording.
+
+- id: POL-4
+  category: policy_rule
+  unit: multifinance_id
+  question: Berapa denda kalau telat bayar cicilan?
+  expect: "multifinance_agreement_terms.pdf#Pasal 2 Denda Keterlambatan"
+  why: The binding article setting the late fee at 0.5 per cent per day.
+
+- id: QUAL-1
+  category: qualification
+  unit: health_ph_en
+  question: Can I apply if I am 62 years old?
+  expect: "health_shield_policy_wording.pdf#5 Eligibility"
+  why: >
+    Entry age is eighteen to sixty, so the answer is no. Previously lost to a
+    FAQ about adding family members, which shares more words with the question.
+
+- id: QUAL-2
+  category: qualification
+  unit: multifinance_id
+  question: Syarat pengajuan pembiayaan mobil apa saja?
+  expect: "multifinance_id"
+  why: >
+    Income, age, employment and arrears conditions. First written expecting the
+    website section, which was wrong: the qualification rules file states the
+    same conditions with the thresholds attached, and outranks the web page on
+    authority. Several records legitimately answer this, so the expectation
+    names the market rather than one source.
+
+- id: QUAL-3
+  category: qualification
+  unit: health_ph_en
+  question: Can I add my spouse and children to my plan?
+  expect: "Can I add my family"
+  why: Dependant ages and the rule that parents cannot be added.
+
+- id: PRICE-1
+  category: pricing
+  unit: health_ph_en
+  question: How much is the monthly premium for someone aged 35?
+  expect: "health_shield_rate_table.pdf"
+  why: >
+    The rate table is the only source quotations may come from. Marketing
+    material advertises PHP 999, which is not a quotable figure.
+
+- id: PRICE-2
+  category: pricing
+  unit: life_ph
+  question: Magkano po ang premium ko kung monthly ang bayad?
+  expect: "life-philippines.html#Magkano po ang premium ko?"
+  why: Taglish question against a Taglish record. Tests the multilingual path.
+
+- id: FAQ-1
+  category: faq
+  unit: health_ph_en
+  question: Do I need a medical exam to apply?
+  expect: "Do I need a medical examination"
+  why: Required over fifty, or for Max cover, or where the questionnaire indicates it.
+
+- id: FAQ-2
+  category: faq
+  unit: health_ph_en
+  question: When does my cover actually start?
+  expect: "When does my cover start"
+  why: First day of the month after approval and first premium.
+
+- id: OBJ-1
+  category: objection
+  unit: health_ph_en
+  question: This is more expensive than I was expecting
+  expect: "more expensive than I expected"
+  why: >
+    Must return the approved objection response, not a pricing record. An
+    objection is a persuasion script with compliance limits on it.
+
+- id: OBJ-2
+  category: objection
+  unit: health_ph_en
+  question: I already have insurance through my employer
+  expect: "already covered through my employer"
+  why: Approved response covering portability and entry age.
+
+- id: PROC-1
+  category: process
+  unit: health_ph_en
+  question: How do I make a claim?
+  expect: "How do I make a claim"
+  why: Notification windows and the ninety day reimbursement deadline.
+
+- id: PROC-2
+  category: process
+  unit: multifinance_id
+  question: Kalau saya mau melunasi lebih cepat, bagaimana caranya?
+  expect: "melunasi"
+  why: >
+    Early settlement penalty of three per cent before half the term. First
+    written expecting the binding article Pasal 4, which was wrong: the
+    Indonesian FAQ answers the same question in the register the caller used,
+    and returning it first is the better outcome, not a miss.
+
+- id: PART-1
+  category: partnership_benefits
+  unit: null
+  question: What support do branch partners receive?
+  expect: "partners.html#Branch partnership benefits"
+  why: The record the assessment's own example is modelled on.
+
+- id: ESC-1
+  category: escalation
+  unit: health_ph_en
+  question: I want to speak to a real person please
+  expect: "ESC-REQUEST"
+  why: Must transfer without arguing. Tests that escalation rules are retrievable.
+
+- id: LIFE-1
+  category: policy_rule
+  unit: life_ph
+  question: Ano po ang mangyayari kung ma-lapse ang policy ko?
+  expect: "life-philippines.html"
+  why: Taglish question about lapse and reinstatement.
+
+- id: OOS-1
+  category: out_of_scope
+  unit: null
+  question: What is the capital of France?
+  decline: true
+  why: Nothing in the knowledge base answers this. The agent must say so.
+
+- id: OOS-2
+  category: out_of_scope
+  unit: null
+  question: What time does the football match start tonight?
+  decline: true
+  why: Unrelated to any product. Must not answer from the nearest record.
+
+- id: OOS-3
+  category: out_of_scope
+  unit: health_ph_en
+  question: Can you recommend a good restaurant in Manila?
+  decline: true
+  why: >
+    Mentions a city that appears throughout the corpus, so this tests that
+    surface overlap alone does not produce confidence.
