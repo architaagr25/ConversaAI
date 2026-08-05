@@ -1,0 +1,43 @@
+﻿====================================================================================
+Personal data detection
+====================================================================================
+
+Measured against the form export, where the answers are known
+------------------------------------------------------------------------------------
+kind       in file  recall  coverage  fired  spurious
+------------------------------------------------------------------------------------
+NAME            25   100%     100%      25        0
+EMAIL           24   100%     100%      24        0
+PHONE           25   100%     100%      25        0
+GOV_ID          25   100%     100%      25        0
+ADDRESS         25   100%      98%      25        0
+DOB             24   100%     100%      24        0
+ACCOUNT          5   100%     100%       5        0
+
+  recall is whether it fired at all, coverage is how much of the
+  value it removed, spurious is detections matching nothing real
+
+Redaction sample
+------------------------------------------------------------------------------------
+  before  Maria Clara Santos, maria.santos@example.ph, +63 917 555 0142, TIN 284-551-903, 142 Mabini Street, Quezon City, policy HS-2026-88412
+  after   [NAME_3f82f4], [EMAIL_b67806], [PHONE_PH_3eab8b], [GOV_ID_PH_699e0a], [ADDRESS_c34c10], policy [ACCOUNT_d85baa]
+  stable  repeat run gives the same tokens: True
+
+Applied to the knowledge base as a safety net
+------------------------------------------------------------------------------------
+  records scanned   106
+  records redacted  0
+    none, which is the expected result: customer rows were
+    excluded at extraction rather than redacted afterwards
+
+  written to  data/processed/records.jsonl
+              data/processed/lead_form_export.redacted.csv (153 items removed)
+
+Known limits
+------------------------------------------------------------------------------------
+  Name detection depends on a stop list built from this corpus, so
+  it will not carry to a corpus it has not seen. It is off when
+  rewriting knowledge base records and in the outbound guard, where
+  a false positive would corrupt policy text or drop a live call.
+  Addresses are matched to the locality, not the postcode, leaving
+  about 2 per cent of a typical address string in place.

@@ -10,6 +10,7 @@ from core.config import PROJECT_ROOT, settings
 from core.embeddings import Embedder, SignatureMismatch, get_embedder, require_matching
 from core.llm import LanguageModel, Reply, clean_for_speech, live, offline
 from core.logging_setup import setup_logging
+from core.privacy import Finding, contains_personal_data, redact, scan
 from core.timing import RECORDER, Recorder, Span, Stopwatch, track, track_async
 
 __all__ = [
@@ -31,4 +32,8 @@ __all__ = [
     "SignatureMismatch",
     "get_embedder",
     "require_matching",
+    "Finding",
+    "contains_personal_data",
+    "redact",
+    "scan",
 ]

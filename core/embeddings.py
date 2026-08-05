@@ -77,11 +77,43 @@ class HostedEmbedder(Embedder):
             self._client = genai.Client(api_key=settings.gemini_api_key)
         return self._client
 
+    @staticmethod
+    def _strip_personal_data(texts: list[str], detect_names: bool = False) -> list[str]:
+        """Remove personal data before a request leaves the machine.
+
+        Names are off by default because this path carries knowledge base
+        content, where a false positive rewrites a policy term into a token and
+        quietly damages retrieval. Anything carrying caller speech, which is
+        the voice agent and the live call analysis, passes detect_names=True:
+        there the cost of an over-eager match is one odd-looking word, and the
+        cost of a miss is somebody's name on a free tier.
+        """
+        from core.privacy import redact
+
+        cleaned = []
+        for text in texts:
+            safe, findings = redact(text, detect_names=detect_names)
+            if findings:
+                log.warning(
+                    "personal data removed before an outbound request",
+                    extra={"kinds": sorted({f.kind for f in findings}),
+                           "count": len(findings)},
+                )
+            cleaned.append(safe)
+        return cleaned
+
     def encode(self, texts: list[str], is_query: bool = False) -> np.ndarray:
         from google.genai import types
 
         if not texts:
             return np.zeros((0, self.dims), dtype=np.float32)
+
+        # Last check before anything leaves the machine. Redacted rather than
+        # refused: refusing would drop a live call, and a token embeds close
+        # enough to the surrounding text for retrieval to still work. Free
+        # tiers may retain what they are sent, so this matters more here than
+        # it would on a paid zero-retention plan.
+        texts = self._strip_personal_data(texts)
 
         # Questions and passages embed differently; saying which improves matching.
         task = "RETRIEVAL_QUERY" if is_query else "RETRIEVAL_DOCUMENT"
