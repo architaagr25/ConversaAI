@@ -15,7 +15,7 @@ asserts no policy content leaks into it.
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import yaml
 
@@ -41,6 +41,9 @@ class Slot:
     # The rules file sometimes calls a field something else. Declaring the
     # mapping means a mismatch is visible rather than a rule that never fires.
     maps_to: str = ""
+    # Words that identify this question in the agent's own wording, since the
+    # model rephrases every question it asks.
+    expects: list[str] = field(default_factory=list)
 
     @property
     def fact_name(self) -> str:

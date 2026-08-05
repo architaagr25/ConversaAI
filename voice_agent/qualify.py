@@ -73,8 +73,14 @@ class Assessment:
 
     @property
     def decided(self) -> bool:
-        """Whether there is enough information to say anything at all."""
-        return not self.missing
+        """Whether there is enough information to say anything at all.
+
+        A failed hard rule settles it on its own. Nothing a sixty-five year old
+        says next makes them eligible, and reporting the outcome as undecided
+        while also naming the rule that declined them is a contradiction the
+        agent would end up speaking aloud.
+        """
+        return not self.missing or not self.eligible
 
 
 @lru_cache(maxsize=1)

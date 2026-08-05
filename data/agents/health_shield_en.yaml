@@ -25,6 +25,11 @@ persona:
     - Plain words. Say "waiting period", not "elimination period".
     - Never more than two questions in a row without acknowledging an answer.
     - "Numbers spoken naturally, so one thousand one hundred eighty pesos."
+    # Left alone, every reply opens with the same approving phrase, which is
+    # the fastest way to sound like a script.
+    - Vary how you open a reply. Do not begin consecutive replies the same way.
+    - Acknowledge briefly. "Got it" or "Thanks" is enough, and often nothing is.
+    - Do not praise the caller for answering a question.
   never:
     - Do not claim to be human if asked directly.
     - Do not use bullet points, headings or symbols. This is speech.
@@ -55,6 +60,10 @@ slots:
     required: true
     type: boolean
     why: Cover is only available to Philippine residents.
+    # Words that identify this question in the agent's own phrasing. The model
+    # rewords every question it asks, so matching the scripted wording alone
+    # loses the answer roughly as often as it finds it.
+    expects: [philippines, living in, based in, reside, resident, ph]
 
   - name: currently_admitted
     ask: Just to check, are you in hospital or receiving treatment right now?
@@ -62,6 +71,7 @@ slots:
     type: boolean
     why: An application cannot be accepted during an admission.
     sensitive: true
+    expects: [hospital, admitted, receiving treatment, confined, in care]
 
   - name: dependants
     ask: Would this be just for you, or for family as well?
@@ -195,6 +205,54 @@ escalation:
     - ESC-LEGAL
     - ESC-VULNERABLE
     - ESC-UNKNOWN-REPEAT
+
+  # Matched against what the caller said, before the model sees it. Escalation
+  # is too important to leave to a model that might decide to have one more go
+  # at answering, and a caller who has asked for a person should not have to
+  # ask twice. Phrases are matched as substrings, so keep them short.
+  detect:
+    ESC-REQUEST:
+      - speak to a real person
+      - speak to a human
+      - talk to a person
+      - talk to someone
+      - real person
+      - human agent
+      - put me through
+      - transfer me
+      - agent please
+      - can i speak to
+    ESC-COMPLAINT:
+      - make a complaint
+      - want to complain
+      - this is unacceptable
+      - terrible service
+      - i am not happy with
+    ESC-CLAIM-DISPUTE:
+      - my claim was declined
+      - you rejected my claim
+      - refused my claim
+      - dispute the claim
+    ESC-MEDICAL-ADVICE:
+      - should i see a doctor
+      - is this serious
+      - do you think i have
+      - what is wrong with me
+      - chest pain
+    ESC-LEGAL:
+      - my lawyer
+      - legal action
+      - take you to court
+      - insurance commission
+      - regulator
+      - sue you
+    ESC-VULNERABLE:
+      - my husband died
+      - my wife died
+      - passed away
+      - terminally ill
+      - i have cancer
+      - i cannot cope
 
 # What happens at the end of a qualifying call.
 business_action:
