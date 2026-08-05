@@ -1,0 +1,77 @@
+# ConversaAI
+
+A voice platform for financial services conversations, built around a single principle:
+the bot answers from an approved knowledge base, or it says it does not know.
+
+The system covers four capabilities that share one retrieval layer:
+
+- **Knowledge base** — mixed business content (web pages, PDFs, rate tables, form
+  exports) converted into clean, deduplicated, traceable records with citations.
+- **Voice agent** — a browser-based calling interface for health insurance lead
+  qualification, grounded in that knowledge base.
+- **Localized agents** — the same capability for the Philippines (life insurance and
+  bancassurance, English–Tagalog code-switching) and Indonesia (multifinance, formal
+  and colloquial Bahasa with regional accent handling).
+- **Live insights** — streaming analysis of a call while it is still in progress,
+  producing short, actionable nudges with measured end-to-end latency.
+
+---
+
+## The business context
+
+Solara Finance Group is a financial services company operating three units:
+
+| Unit | Sector | Market |
+| --- | --- | --- |
+| Solara Health Shield | Health insurance | English |
+| Solara Life Philippines | Life insurance and bancassurance | Philippines |
+| Solara Multifinance Indonesia | Vehicle and consumer financing | Indonesia |
+
+Its product information lives across a website, marketing PDFs, policy documents, rate
+tables and form exports. Agents answer the same questions on the phone all day, in
+three languages, and the answers drift. This platform makes that knowledge canonical
+and puts it behind the voice channel.
+
+---
+
+## Repository layout
+
+```
+core/                shared configuration, logging, timing and provider fallback
+knowledge_base/      extraction, cleaning, chunking, indexing and retrieval
+voice_agent/         browser calling interface and the English qualification flow
+localized_agents/    Philippines and Indonesia conversation packs
+live_insights/       streaming transcription, signal detection and nudge delivery
+data/raw/            original unprocessed source material
+data/processed/      cleaned intermediate output
+data/kb/             the built knowledge base and its index
+docs/                architecture notes and design decisions
+results/             test transcripts, recordings and measured results
+tests/               automated checks
+scripts/             operational scripts
+```
+
+---
+
+## Setup
+
+Requires Python 3.12 and FFmpeg available on the system path.
+
+```
+git clone https://github.com/architaagr25/ConversaAI.git
+cd ConversaAI
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+copy .env.example .env
+```
+
+Then fill in `.env` with your own API keys. `.env.example` lists every variable the
+system reads and explains what each one is for.
+
+---
+
+## Documentation
+
+Architecture, design decisions, retrieval evaluation, localization notes, latency
+measurements and known limitations are in [`docs/`](docs/).
