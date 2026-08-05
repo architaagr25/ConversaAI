@@ -1,22 +1,16 @@
 """
-Compares the available Gemini models on the three things that decide the choice.
+Compares the available Gemini models on what decides the choice.
 
-Speed matters because the model sits inside a live call. What counts is not how
-long a full answer takes but how long until the first words arrive, because the
-reply is streamed and speech synthesis starts on the first sentence. The caller
-hears silence until that moment, so time-to-first-token is the number that maps
-onto the experience.
+Time to first token, not total response time - replies are streamed and speech
+starts on the first sentence, so that's the silence a caller actually hears.
 
-Reasoning effort matters because the newer models deliberate before answering by
-default. That is worth paying for in a difficult judgement and wasteful in a
-scripted phone turn, so both settings are measured rather than assumed.
+Deliberation on and off, because the newer models think before answering by
+default and it costs roughly three times the wait.
 
-Language matters because two of the three markets are not English. A model that
-answers a Taglish prompt in formal Tagalog, or in polished English, is unusable
-for the Philippines flow at any speed. Those replies are printed rather than
-scored, because it is a judgement that has to be read.
+Localized output printed rather than scored. A model that answers a Taglish
+prompt in formal Tagalog is unusable at any speed, and no automatic metric
+catches that.
 
-Usage:
     .venv\\Scripts\\python scripts/benchmark_language_models.py
 """
 
@@ -32,8 +26,8 @@ from dotenv import load_dotenv
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 load_dotenv(PROJECT_ROOT / ".env")
 
-# Version-pinned rather than using a "latest" alias, so an upstream release
-# cannot quietly change behaviour in the middle of the project.
+# Pinned rather than a "latest" alias - an upstream release shouldn't change
+# behaviour mid-project.
 CANDIDATES = [
     "gemini-3.6-flash",
     "gemini-3.5-flash",
@@ -42,7 +36,7 @@ CANDIDATES = [
 
 RUNS = 3
 
-# Deliberately the awkward case: the honest answer is that it does not know.
+# The awkward case: the honest answer is that it doesn't know.
 SHORT_PROMPT = (
     "A caller asks whether dental treatment is covered. You have no information "
     "about dental cover. Reply in one short sentence."
@@ -73,7 +67,7 @@ def build_config(thinking: bool):
 
 
 def measure(client, model: str, thinking: bool) -> dict | None:
-    """Time the wait before the first words and the wait for the whole reply."""
+    """Time the wait before the first words, and for the whole reply."""
     first_token: list[float] = []
     complete: list[float] = []
     reply = ""

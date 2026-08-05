@@ -1,22 +1,10 @@
 """
-The language model layer.
+Model access, with retry, failover and output cleaning.
 
-Everything that talks to a model goes through here, for three reasons that came
-out of testing rather than design.
-
-Free tiers throttle. A rate limit arrived in the middle of benchmarking, and a
-rate limit in the middle of a call is worse: the caller hears nothing and
-assumes the line dropped. So requests retry with backoff, and if the primary
-service is still refusing, a second provider answers instead. A throttle should
-cost a pause, not a call.
-
-Models format their replies. One of the candidates wrapped a sentence in
-markdown asterisks, which is invisible on a screen and read aloud as "asterisk"
-by speech synthesis. Anything heading for a voice gets cleaned first.
-
-Deliberation is expensive. The newer models think before answering by default,
-which roughly triples the wait before the first word. That is switched off for
-anything a caller is waiting on, and left available for work done after a call.
+Free tiers throttle, so requests retry and then fall back to a second provider -
+a rate limit mid-call should cost a pause, not the call. Replies get markdown
+stripped before they reach speech synthesis, since one model wrapped a whole
+sentence in asterisks and TTS reads those aloud.
 """
 
 from __future__ import annotations
@@ -59,11 +47,10 @@ _MARKDOWN_PATTERNS = [
 
 
 def clean_for_speech(text: str) -> str:
-    """Strip formatting that speech synthesis would otherwise read aloud.
+    """Strip formatting that speech synthesis would read aloud.
 
-    Underscores and single asterisks are only removed when they wrap a phrase,
-    so a stray asterisk in ordinary text is left alone rather than silently
-    swallowing the words after it.
+    Single asterisks and underscores only go when they wrap a phrase, so a stray
+    one doesn't swallow the rest of the sentence.
     """
     if not text:
         return ""
@@ -128,16 +115,11 @@ class LanguageModel:
         return self._groq
 
     def warmup(self) -> float:
-        """Build the client and open a connection before anyone is waiting on it.
+        """Build the client and open the connection before anyone is waiting.
 
-        The first request of a process pays for client construction and the TLS
-        handshake on top of the model's own latency, which measured about three
-        seconds against roughly one for every request after it. On a phone call
-        that cost lands entirely on the caller's first question, which is the
-        worst possible place for it. Calling this while the line is still
-        connecting moves it somewhere harmless.
-
-        Returns how long the warm-up took, in milliseconds.
+        First request of a process measured ~3s against ~1s for the rest, the
+        difference being client construction and the TLS handshake. Call this
+        while the line is still connecting. Returns milliseconds taken.
         """
         watch = Stopwatch()
         try:
@@ -250,12 +232,7 @@ class LanguageModel:
         max_tokens: int | None = 600,
         trace: str = "",
     ) -> Iterator[str]:
-        """Yield the answer in pieces, so speech can start on the first sentence.
-
-        This is the difference between roughly a second of silence and roughly
-        three, which is the difference between a bot that feels responsive and
-        one that feels broken.
-        """
+        """Yield the answer in pieces so speech can start on the first sentence."""
         first = True
         watch = Stopwatch()
         try:
@@ -269,9 +246,8 @@ class LanguageModel:
                 if not piece:
                     continue
                 if first:
-                    # Recorded separately from the total because this is the
-                    # number the caller experiences. The rest of the reply
-                    # arrives while speech is already playing.
+                    # Tracked separately from the total: this is what the caller
+                    # hears as silence. The rest arrives while speech is playing.
                     elapsed = watch.mark("llm_first_token")
                     RECORDER.add(
                         Span("llm_first_token", elapsed, trace=trace,
@@ -291,13 +267,12 @@ class LanguageModel:
             )
         except Exception as exc:
             if first:
-                # Nothing was sent yet, so falling back is invisible to the caller.
+                # Nothing sent yet, so the fallback is invisible to the caller.
                 log.warning("stream failed before output, falling back",
                             extra={"reason": str(exc)[:120]})
                 yield self._fallback(prompt, system, temperature, max_tokens, trace).text
             else:
-                # Mid-sentence. Restarting would repeat what was already spoken,
-                # so the partial answer stands and the error is recorded.
+                # Mid-sentence. Retrying would repeat what was already spoken.
                 log.error("stream failed part way through", extra={"reason": str(exc)[:120]})
 
     # -- asynchronous, for the call loop -------------------------------------

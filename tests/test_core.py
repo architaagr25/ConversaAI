@@ -1,10 +1,7 @@
 """
-Checks on the shared foundation.
-
-These cover the parts that can go wrong quietly: text cleaning that a voice
-depends on, latency arithmetic that every reported number depends on, vector
-normalisation, and the guard that stops an index being searched by the wrong
-model. Nothing here needs a network connection.
+Covers the parts of the foundation that fail quietly: text cleaning a voice
+depends on, latency arithmetic every reported number depends on, vector
+normalisation, and the index signature guard. No network needed.
 """
 
 from __future__ import annotations
@@ -27,13 +24,12 @@ class TestCleanForSpeech:
         assert clean_for_speech("Your **premium** is due") == "Your premium is due"
 
     def test_removes_the_wrapping_asterisks_a_model_actually_produced(self):
-        # This is the real case from testing: an entire reply wrapped in
-        # asterisks, which speech synthesis would read out as "asterisk".
+        # Real case from model testing - TTS reads these out as "asterisk".
         raw = "*Nuwun sewu, kapan panjenengan saget mbayar?*"
         assert clean_for_speech(raw) == "Nuwun sewu, kapan panjenengan saget mbayar?"
 
     def test_leaves_a_lone_asterisk_alone(self):
-        # A stray asterisk must not swallow the rest of the sentence.
+        # Must not swallow the rest of the sentence.
         assert clean_for_speech("Terms apply * see policy") == "Terms apply * see policy"
 
     def test_strips_headings_and_bullets(self):
@@ -76,8 +72,7 @@ class TestTransientDetection:
         ],
     )
     def test_does_not_retry_permanent_failures(self, message):
-        # Retrying a malformed or unauthorised request just fails again more
-        # slowly, and delays the fallback that would have worked.
+        # Retrying just fails again slower, and delays the working fallback.
         assert not is_transient(Exception(message))
 
 
@@ -94,8 +89,8 @@ class TestRecorder:
         assert recorder.spans[0].milliseconds >= 15
 
     def test_records_a_block_that_failed(self):
-        # A slow failure is exactly the case worth seeing in the numbers, so the
-        # span must survive the exception.
+        # A slow failure is worth seeing in the numbers, so the span has to
+        # survive the exception.
         recorder = Recorder()
         with pytest.raises(ValueError):
             with track("llm", recorder=recorder):
@@ -115,8 +110,7 @@ class TestRecorder:
         assert Recorder.percentiles([])["count"] == 0
 
     def test_reports_the_slowest_when_samples_are_few(self):
-        # With a handful of samples an interpolated 95th percentile is
-        # misleading, so the worst observation is reported instead.
+        # An interpolated p95 over three samples is invented precision.
         result = Recorder.percentiles([10.0, 20.0, 30.0])
         assert result["p50"] == 20.0
         assert result["p95"] == 30.0
@@ -127,8 +121,8 @@ class TestRecorder:
         assert result["p95"] == pytest.approx(96.0, abs=2)
 
     def test_end_to_end_does_not_double_count_concurrent_stages(self):
-        # Two stages that overlap in time took 100 ms in total, not 200 ms.
-        # Summing the stages would overstate what the caller waited for.
+        # Two overlapping stages took 100 ms, not 200. Summing would overstate
+        # what the caller actually waited for.
         recorder = Recorder()
         start = time.perf_counter()
         recorder.add(Span("a", 100.0, trace="t1", started_at=start))
@@ -137,9 +131,8 @@ class TestRecorder:
         assert 90 <= total <= 130
 
     def test_end_to_end_stays_sane_when_no_start_time_was_given(self):
-        # A span built without a start time must not be placed at the beginning
-        # of the process clock. That produced an end-to-end figure of several
-        # days from two spans that each took a few hundred milliseconds.
+        # Regression: a span with no start time landed at the beginning of the
+        # process clock, and two spans of a few hundred ms reported five days.
         recorder = Recorder()
         recorder.add(Span("llm_first_token", 400.0, trace="t"))
         recorder.add(Span("llm_stream_total", 420.0, trace="t"))
@@ -184,8 +177,7 @@ class TestNormalise:
         assert np.allclose(np.linalg.norm(result, axis=1), 1.0)
 
     def test_survives_a_zero_vector(self):
-        # Dividing by zero here would put NaN into the index and poison every
-        # later comparison rather than failing outright.
+        # Would otherwise put NaN in the index and poison every comparison.
         result = _normalise(np.array([[0.0, 0.0], [3.0, 4.0]]))
         assert not np.isnan(result).any()
 
@@ -205,8 +197,7 @@ class TestSignatureGuard:
         require_matching("gemini:test:768", Stub())
 
     def test_refuses_an_index_built_by_another_model(self):
-        # The search would otherwise run happily and return the wrong records,
-        # which is far harder to notice than an exception.
+        # Otherwise the search runs happily and returns the wrong records.
         class Stub:
             signature = "local:minilm:384"
 

@@ -1,10 +1,8 @@
 """
 Every setting the system reads, in one typed object.
 
-Configuration is loaded once at import and validated immediately, so a missing
-key or a malformed number fails at startup with a clear message rather than
-halfway through a call. Nothing else in the codebase reads os.environ directly;
-if a setting is needed somewhere, it belongs here first.
+Loaded and validated at import, so a malformed value fails at startup rather
+than halfway through a call. Nothing else reads os.environ directly.
 """
 
 from __future__ import annotations
@@ -13,7 +11,7 @@ import os
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import Field, field_validator
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -104,9 +102,9 @@ class Settings(BaseSettings):
         return cleaned
 
     # --- Derived paths -------------------------------------------------------
-    # Kept as properties so they are always absolute. A relative cache path
-    # would otherwise resolve against whatever directory a script was launched
-    # from, and models would be downloaded more than once.
+    # Properties so they're always absolute. A relative cache path resolves
+    # against whatever directory a script was launched from, and the models end
+    # up downloaded twice.
 
     @property
     def root(self) -> Path:
@@ -137,7 +135,7 @@ class Settings(BaseSettings):
         return path
 
     def missing_keys(self) -> list[str]:
-        """Which credentials are absent, so callers can fail with a useful message."""
+        """Which credentials are absent, for a useful startup error."""
         required = {
             "GEMINI_API_KEY": self.gemini_api_key,
             "GROQ_API_KEY": self.groq_api_key,
@@ -151,9 +149,9 @@ def get_settings() -> Settings:
     """Load settings once and reuse them."""
     loaded = Settings()
 
-    # The model download library reads this from the environment rather than
-    # taking it as an argument, so it has to be set before anything imports it.
-    # Pointing it at the project keeps large files off the system drive.
+    # The download library reads this from the environment rather than taking an
+    # argument, so it has to be set before anything imports it. Points at the
+    # project to keep large files off the system drive.
     os.environ.setdefault("HF_HOME", str(loaded.cache_path))
     os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
 

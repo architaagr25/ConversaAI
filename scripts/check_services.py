@@ -1,15 +1,12 @@
 """
-Confirms every external service is reachable with the keys in .env.
+Confirms every service is reachable with the keys in .env.
 
-Each check makes a real request rather than only looking for a non-empty
-string, because a key that is present but expired, revoked or pasted with a
-stray space fails in exactly the same way as a missing one, and it is much
-easier to find that out here than halfway through a call.
+Each check makes a real request rather than testing for a non-empty string. A
+key that's expired, revoked or pasted with a stray space looks identical to a
+missing one until something uses it.
 
-Keys are never printed. Only a masked fragment is shown, enough to tell two
-keys apart without exposing either.
+Keys are masked in all output.
 
-Usage:
     .venv\\Scripts\\python scripts/check_services.py
 """
 
@@ -30,7 +27,7 @@ problems: list[str] = []
 
 
 def mask(value: str) -> str:
-    """Show enough of a key to identify it, never enough to use it."""
+    """Enough of a key to tell two apart, never enough to use one."""
     if len(value) <= 12:
         return "*" * len(value)
     return f"{value[:4]}...{value[-4:]}  ({len(value)} chars)"
@@ -65,8 +62,7 @@ def check_gemini() -> None:
 
         client = genai.Client(api_key=key)
 
-        # Match how the call path actually runs, so this measures the latency
-        # the caller would hear rather than some other configuration.
+        # Same config the call path uses, so this measures what a caller hears.
         config = None
         if budget >= 0:
             config = types.GenerateContentConfig(
@@ -120,8 +116,8 @@ def check_groq() -> None:
         print(f"  reply      {completion.choices[0].message.content.strip()[:40]!r}")
         print(f"  latency    {elapsed:.0f} ms")
 
-        # Confirm the transcription model is actually available to this account,
-        # rather than assuming it because the chat model worked.
+        # Check the transcription model separately - a working chat model says
+        # nothing about whether this account can use Whisper.
         names = {m.id for m in client.models.list().data}
         if asr_model in names:
             print(f"  speech     {asr_model} available")
@@ -157,8 +153,7 @@ def check_deepgram() -> None:
             print(f"  projects   {len(entries)}")
             print(f"  latency    {elapsed:.0f} ms")
 
-            # Report remaining credit, since this is the one service with a
-            # balance that can actually run out mid-project.
+            # The one service with a balance that can run out mid-project.
             if not entries:
                 print("  credit     no projects on this key")
                 problems.append("Deepgram key has no project attached")
@@ -170,9 +165,8 @@ def check_deepgram() -> None:
                 headers=headers,
             )
             if balances.status_code != 200:
-                # A key with Member rather than Owner permissions can transcribe
-                # perfectly well but cannot read billing, so this is reported
-                # rather than treated as a failure.
+                # A Member key transcribes fine but can't read billing. Not a
+                # failure, just something to check manually.
                 print(
                     f"  credit     not readable (HTTP {balances.status_code}), "
                     "check the balance in the Deepgram console"
@@ -195,7 +189,7 @@ def check_deepgram() -> None:
 
 
 def check_tts() -> None:
-    """Speech synthesis needs no key, but the voices still have to exist."""
+    """No key needed, but the voices still have to exist."""
     heading("Speech synthesis  (no key required)")
 
     async def run() -> None:
@@ -216,8 +210,7 @@ def check_tts() -> None:
                 print(f"  {label:<11}{voice}  NOT FOUND")
                 problems.append(f"{label} voice {voice} is unavailable")
 
-        # Synthesise a short phrase so this proves audio is produced, not just
-        # that a name appears in a list.
+        # Actually synthesise something - a name in a list proves nothing.
         start = time.perf_counter()
         audio = bytearray()
         communicator = edge_tts.Communicate("Ready.", wanted["English"])

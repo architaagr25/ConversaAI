@@ -1,21 +1,13 @@
 """
-Turning text into vectors for retrieval.
+Text to vectors, hosted or local.
 
-Two providers are supported. The hosted one is the default because the local
-models small enough to run on a laptop do not cover Tagalog: the best of them
-scored -0.02 between a Tagalog question and its own English translation, while
-rating an unrelated sentence higher. The hosted model scores +0.90 on the same
-pair. Numbers are in results/embedding_comparison.txt.
+Hosted is the default: the local models small enough to run here don't cover
+Tagalog. Numbers in results/embedding_comparison.txt. Local stays available for
+offline work, but only English and Indonesian can be trusted on it.
 
-The local model stays available for working offline, but only English and
-Indonesian retrieval can be trusted on it.
-
-One hazard is worth spelling out. The two providers produce vectors of
-different sizes, and vectors from different models are not comparable even when
-the sizes match. If an index were built with one and queried with the other, no
-error would be raised and every search would quietly return the wrong records.
-So each provider carries a signature, the index stores the signature it was
-built with, and a mismatch is refused rather than tolerated.
+Watch the signature guard at the bottom. Vectors from different models aren't
+comparable, and searching an index with the wrong one returns plausible garbage
+rather than raising.
 """
 
 from __future__ import annotations
@@ -38,12 +30,12 @@ HOSTED_BATCH = 50
 
 
 class Embedder(ABC):
-    """A source of vectors, identified so an index cannot be queried by the wrong one."""
+    """A source of vectors, identified so the wrong one can't query an index."""
 
     @property
     @abstractmethod
     def signature(self) -> str:
-        """Identifies the model and size. Stored alongside any index built with it."""
+        """Model and size. Stored alongside any index built with it."""
 
     @property
     @abstractmethod
@@ -91,8 +83,7 @@ class HostedEmbedder(Embedder):
         if not texts:
             return np.zeros((0, self.dims), dtype=np.float32)
 
-        # Telling the service whether this is a question or a passage measurably
-        # improves matching, because the two are embedded differently.
+        # Questions and passages embed differently; saying which improves matching.
         task = "RETRIEVAL_QUERY" if is_query else "RETRIEVAL_DOCUMENT"
         config = types.EmbedContentConfig(
             task_type=task, output_dimensionality=self.dims
@@ -122,10 +113,8 @@ class HostedEmbedder(Embedder):
                         continue
                     raise
 
-        array = np.asarray(vectors, dtype=np.float32)
-        # Normalising here means similarity is a plain dot product later, which
-        # keeps the search loop simple and fast.
-        return _normalise(array)
+        # Normalised here so similarity is a plain dot product downstream.
+        return _normalise(np.asarray(vectors, dtype=np.float32))
 
 
 class LocalEmbedder(Embedder):
@@ -169,9 +158,7 @@ def _normalise(array: np.ndarray) -> np.ndarray:
     if array.size == 0:
         return array
     lengths = np.linalg.norm(array, axis=1, keepdims=True)
-    # Guard against a zero vector, which would otherwise divide by zero and
-    # poison every later comparison with NaN.
-    lengths[lengths == 0] = 1.0
+    lengths[lengths == 0] = 1.0  # a zero vector would put NaN through the index
     return array / lengths
 
 
@@ -179,10 +166,8 @@ def _normalise(array: np.ndarray) -> np.ndarray:
 def get_embedder() -> Embedder:
     """The configured embedder, created once.
 
-    If the hosted service cannot be reached at all, this falls back to the local
-    model and says so loudly, because the fallback cannot answer Tagalog
-    questions and an index built with one provider cannot be searched with the
-    other.
+    Falls back to local if hosted is unreachable, and complains loudly about it:
+    the fallback can't do Tagalog and invalidates any existing index.
     """
     if settings.embedding_provider == "local":
         return LocalEmbedder()
@@ -208,8 +193,7 @@ class SignatureMismatch(RuntimeError):
 def require_matching(index_signature: str, embedder: Embedder | None = None) -> None:
     """Refuse to search an index built by a different model.
 
-    Without this the search still runs and still returns results, they are just
-    wrong, which is far harder to notice than an exception.
+    Without this the search runs and returns results. They're just wrong.
     """
     current = (embedder or get_embedder()).signature
     if index_signature and index_signature != current:

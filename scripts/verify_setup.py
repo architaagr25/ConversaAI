@@ -1,14 +1,9 @@
 """
-Checks that this machine can actually run the project.
+Checks this machine can run the project: interpreter version, every dependency
+imports, FFmpeg reachable, and the local embedding model produces sensible
+vectors. That last one matters most - it's the only compiled model running
+locally and the most likely thing to break on an unfamiliar machine.
 
-Run this after installing requirements, and again whenever something behaves
-strangely. It confirms the interpreter version, that every dependency imports,
-that FFmpeg is reachable, and that the embedding model loads and produces
-sensible vectors. The embedding check is the important one: it is the only
-dependency that runs a compiled model locally, so it is the most likely thing
-to fail on an unfamiliar machine.
-
-Usage:
     .venv\\Scripts\\python scripts/verify_setup.py
 """
 
@@ -24,8 +19,8 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 MODEL_CACHE = PROJECT_ROOT / ".cache" / "models"
 
-# Import name on the left, distribution name on the right. They differ often
-# enough that guessing one from the other is unreliable.
+# Import name, then distribution name. They differ often enough that deriving
+# one from the other doesn't work: bs4/beautifulsoup4, dotenv/python-dotenv.
 PACKAGES = [
     ("dotenv", "python-dotenv"),
     ("pydantic", "pydantic"),
@@ -59,8 +54,8 @@ PACKAGES = [
     ("pytest", "pytest"),
 ]
 
-# Preference order for the embedding model. Multilingual comes first because the
-# knowledge base has to answer Tagalog and Indonesian questions as well as English.
+# Multilingual first: the knowledge base has to answer Tagalog and Indonesian
+# questions, not only English.
 PREFERRED_MODELS = [
     "intfloat/multilingual-e5-small",
     "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -125,11 +120,10 @@ def check_ffmpeg() -> None:
 
 
 def check_embeddings() -> None:
-    """Load the embedding model and confirm it separates related from unrelated text.
+    """Load the model and check it separates related from unrelated text.
 
-    A model that loads but returns meaningless vectors would pass an import check
-    and then quietly ruin retrieval, so this compares three sentences instead of
-    just checking that the call returns something.
+    A model that loads but returns noise passes an import check and then quietly
+    ruins retrieval, hence three sentences rather than one call.
     """
     heading("Embedding model")
     try:

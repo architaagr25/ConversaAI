@@ -1,10 +1,9 @@
 """
-Shared foundation used by the knowledge base, the voice agents and the live
-call analysis.
+Shared by the knowledge base, the voice agents and the live call analysis.
 
-Nothing here is specific to one part of the system. Configuration, logging,
-latency measurement, model access and embeddings live here so that all four
-parts behave the same way when a service is slow, throttled or unavailable.
+Nothing here is specific to one part. Keeping config, logging, timing, model
+access and embeddings in one place means all four behave the same way when a
+service is slow or throttled.
 """
 
 from core.config import PROJECT_ROOT, settings

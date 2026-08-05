@@ -1,23 +1,12 @@
 """
-Latency measurement.
+Latency measurement for the live pipeline.
 
-The live pipeline has to report how long each stage takes and where the time
-goes, so timing is built in from the start rather than bolted on afterwards.
-Measuring after the fact tends to produce numbers for whichever stage was easy
-to instrument, which is rarely the slow one.
-
-A span is one timed stage. Spans belonging to the same call share a trace id,
-so an end-to-end figure can be assembled from the parts without guessing which
-transcription belongs to which nudge.
-
-Typical use:
+A span is one timed stage. Spans sharing a trace id belong to the same call,
+which is how end-to-end figures get assembled without guessing which
+transcription produced which nudge.
 
     with track("asr", trace="call-17"):
         text = transcribe(audio)
-
-    with track("llm", trace="call-17"):
-        reply = answer(text)
-
     print(RECORDER.summary())
 """
 
@@ -35,10 +24,8 @@ from typing import Iterator
 class Span:
     """One timed stage.
 
-    started_at defaults to now rather than to zero. A zero here would place the
-    span at the start of the process clock, and any end-to-end figure covering
-    it would come out as the entire uptime of the program instead of the
-    duration of a call.
+    started_at defaults to now, not zero. Zero puts the span at the start of the
+    process clock and end-to-end comes out as the whole uptime of the program.
     """
 
     stage: str
@@ -70,10 +57,9 @@ class Recorder:
         return [s for s in self.spans if s.trace == trace]
 
     def end_to_end(self) -> list[float]:
-        """Total elapsed time per trace, from the first span's start to the last one's end.
+        """Wall clock elapsed per trace, first span's start to last span's end.
 
-        Summing the stages would overcount anything that ran concurrently, so
-        this measures the wall clock span instead.
+        Summing the stages would overcount anything that ran concurrently.
         """
         grouped: dict[str, list[Span]] = defaultdict(list)
         for span in self.spans:
@@ -95,8 +81,8 @@ class Recorder:
         return {
             "count": len(ordered),
             "p50": statistics.median(ordered),
-            # With few samples the 95th percentile is not meaningful, so the
-            # slowest observation is reported instead of interpolating one.
+            # Under 20 samples an interpolated p95 invents precision, so report
+            # the slowest observation instead.
             "p95": (
                 ordered[min(int(len(ordered) * 0.95), len(ordered) - 1)]
                 if len(ordered) >= 20
@@ -114,7 +100,7 @@ class Recorder:
         return out
 
     def summary(self) -> str:
-        """A table suitable for dropping straight into a report."""
+        """A table that can go straight into a report."""
         rows = self.stats()
         if not rows:
             return "no measurements recorded"
@@ -123,7 +109,6 @@ class Recorder:
             f"{'stage':<22}{'n':>5}{'p50':>10}{'p95':>10}{'min':>10}{'max':>10}",
             "-" * 67,
         ]
-        # End-to-end last, since it is the summary of everything above it.
         ordered = sorted(rows.items(), key=lambda kv: kv[0] == "end to end")
         for stage, s in ordered:
             if stage == "end to end":
@@ -135,8 +120,8 @@ class Recorder:
         return "\n".join(lines)
 
 
-# One shared recorder, because latency is reported for the system rather than
-# for a single object. Tests and separate runs call clear() between them.
+# Shared, since latency is reported for the system not per object.
+# Tests and separate runs call clear() between them.
 RECORDER = Recorder()
 
 
@@ -151,8 +136,8 @@ def track(
     try:
         yield span
     finally:
-        # Recorded in a finally block so a failed stage still reports its cost.
-        # A slow failure is exactly the case worth seeing in the numbers.
+        # In finally so a failed stage still reports its cost - a slow failure is
+        # exactly what you want to see in the numbers.
         span.milliseconds = (time.perf_counter() - started) * 1000
         target.add(span)
 
@@ -173,10 +158,10 @@ async def track_async(
 
 
 class Stopwatch:
-    """Manual timing for stages that do not fit inside a block.
+    """Manual timing for stages that don't fit inside a block.
 
-    Streaming needs this: the wait before the first token and the wait for the
-    whole reply are both interesting, and they end at different moments.
+    Streaming needs this: first token and full reply both matter and they end at
+    different moments.
     """
 
     __slots__ = ("_start", "_marks")

@@ -1,15 +1,11 @@
 """
 Exercises the shared foundation against the real services.
 
-The unit tests cover the logic; this covers the wiring. It loads configuration,
-streams a reply while timing the wait before the first word, embeds a query in
-all three languages, and prints the latency table that the rest of the project
-reports through.
+Unit tests cover the logic, this covers the wiring: config loads, a reply
+streams, queries embed in all three languages, and the latency table prints.
 
-The numbers it prints are the floor for everything built on top: no call can be
-faster than the sum of these parts.
+Those numbers are the floor for everything built on top.
 
-Usage:
     .venv\\Scripts\\python scripts/verify_core.py
 """
 
@@ -46,7 +42,7 @@ def check_configuration() -> bool:
 
 
 def check_streaming() -> None:
-    """Time the wait before the first word, which is what a caller hears as silence."""
+    """Time the wait before the first word - the silence a caller hears."""
     print("\nStreaming a reply")
     print("-" * 62)
 
@@ -55,10 +51,9 @@ def check_streaming() -> None:
         "no information about dental cover. Reply in one short sentence."
     )
 
-    # The first request of a process also pays for building the client and
-    # opening a connection, which is several times the model's own latency.
-    # Warming up first means the numbers below describe a turn in the middle of
-    # a call rather than the very first one.
+    # First request also pays for client construction and the handshake, which
+    # is several times the model's own latency. Warming up first means the
+    # numbers below describe a turn mid-call, not the very first one.
     cold_ms = live.warmup()
     print(f"  connection warm-up {cold_ms:.0f} ms  (paid once, before any call)")
 
@@ -106,9 +101,8 @@ def check_embeddings() -> None:
             vectors[label] = embedder.encode_query(text)
         print(f"  {label:<11}{len(vectors[label])} dimensions")
 
-    # A quick sanity check that the vectors carry meaning rather than noise:
-    # an English question about premiums should sit closer to its Taglish
-    # equivalent than to a question about installments in another market.
+    # Sanity check the vectors carry meaning: an English premium question should
+    # sit closer to its Taglish form than to an Indonesian installment question.
     english_reference = embedder.encode_query("How much is my monthly premium?")
     close = float(english_reference @ vectors["Taglish"])
     far = float(english_reference @ vectors["Indonesian"])

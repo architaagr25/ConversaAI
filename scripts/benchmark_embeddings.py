@@ -1,21 +1,15 @@
 """
-Compares embedding options on the three languages this system has to serve.
+Compares embedding options on the three languages this system serves.
 
-The knowledge base is written mostly in English, but callers ask questions in
-Taglish and in Bahasa Indonesia. Retrieval therefore depends on the embedding
-model placing a Tagalog or Indonesian question near an English answer. Not every
-multilingual model can do this, and the failure is silent: the model loads, the
-search runs, and the wrong passage comes back.
+The knowledge base is mostly English but callers ask in Taglish and Bahasa
+Indonesia, so retrieval depends on a foreign-language question landing near an
+English answer. Not every multilingual model manages it, and the failure is
+silent: the model loads, the search runs, the wrong passage comes back.
 
-Two options are measured here:
+Local runs here with no network cost. Hosted costs a round trip per query but
+covers far more languages. English alone doesn't separate them - both handle it
+well - so the comparison has to include the other two.
 
-  local    runs on this machine, no network, no cost, no rate limit
-  hosted   a network call per query, but far wider language coverage
-
-The comparison is deliberately not decided on English alone, because both
-options handle English well and the difference only appears elsewhere.
-
-Usage:
     .venv\\Scripts\\python scripts/benchmark_embeddings.py
 """
 
@@ -36,9 +30,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 load_dotenv(PROJECT_ROOT / ".env")
 MODEL_CACHE = PROJECT_ROOT / ".cache" / "models"
 
-# Each case is a pair that should score highly, except the two controls.
-# Without controls, a model that returns high similarity for everything looks
-# perfect. What matters is the gap between real matches and unrelated text.
+# Pairs that should score highly, plus two controls. Without controls a model
+# that scores everything at 0.8 looks perfect. The gap is what matters.
 CASES = [
     ("English to English", "match",
      "What is the waiting period for pre-existing conditions?",
@@ -113,8 +106,7 @@ def hosted_encoder():
     client = genai.Client(api_key=key)
 
     def encode(texts: list[str]) -> np.ndarray:
-        # Retried because the free tier throttles, and a throttle here is a
-        # pause rather than a failure.
+        # The free tier throttles; a throttle here is a pause, not a failure.
         for attempt in range(4):
             try:
                 response = client.models.embed_content(

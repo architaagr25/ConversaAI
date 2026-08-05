@@ -1,13 +1,8 @@
 """
-Logging configuration.
+Logging setup. Console stays short for watching a call live; the file is JSON
+lines so a run can be measured afterwards without parsing prose.
 
-Two destinations, because they serve different readers. The console is for a
-person watching a call happen, so it stays short and readable. The file is one
-JSON object per line, so a run can be replayed and measured afterwards without
-parsing prose.
-
-Call setup_logging() once at the start of a program, then use
-logging.getLogger(__name__) everywhere else as normal.
+Call setup_logging() once at start, then getLogger(__name__) as normal.
 """
 
 from __future__ import annotations
@@ -20,8 +15,8 @@ from pathlib import Path
 
 from core.config import PROJECT_ROOT, settings
 
-# Fields the logging library puts on every record. Anything outside this set was
-# added by us and belongs in the structured output.
+# Fields the logging library sets itself. Anything else came from a caller's
+# extra={} and belongs in the output.
 _STANDARD_FIELDS = {
     "args", "asctime", "created", "exc_info", "exc_text", "filename",
     "funcName", "levelname", "levelno", "lineno", "module", "msecs",
@@ -70,8 +65,7 @@ def setup_logging(
 ) -> None:
     """Configure logging for the whole program.
 
-    Safe to call more than once; existing handlers are replaced rather than
-    stacked, which otherwise produces duplicated lines.
+    Safe to call twice - handlers are replaced, not stacked.
     """
     resolved = (level or settings.log_level).upper()
     root = logging.getLogger()
@@ -91,7 +85,7 @@ def setup_logging(
     file_handler.setLevel(logging.DEBUG)
     root.addHandler(file_handler)
 
-    # These libraries log every HTTP request at INFO, which buries our own
-    # output during a call. Warnings from them are still wanted.
+    # These log every HTTP request at INFO, which buries our own output during a
+    # call. Warnings from them are still wanted.
     for noisy in ("httpx", "httpcore", "urllib3", "websockets", "google_genai"):
         logging.getLogger(noisy).setLevel(logging.WARNING)

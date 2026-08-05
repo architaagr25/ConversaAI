@@ -1,22 +1,15 @@
 """
-Builds the sample PDF sources the extraction pipeline is tested against.
+Builds the sample PDFs the extraction pipeline is tested against.
 
-Three real documents and one broken one:
+  policy wording    prose with running headers, footers and clause numbering
+  rate table        figures in tables, which lose meaning when flattened to text
+  agreement terms   the Indonesian equivalent, different number formatting
+  truncated file    cut off part way through, so a bad source gets skipped
+                    rather than stopping the run
 
-  policy wording    prose with running headers, footers, page numbers and
-                    clause numbering, which is what a parser has to strip
-  rate table        figures laid out as tables, which lose their meaning when
-                    flattened into a line of text
-  agreement terms   the Indonesian equivalent, so the parser is exercised on
-                    non-English content and different number formatting
-  truncated file    a PDF cut off part way through, to prove a bad source is
-                    reported and skipped rather than stopping the run
+Generated rather than committed as binaries, so the content stays reviewable in
+version control.
 
-The documents are generated rather than committed as binaries so that the
-content is reviewable in version control and can be regenerated if a test needs
-different material.
-
-Usage:
     .venv\\Scripts\\python scripts/build_sample_pdfs.py
 """
 
@@ -51,10 +44,10 @@ SMALL = ParagraphStyle("small", parent=BODY, fontSize=8, textColor=colors.grey)
 
 
 def _decorate(canvas, doc, title: str, reference: str) -> None:
-    """Draw the running header and footer that every page carries.
+    """Running header and footer on every page.
 
-    These repeat on all pages and are exactly the kind of text that has to be
-    removed before the content is usable, so they are here on purpose.
+    Repeats exactly like a real document set, which is the boilerplate the
+    parser has to strip.
     """
     canvas.saveState()
     canvas.setFont("Helvetica", 7.5)
@@ -312,11 +305,10 @@ def agreement_terms() -> list:
 
 
 def write_truncated_pdf(path: Path) -> None:
-    """Write a PDF that stops part way through.
+    """A PDF that stops part way through.
 
-    Real document sets contain files damaged in transfer or export. The pipeline
-    has to notice, record which source failed, and carry on with the rest, so
-    there needs to be one of these to test against.
+    Truncating a real file is what a transfer failure actually produces. Random
+    bytes would fail at a different point and exercise a different code path.
     """
     source = OUTPUT_DIR / "health_shield_policy_wording.pdf"
     data = source.read_bytes()
