@@ -46,6 +46,10 @@ class Turn:
     citations: list[str] = field(default_factory=list)
     grounded: bool = False
     retrieved: int = 0
+    # Whether this turn went looking for knowledge at all. A slot answer does
+    # not, and reporting those as ungrounded makes an ordinary call look like
+    # it failed on every turn.
+    sought_knowledge: bool = False
     escalated_to: str = ""
     slots_filled: dict = field(default_factory=dict)
     timings: dict = field(default_factory=dict)
@@ -59,7 +63,7 @@ class Turn:
         happens to contain the same words as a refusal, and counting it as one
         put a correctly answered question on the list of failures.
         """
-        if self.grounded:
+        if self.grounded or not self.sought_knowledge:
             return False
         lowered = self.agent.lower()
         return any(phrase in lowered for phrase in
@@ -441,6 +445,7 @@ class Agent:
             citations=[r.source_ref for r in records] if confident else [],
             grounded=confident,
             retrieved=len(records),
+            sought_knowledge=pending is not None,
             slots_filled=filled,
             timings=watch.marks,
         )

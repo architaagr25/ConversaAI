@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solara Health Shield</title>
+<style>
+  :root { --ink:#16202c; --muted:#6b7a8d; --line:#dde4ec; --bg:#f6f8fa;
+          --accent:#1d6fd0; --warn:#b3541e; --good:#1f7a4d; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:15px/1.55 -apple-system,Segoe UI,Roboto,sans-serif;
+         color:var(--ink); background:var(--bg); }
+  .wrap { max-width:760px; margin:0 auto; padding:28px 20px 60px; }
+  header { display:flex; align-items:baseline; gap:12px; margin-bottom:4px; }
+  h1 { font-size:19px; margin:0; font-weight:600; }
+  .sub { color:var(--muted); font-size:13px; }
+  .panel { background:#fff; border:1px solid var(--line); border-radius:10px;
+           padding:18px; margin-top:18px; }
+  .controls { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  button { font:inherit; padding:9px 18px; border-radius:7px; cursor:pointer;
+           border:1px solid var(--line); background:#fff; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  button.danger { background:#fff; border-color:#d9b3b3; color:#8b2f2f; }
+  button:disabled { opacity:.45; cursor:default; }
+  select { font:inherit; padding:8px; border-radius:7px; border:1px solid var(--line); }
+  .state { margin-left:auto; display:flex; align-items:center; gap:8px;
+           font-size:13px; color:var(--muted); }
+  .dot { width:9px; height:9px; border-radius:50%; background:#c3ccd8; }
+  .dot.listening { background:var(--good); animation:pulse 1.4s infinite; }
+  .dot.thinking  { background:#c9a227; }
+  .dot.speaking  { background:var(--accent); animation:pulse 1s infinite; }
+  .dot.ended     { background:#9aa5b1; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+  #log { min-height:220px; max-height:46vh; overflow-y:auto; }
+  .line { padding:9px 0; border-bottom:1px solid #eef2f6; }
+  .line:last-child { border-bottom:0; }
+  .who { font-size:11px; text-transform:uppercase; letter-spacing:.07em;
+         color:var(--muted); margin-bottom:3px; }
+  .line.agent .who { color:var(--accent); }
+  .cites { margin-top:5px; font-size:12px; color:var(--muted); }
+  .cites code { background:var(--bg); padding:1px 5px; border-radius:4px; }
+  .flag { display:inline-block; font-size:11px; padding:1px 7px; border-radius:20px;
+          margin-left:6px; }
+  .flag.ungrounded { background:#fdf0e6; color:var(--warn); }
+  .flag.grounded { background:#e9f5ee; color:var(--good); }
+  .note { font-size:13px; color:var(--muted); }
+  .hint { background:#fffbe9; border:1px solid #f0e3b8; border-radius:8px;
+          padding:11px 13px; font-size:13px; margin-top:14px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  td { padding:5px 0; vertical-align:top; }
+  td:first-child { color:var(--muted); width:38%; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Solara Health Shield</h1>
+    <span class="sub">lead qualification</span>
+  </header>
+  <div class="note">Speak normally and pause when you have finished. You can
+    interrupt at any time.</div>
+
+  <div class="panel">
+    <div class="controls">
+      <select id="pack">
+        <option value="health_shield_en">Health Shield &mdash; English</option>
+      </select>
+      <button id="start" class="primary">Start call</button>
+      <button id="stop" class="danger" disabled>Hang up</button>
+      <span class="state"><span id="dot" class="dot"></span><span id="stateLabel">not connected</span></span>
+    </div>
+    <div class="hint" id="hint">Your browser will ask for microphone access.
+      Nothing is recorded until you start the call.</div>
+  </div>
+
+  <div class="panel">
+    <div id="log"><div class="note">The conversation will appear here.</div></div>
+  </div>
+
+  <div class="panel" id="summaryPanel" style="display:none">
+    <div class="who">Call summary</div>
+    <table id="summary"></table>
+  </div>
+
+</div>
+
+<script>
+const SAMPLE_RATE = 16000;
+
+const els = {
+  start: document.getElementById('start'),
+  stop: document.getElementById('stop'),
+  pack: document.getElementById('pack'),
+  dot: document.getElementById('dot'),
+  state: document.getElementById('stateLabel'),
+  log: document.getElementById('log'),
+  hint: document.getElementById('hint'),
+  summaryPanel: document.getElementById('summaryPanel'),
+  summary: document.getElementById('summary'),
+};
+
+let socket, audioCtx, micStream, node, playCtx;
+let queue = [];            // audio waiting to play
+let playing = false;
+let currentSource = null;  // so an interruption can stop it mid-sentence
+let pendingLabel = '';
+let firstLine = true;
+
+function setState(name) {
+  els.dot.className = 'dot ' + name;
+  els.state.textContent = {
+    listening: 'listening', thinking: 'thinking',
+    speaking: 'speaking', ended: 'call ended', idle: 'connecting',
+  }[name] || name;
+}
+
+function addLine(who, text, opts = {}) {
+  if (firstLine) { els.log.innerHTML = ''; firstLine = false; }
+  const div = document.createElement('div');
+  div.className = 'line ' + who;
+  let flag = '';
+  if (who === 'agent' && opts.grounded === true)
+    flag = '<span class="flag grounded">from knowledge base</span>';
+  if (who === 'agent' && opts.grounded === false)
+    flag = '<span class="flag ungrounded">no supporting record</span>';
+  let cites = '';
+  if (opts.citations && opts.citations.length)
+    cites = '<div class="cites">' +
+      opts.citations.map(c => '<code>' + c + '</code>').join(' ') + '</div>';
+  div.innerHTML = '<div class="who">' + (who === 'agent' ? 'Agent' : 'You') +
+    flag + '</div><div>' + text + '</div>' + cites;
+  els.log.appendChild(div);
+  els.log.scrollTop = els.log.scrollHeight;
+}
+
+function addNote(text) {
+  if (firstLine) { els.log.innerHTML = ''; firstLine = false; }
+  const div = document.createElement('div');
+  div.className = 'line';
+  div.innerHTML = '<div class="note">' + text + '</div>';
+  els.log.appendChild(div);
+  els.log.scrollTop = els.log.scrollHeight;
+}
+
+// Playback runs off a queue so sentences arriving separately still play in
+// order, and so an interruption can drop everything not yet started.
+async function playNext() {
+  if (playing || !queue.length) return;
+  playing = true;
+  const bytes = queue.shift();
+  try {
+    playCtx = playCtx || new AudioContext();
+    const buffer = await playCtx.decodeAudioData(bytes);
+    const source = playCtx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(playCtx.destination);
+    currentSource = source;
+    source.onended = () => { currentSource = null; playing = false; playNext(); };
+    source.start();
+  } catch (e) {
+    playing = false;
+    playNext();
+  }
+}
+
+function stopPlayback() {
+  queue = [];
+  if (currentSource) { try { currentSource.stop(); } catch (e) {} }
+  currentSource = null;
+  playing = false;
+}
+
+async function start() {
+  els.start.disabled = true;
+  els.pack.disabled = true;
+  setState('idle');
+
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        // Without echo cancellation the microphone hears the agent and the
+        // agent interrupts itself.
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true,
+        channelCount: 1,
+      }
+    });
+  } catch (e) {
+    els.hint.textContent = 'Microphone access was refused, so the call cannot start.';
+    els.start.disabled = false; els.pack.disabled = false;
+    setState('ended');
+    return;
+  }
+
+  els.hint.style.display = 'none';
+  els.stop.disabled = false;
+
+  const url = (location.protocol === 'https:' ? 'wss://' : 'ws://') +
+    location.host + '/call?pack=' + encodeURIComponent(els.pack.value);
+  socket = new WebSocket(url);
+  socket.binaryType = 'arraybuffer';
+
+  socket.onmessage = (event) => {
+    if (typeof event.data !== 'string') {
+      queue.push(event.data.slice(0));
+      playNext();
+      return;
+    }
+    const msg = JSON.parse(event.data);
+    if (msg.kind === 'state') setState(msg.state);
+    else if (msg.kind === 'speaking') pendingLabel = msg.text;
+    else if (msg.kind === 'transcript')
+      addLine(msg.detail.speaker, msg.text, msg.detail);
+    else if (msg.kind === 'barge_in') { stopPlayback(); addNote('interrupted'); }
+    else if (msg.kind === 'status') addNote(msg.text);
+    else if (msg.kind === 'error') addNote('Error: ' + msg.text);
+    else if (msg.kind === 'ended') { stopPlayback(); finish(); }
+    else if (msg.kind === 'summary') showSummary(msg.detail);
+  };
+
+  socket.onclose = () => { finish(); };
+  socket.onerror = () => { addNote('Connection lost.'); finish(); };
+
+  // Asking for the rate we want avoids resampling on either side. Browsers
+  // that will not honour it fall back to their own rate and the server
+  // resamples instead.
+  audioCtx = new AudioContext({ sampleRate: SAMPLE_RATE });
+  const source = audioCtx.createMediaStreamSource(micStream);
+  node = audioCtx.createScriptProcessor(2048, 1, 1);
+
+  node.onaudioprocess = (e) => {
+    if (!socket || socket.readyState !== WebSocket.OPEN) return;
+    const input = e.inputBuffer.getChannelData(0);
+    const pcm = new Int16Array(input.length);
+    for (let i = 0; i < input.length; i++) {
+      const s = Math.max(-1, Math.min(1, input[i]));
+      pcm[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+    }
+    socket.send(pcm.buffer);
+  };
+
+  source.connect(node);
+  node.connect(audioCtx.destination);
+}
+
+function showSummary(detail) {
+  const rows = [
+    ['Turns', detail.turns],
+    ['Collected', JSON.stringify(detail.collected)],
+    ['Corrections', (detail.corrections || []).join('; ') || 'none'],
+    ['Eligibility', detail.decided
+      ? (detail.eligible ? 'eligible' : 'declined: ' + detail.decline_reason)
+      : 'undecided, needs ' + (detail.missing || []).join(', ')],
+    ['Requirements', (detail.requirements || []).join(', ') || 'none'],
+    ['Escalated', detail.escalated_to || 'no'],
+    ['Could not answer', (detail.unanswered || []).length],
+    ['Interruptions', detail.barge_ins],
+    ['Sources used', (detail.citations || []).length],
+  ];
+  els.summary.innerHTML = rows
+    .map(([k, v]) => '<tr><td>' + k + '</td><td>' + v + '</td></tr>').join('');
+  els.summaryPanel.style.display = '';
+}
+
+function finish() {
+  els.stop.disabled = true;
+  els.start.disabled = false;
+  els.pack.disabled = false;
+  setState('ended');
+  if (node) { node.disconnect(); node = null; }
+  if (audioCtx) { audioCtx.close(); audioCtx = null; }
+  if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
+}
+
+els.start.onclick = start;
+els.stop.onclick = () => {
+  if (socket && socket.readyState === WebSocket.OPEN)
+    socket.send(JSON.stringify({ command: 'hangup' }));
+  else finish();
+};
+</script>
+</body>
+</html>

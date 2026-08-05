@@ -1,0 +1,71 @@
+{
+  "name": "escalation",
+  "pack": "health_shield_en",
+  "lines": [
+    {
+      "at": 7.06,
+      "speaker": "agent",
+      "text": "Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?"
+    },
+    {
+      "at": 14.63,
+      "speaker": "caller",
+      "text": "Yes okay.",
+      "spoken": true
+    },
+    {
+      "at": 19.38,
+      "speaker": "caller",
+      "text": "Yes okay"
+    },
+    {
+      "at": 19.38,
+      "speaker": "agent",
+      "text": "Great. To start, what made you look into health cover just now?",
+      "grounded": false,
+      "citations": []
+    },
+    {
+      "at": 24.78,
+      "speaker": "caller",
+      "text": "I am thirty years old.",
+      "spoken": true
+    },
+    {
+      "at": 29.87,
+      "speaker": "caller",
+      "text": "I am 30 years old."
+    },
+    {
+      "at": 29.87,
+      "speaker": "agent",
+      "text": "Got it. And are you currently living in the Philippines?",
+      "grounded": false,
+      "citations": []
+    },
+    {
+      "at": 37.4,
+      "speaker": "caller",
+      "text": "Actually, can I speak to a real person please?",
+      "spoken": true
+    },
+    {
+      "at": 44.49,
+      "speaker": "caller",
+      "text": "Actually, can I speak to a real person please?"
+    },
+    {
+      "at": 44.49,
+      "speaker": "agent",
+      "text": "I am putting you through to a colleague now. They will have everything you have told me.",
+      "grounded": false,
+      "citations": []
+    }
+  ],
+  "summary": {},
+  "turn_latency_ms": [
+    10997,
+    11018,
+    11829
+  ]
+}

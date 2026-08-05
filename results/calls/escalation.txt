@@ -1,0 +1,19 @@
+Call: escalation
+Pack: health_shield_en
+
+[  7.06s] Agent: Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?
+[ 14.63s] Caller: Yes okay.
+[ 19.38s] Caller: Yes okay
+[ 19.38s] Agent: Great. To start, what made you look into health cover just now?
+           (no supporting record, agent said so)
+[ 24.78s] Caller: I am thirty years old.
+[ 29.87s] Caller: I am 30 years old.
+[ 29.87s] Agent: Got it. And are you currently living in the Philippines?
+           (no supporting record, agent said so)
+[ 37.40s] Caller: Actually, can I speak to a real person please?
+[ 44.49s] Caller: Actually, can I speak to a real person please?
+[ 44.49s] Agent: I am putting you through to a colleague now. They will have everything you have told me.
+           (no supporting record, agent said so)
+
+Summary
+----------------------------------------

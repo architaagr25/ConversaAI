@@ -1,0 +1,66 @@
+Call: cooperative
+Pack: health_shield_en
+
+[  7.26s] Agent: Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?
+[ 21.95s] Caller: Yes, now is a good time.
+[ 21.95s] Agent: That is great to hear. What made you look into health cover just now?
+           source: documents/health_shield_policy_wording.pdf#5 Eligibility
+           source: rules/qualification_rules.yaml#health_ph_en.hard_rules
+           source: documents/health_shield_policy_wording.pdf#1 Definitions
+           source: web/health-shield-plans.html#Who can apply
+           source: web/health-shield-faq.html#Can I add my family?
+[ 36.00s] Caller: I am looking for cover for myself and my wife.
+[ 36.00s] Agent: That makes sense. It is good to have that extra peace of mind for both of you. And how old are you?
+           source: web/health-shield-faq.html#Can I add my family?
+           source: documents/health_shield_policy_wording.pdf#5 Eligibility
+           source: web/health-shield-faq.html#"I am already covered through my employer."
+           source: web/health-shield-plans.html#Solara Health Shield
+           source: web/health-shield-faq.html#Do I need a medical examination to apply?
+[ 58.43s] Caller: I am 35 years old.
+[ 58.43s] Agent: Got it. Are you currently living in the Philippines?
+[ 71.43s] Caller: Yes, I live in the Philippines.
+[ 71.43s] Agent: That is good to know. Just to check, are you or your wife in hospital or receiving treatment right now?
+           source: documents/health_shield_policy_wording.pdf#5 Eligibility
+           source: web/health-shield-plans.html#Who can apply
+           source: documents/health_shield_rate_table.pdf#Health Shield Rate Table
+           source: web/partners.html#Bancassurance partnerships
+           source: web/health-shield-faq.html#"I never claim, so it is wasted money."
+[ 83.69s] Caller: No, I am not in hospital
+[ 83.69s] Agent: That is good to hear. Since you mentioned your wife earlier, would this be just for you and her, or are there other family members you are looking to include as well?
+           source: documents/health_shield_policy_wording.pdf#6 Claims
+           source: documents/health_shield_policy_wording.pdf#1 Definitions
+           source: web/health-shield-faq.html#Can I use any hospital?
+           source: web/health-shield-faq.html#"I am already covered through my employer."
+           source: documents/health_shield_policy_wording.pdf#2 Waiting periods
+[ 96.46s] Caller: About 60,000 a month
+[ 96.46s] Agent: Thanks for sharing that. It is helpful to know. We have three levels of cover, called Essential, Plus, and Max. Do you have a sense of which one you are after, or would you like me to explain the differences?
+           source: documents/health_shield_rate_table.pdf#Dependant monthly premium
+           source: documents/health_shield_rate_table.pdf#Standard monthly premium by entry age
+           source: documents/health_shield_rate_table.pdf#Health Shield Rate Table
+           source: web/health-shield-plans.html#Monthly premium
+           source: documents/health_shield_rate_table.pdf#Rider monthly premium
+[111.30s] Caller: What does the Plus Plan cover?
+[111.30s] Agent: The Plus plan gives you an annual benefit limit of seven hundred fifty thousand pesos. It includes eight out-patient consultations per year and your annual physical exam.
+Would you like me to go over the daily hospital room or intensive care limits for that plan?
+           source: web/health-shield-plans.html#Compare plans
+           source: documents/health_shield_policy_wording.pdf#3 General exclusions
+           source: web/health-shield-plans.html#What is not covered
+           source: documents/health_shield_policy_wording.pdf#5 Eligibility
+           source: documents/health_shield_rate_table.pdf#Rider monthly premium
+
+Summary
+----------------------------------------
+pack: health_shield_en
+turns: 7
+collected: {'age': 35, 'residency': 'PH', 'currently_admitted': False, 'monthly_income': 60000, 'plan_interest': 'Plus'}
+corrections: []
+eligible: True
+decided: True
+decline_reason: 
+requirements: []
+missing: []
+escalated_to: 
+unanswered: []
+citations: ['documents/health_shield_policy_wording.pdf#5 Eligibility', 'rules/qualification_rules.yaml#health_ph_en.hard_rules', 'documents/health_shield_policy_wording.pdf#1 Definitions', 'web/health-shield-plans.html#Who can apply', 'web/health-shield-faq.html#Can I add my family?', 'web/health-shield-faq.html#"I am already covered through my employer."', 'web/health-shield-plans.html#Solara Health Shield', 'web/health-shield-faq.html#Do I need a medical examination to apply?', 'documents/health_shield_rate_table.pdf#Health Shield Rate Table', 'web/partners.html#Bancassurance partnerships', 'web/health-shield-faq.html#"I never claim, so it is wasted money."', 'documents/health_shield_policy_wording.pdf#6 Claims', 'web/health-shield-faq.html#Can I use any hospital?', 'documents/health_shield_policy_wording.pdf#2 Waiting periods', 'documents/health_shield_rate_table.pdf#Dependant monthly premium', 'documents/health_shield_rate_table.pdf#Standard monthly premium by entry age', 'web/health-shield-plans.html#Monthly premium', 'documents/health_shield_rate_table.pdf#Rider monthly premium', 'web/health-shield-plans.html#Compare plans', 'documents/health_shield_policy_wording.pdf#3 General exclusions', 'web/health-shield-plans.html#What is not covered']
+barge_ins: 0
+failed_recognitions: 0

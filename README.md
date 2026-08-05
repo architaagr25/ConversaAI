@@ -69,6 +69,60 @@ copy .env.example .env
 Then fill in `.env` with your own API keys. `.env.example` lists every variable the
 system reads and explains what each one is for.
 
+Check the setup before going further:
+
+```
+python scripts\verify_setup.py      interpreter, dependencies, FFmpeg
+python scripts\check_services.py    every external service, with a real request
+```
+
+---
+
+## Making a call
+
+Build the knowledge base once, then start the call interface:
+
+```
+python -m knowledge_base.web          extract from web sources
+python -m knowledge_base.documents    extract from PDFs, forms and rules
+python -m knowledge_base.clean        classify, deduplicate, find contradictions
+python -m knowledge_base.pii          redact personal data
+python -m knowledge_base.store        build the store
+python -m knowledge_base.retrieve     build the search index
+
+python -m voice_agent.server
+```
+
+Open `http://127.0.0.1:8000` and allow microphone access. Speak normally and
+pause when you have finished. You can interrupt the agent at any time.
+
+### A public address
+
+Browsers only allow microphone access over HTTPS, or on localhost. To take a
+call from another machine, put a tunnel in front of it:
+
+```
+cloudflared tunnel --url http://localhost:8000
+```
+
+That prints a `https://something.trycloudflare.com` address that works
+immediately. No account, no card, and nothing to configure. Download
+`cloudflared` from Cloudflare's releases page, or install it with
+`winget install Cloudflare.cloudflared`.
+
+### Without a microphone
+
+Two harnesses, useful for testing and for producing evidence:
+
+```
+python scripts\try_agent.py                     type instead of speaking
+python scripts\call_client.py --script all      place scripted calls, record them
+```
+
+`call_client.py` synthesises the caller's speech, streams it to the server in
+real time, and saves a WAV, a transcript with sources, and a summary to
+`results/calls/`.
+
 ---
 
 ## Documentation

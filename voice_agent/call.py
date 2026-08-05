@@ -95,6 +95,7 @@ class CallSession:
 
         self._speech_run = 0
         self._cancel_speaking = False
+        self._turn_number = 0
 
     # -- lifecycle ------------------------------------------------------------
 
@@ -107,6 +108,9 @@ class CallSession:
 
         greeting = self.agent.greeting()
         self.record.add("agent", greeting)
+        # Emitted as text as well as audio, so the greeting appears in the
+        # transcript rather than only being heard.
+        yield Event("transcript", text=greeting, detail={"speaker": "agent"})
         async for event in self._speak(greeting):
             yield event
 
@@ -179,11 +183,17 @@ class CallSession:
         self._cancel_speaking = False
         yield Event("state", state=self.state.value)
 
+        # A trace per turn, not per call. Sharing one across a whole call makes
+        # the end-to-end figure the length of the call, which is true and
+        # useless: what matters is how long one answer took.
+        self._turn_number += 1
+        turn_trace = f"{self.trace}-t{self._turn_number}"
+
         transcript = self.transcriber.transcribe(
             utterance.wav,
             prompt=hint_for(self.agent.pack.business_unit),
             audio_ms=utterance.duration_ms,
-            trace=self.trace,
+            trace=turn_trace,
         )
 
         if not transcript:
@@ -206,12 +216,13 @@ class CallSession:
                         audio_ms=round(utterance.duration_ms))
         yield Event("transcript", text=transcript.text, detail={"speaker": "caller"})
 
-        turn = self.agent.respond(transcript.text, trace=self.trace)
+        turn = self.agent.respond(transcript.text, trace=turn_trace)
         self.record.add("agent", turn.agent, grounded=turn.grounded,
                         citations=turn.citations, escalated=turn.escalated_to,
                         timings=turn.timings)
         yield Event("transcript", text=turn.agent,
                     detail={"speaker": "agent", "grounded": turn.grounded,
+                            "sought_knowledge": turn.sought_knowledge,
                             "citations": turn.citations})
 
         self.state = CallState.SPEAKING

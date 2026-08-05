@@ -1,0 +1,90 @@
+{
+  "name": "out_of_scope",
+  "pack": "health_shield_en",
+  "lines": [
+    {
+      "at": 7.04,
+      "speaker": "agent",
+      "text": "Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?"
+    },
+    {
+      "at": 19.63,
+      "speaker": "caller",
+      "text": "Yes that is fine."
+    },
+    {
+      "at": 19.63,
+      "speaker": "agent",
+      "text": "Thanks for that. What made you look into health cover just now?",
+      "grounded": false,
+      "sought_knowledge": false,
+      "citations": []
+    },
+    {
+      "at": 32.01,
+      "speaker": "caller",
+      "text": "Does the plan cover dental treatment?"
+    },
+    {
+      "at": 32.01,
+      "speaker": "agent",
+      "text": "Dental treatment is not covered on any of our plans. The only exception is for reconstructive work needed after an accident. And how old are you?",
+      "grounded": true,
+      "sought_knowledge": true,
+      "citations": [
+        "documents/health_shield_policy_wording.pdf#3 General exclusions",
+        "web/health-shield-faq.html#Is dental included?",
+        "web/health-shield-plans.html#What is not covered",
+        "documents/health_shield_policy_wording.pdf#6 Claims",
+        "documents/health_shield_policy_wording.pdf#5 Eligibility"
+      ]
+    },
+    {
+      "at": 47.06,
+      "speaker": "caller",
+      "text": "What is the capital of France?"
+    },
+    {
+      "at": 47.06,
+      "speaker": "agent",
+      "text": "I do not have that detail here. I can have someone check and come back to you. And how old are you?",
+      "grounded": false,
+      "sought_knowledge": true,
+      "citations": []
+    }
+  ],
+  "summary": {
+    "pack": "health_shield_en",
+    "turns": 3,
+    "collected": {},
+    "corrections": [],
+    "eligible": true,
+    "decided": false,
+    "decline_reason": "",
+    "requirements": [],
+    "missing": [
+      "age",
+      "currently_admitted",
+      "residency"
+    ],
+    "escalated_to": "",
+    "unanswered": [
+      "What is the capital of France?"
+    ],
+    "citations": [
+      "documents/health_shield_policy_wording.pdf#3 General exclusions",
+      "web/health-shield-faq.html#Is dental included?",
+      "web/health-shield-plans.html#What is not covered",
+      "documents/health_shield_policy_wording.pdf#6 Claims",
+      "documents/health_shield_policy_wording.pdf#5 Eligibility"
+    ],
+    "barge_ins": 0,
+    "failed_recognitions": 0,
+    "transcript": "agent: Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?\ncaller: Yes that is fine.\nagent: Thanks for that. What made you look into health cover just now?\ncaller: Does the plan cover dental treatment?\nagent: Dental treatment is not covered on any of our plans. The only exception is for reconstructive work needed after an accident. And how old are you?\ncaller: What is the capital of France?\nagent: I do not have that detail here. I can have someone check and come back to you. And how old are you?\nagent: No problem at all. I will arrange for someone to call you back. Thanks for your time."
+  },
+  "turn_latency_ms": [
+    1655,
+    1886,
+    2989
+  ]
+}

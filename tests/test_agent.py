@@ -1,4 +1,4 @@
-"""
+﻿"""
 Agent brain tests.
 
 Everything here runs without a model or a network. What is being checked is
@@ -122,7 +122,7 @@ class TestWhenToRetrieve:
 class TestRefusalDetection:
     def test_a_refusal_is_recorded(self):
         turn = Turn(caller="q", agent="I do not have that detail here.",
-                    grounded=False)
+                    grounded=False, sought_knowledge=True)
         assert turn.said_it_did_not_know
 
     def test_a_grounded_answer_is_never_a_refusal(self):
@@ -164,7 +164,8 @@ class TestEscalationDetection:
         fresh = Agent("health_shield_en")
         fresh.conversation.turns.append(Turn(
             caller="do you cover physiotherapy sessions",
-            agent="I do not have that detail here.", grounded=False))
+            agent="I do not have that detail here.", grounded=False,
+            sought_knowledge=True))
         assert fresh._check_escalation(
             "so is physiotherapy covered or not") == "ESC-UNKNOWN-REPEAT"
 
@@ -174,7 +175,8 @@ class TestEscalationDetection:
         fresh = Agent("health_shield_en")
         fresh.conversation.turns.append(Turn(
             caller="what is the capital of France",
-            agent="I do not have that detail here.", grounded=False))
+            agent="I do not have that detail here.", grounded=False,
+            sought_knowledge=True))
         assert fresh._check_escalation("what is tomorrow's weather") == ""
 
 
@@ -209,7 +211,8 @@ class TestConversationRecord:
     def test_unanswered_questions_are_listed(self):
         conversation = Conversation(pack_id="p", business_unit="u")
         conversation.turns.append(Turn("what is the weather",
-                                       "I do not have that detail.", grounded=False))
+                                       "I do not have that detail.", grounded=False,
+                                       sought_knowledge=True))
         conversation.turns.append(Turn("is dental covered",
                                        "No, dental is excluded.", grounded=True))
         assert conversation.unanswered == ["what is the weather"]
