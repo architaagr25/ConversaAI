@@ -102,8 +102,15 @@ async def call(socket: WebSocket) -> None:
                 break
 
             if (audio := message.get("bytes")) is not None:
+                finished = False
                 async for event in session.on_audio(audio):
                     await emit(event)
+                    finished = finished or event.kind == "ended"
+                # An escalation ends the call from inside a turn. Without this
+                # the loop keeps waiting for audio nobody is going to send, and
+                # the lead is only written when the socket eventually drops.
+                if finished:
+                    break
                 continue
 
             if (text := message.get("text")) is not None:
@@ -123,7 +130,19 @@ async def call(socket: WebSocket) -> None:
             pass
     finally:
         summary = session.summary()
-        summary["transcript"] = session.record.transcript()
+        transcript = session.record.transcript()
+        summary["transcript"] = transcript
+
+        # The lead is created whatever ended the call, including a caller who
+        # simply closed the tab. A conversation that produced nothing because
+        # nobody said goodbye properly is a lost lead.
+        try:
+            from voice_agent.actions import finish_call
+
+            summary["actions"] = finish_call(session, transcript)
+        except Exception:
+            log.exception("could not record the lead")
+
         log.info("call finished", extra={"summary": summary})
         try:
             await socket.send_text(json.dumps({"kind": "summary", "detail": summary}))

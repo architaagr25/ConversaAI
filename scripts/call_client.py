@@ -216,17 +216,21 @@ async def place(name: str, lines: list[str], pack: str, voice: str,
             await socket.send(json.dumps({"command": "hangup"}))
             await drain_replies(socket, call, quiet_for=2.0)
 
-        # The summary is sent as the server closes, after the last audio.
-        try:
-            for _ in range(20):
-                message = await asyncio.wait_for(socket.recv(), timeout=0.5)
-                if isinstance(message, str):
-                    event = json.loads(message)
-                    if event.get("kind") == "summary":
-                        call.summary = event.get("detail", {})
-                        break
-        except Exception:
-            pass
+        # The summary is sent last, after the server has written the lead and
+        # the handover note. That takes a few seconds, so a timeout here means
+        # keep waiting rather than give up.
+        deadline = time.perf_counter() + 25
+        while time.perf_counter() < deadline and not call.summary:
+            try:
+                message = await asyncio.wait_for(socket.recv(), timeout=1.0)
+            except asyncio.TimeoutError:
+                continue
+            except Exception:
+                break
+            if isinstance(message, str):
+                event = json.loads(message)
+                if event.get("kind") == "summary":
+                    call.summary = event.get("detail", {})
 
     return call
 

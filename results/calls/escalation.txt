@@ -1,19 +1,28 @@
 Call: escalation
 Pack: health_shield_en
 
-[  7.06s] Agent: Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?
-[ 14.63s] Caller: Yes okay.
-[ 19.38s] Caller: Yes okay
-[ 19.38s] Agent: Great. To start, what made you look into health cover just now?
-           (no supporting record, agent said so)
-[ 24.78s] Caller: I am thirty years old.
-[ 29.87s] Caller: I am 30 years old.
-[ 29.87s] Agent: Got it. And are you currently living in the Philippines?
-           (no supporting record, agent said so)
-[ 37.40s] Caller: Actually, can I speak to a real person please?
-[ 44.49s] Caller: Actually, can I speak to a real person please?
-[ 44.49s] Agent: I am putting you through to a colleague now. They will have everything you have told me.
-           (no supporting record, agent said so)
+[  8.76s] Agent: Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?
+[ 21.73s] Caller: Yes okay
+[ 21.73s] Agent: Great. To get us started, what made you look into health cover just now?
+[ 34.24s] Caller: I am 30 years old.
+[ 34.24s] Agent: Got it. Thanks for sharing that with me. Are you currently living in the Philippines?
+[ 48.71s] Caller: Actually, can I speak to a real person please?
+[ 48.71s] Agent: I am putting you through to a colleague now. They will have everything you have told me.
 
 Summary
 ----------------------------------------
+pack: health_shield_en
+turns: 3
+collected: {'age': 30}
+corrections: []
+eligible: True
+decided: False
+decline_reason: 
+requirements: []
+missing: ['currently_admitted', 'residency']
+escalated_to: ESC-REQUEST
+unanswered: []
+citations: []
+barge_ins: 0
+failed_recognitions: 0
+actions: {'lead_id': 'LD-20260805-a97f5a', 'outcome': 'escalated', 'next_action': 'Handed to a person during the call. No callback needed.', 'working_copy': 'D:\\ConversaAI\\data\\leads\\LD-20260805-a97f5a.json', 'evidence_copy': 'D:\\ConversaAI\\results\\leads\\LD-20260805-a97f5a.json', 'escalation': {'delivered': False, 'written_to': 'D:\\ConversaAI\\results\\webhooks\\LD-20260805-a97f5a.json', 'payload': {'event': 'escalation', 'lead_id': 'LD-20260805-a97f5a', 'at': '2026-08-05T20:25:30+00:00', 'trigger': 'ESC-REQUEST', 'business_unit': 'health_ph_en', 'collected': {'age': 30}, 'unanswered': [], 'summary': '(incorporating constraints):**\n    *   *', 'next_action': 'Handed to a person during the call. No callback needed.'}}}

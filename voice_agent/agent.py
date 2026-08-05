@@ -109,8 +109,16 @@ WORD_NUMBERS = {
     "seven": 7, "eight": 8, "nine": 9,
 }
 
-AGE = re.compile(r"\b(\d{1,3})\s*(?:years?\s*old|yo\b|$)|\bi am\s+(\d{1,3})\b"
+# The trailing punctuation matters. A recogniser writes "I meant 65." with a
+# full stop, and anchoring on end-of-string alone missed the correction while
+# happily parsing the same sentence without it.
+AGE = re.compile(r"\b(\d{1,3})\s*(?:years?\s*old|yo\b|[.!?]*\s*$)"
+                 r"|\bi am\s+(\d{1,3})\b"
                  r"|\bage\s+(?:is\s+)?(\d{1,3})\b", re.I)
+
+# A bare number counts as an age only when one was asked for or is being
+# corrected. Outside that, "I have 2 children" is not an age.
+BARE_NUMBER = re.compile(r"\b(\d{2,3})\b")
 
 # People correct themselves mid-call, and an agent that keeps the first answer
 # ends up assessing somebody who no longer exists.
@@ -119,11 +127,15 @@ CORRECTION = re.compile(
     r"my mistake|let me correct|that was wrong|hindi pala|maaf|salah)\b", re.I)
 
 
-def read_age(text: str) -> int | None:
+def read_age(text: str, expecting: bool = False) -> int | None:
     """Pull an age out of ordinary speech.
 
     Done in code rather than by the model because a number the caller said and
     the agent then forgets is the most obvious way for a call to feel broken.
+
+    expecting widens what counts, and should be set only when an age was just
+    asked for or is being corrected. Without that guard "I have 2 children"
+    becomes an age.
     """
     match = AGE.search(text)
     if match:
@@ -142,9 +154,15 @@ def read_age(text: str) -> int | None:
             if 18 <= total <= 110:
                 return total
 
-    lone = re.fullmatch(r"\s*(\d{1,3})\s*", text)
+    lone = re.fullmatch(r"\s*(\d{1,3})[.!?]*\s*", text)
     if lone and 10 <= int(lone.group(1)) <= 110:
         return int(lone.group(1))
+
+    if expecting:
+        for match in BARE_NUMBER.finditer(text):
+            value = int(match.group(1))
+            if 16 <= value <= 100:
+                return value
     return None
 
 
@@ -340,14 +358,14 @@ class Agent:
         # correction out of the transcript and answers on the new age while the
         # recorded value stays at the old one, so the spoken outcome and the
         # recorded assessment disagree.
+        last_asked = self._last_question_asked()
         if "age" not in slots or correcting:
-            age = read_age(text)
+            age = read_age(text, expecting=correcting or last_asked == "age")
             if age is not None and age != slots.get("age"):
                 found["age"] = age
 
         # Only read a yes or no against a question that has actually been asked,
         # or "no" in "no problem" fills a slot nobody asked about.
-        last_asked = self._last_question_asked()
         if last_asked in ("residency", "currently_admitted") and last_asked not in slots:
             answer = read_yes_no(text)
             if answer is not None:
@@ -365,6 +383,12 @@ class Agent:
         for level in ("Essential", "Plus", "Max"):
             if re.search(rf"\b{level}\b", text) and "plan_interest" not in slots:
                 found["plan_interest"] = level
+
+        from voice_agent.actions import contact_of
+
+        for name, value in contact_of(text).items():
+            if name not in slots:
+                found[name] = value
 
         return found
 

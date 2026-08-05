@@ -1,0 +1,139 @@
+{
+  "name": "conflicting",
+  "pack": "health_shield_en",
+  "lines": [
+    {
+      "at": 9.82,
+      "speaker": "agent",
+      "text": "Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?"
+    },
+    {
+      "at": 22.81,
+      "speaker": "caller",
+      "text": "Sure, go ahead."
+    },
+    {
+      "at": 22.81,
+      "speaker": "agent",
+      "text": "Thanks. To start, what made you look into health cover just now?",
+      "grounded": false,
+      "sought_knowledge": false,
+      "citations": []
+    },
+    {
+      "at": 32.65,
+      "speaker": "caller",
+      "text": "I am 28 years old."
+    },
+    {
+      "at": 32.65,
+      "speaker": "agent",
+      "text": "Got it, thanks for sharing that. What made you look into health cover just now?",
+      "grounded": false,
+      "sought_knowledge": false,
+      "citations": []
+    },
+    {
+      "at": 45.57,
+      "speaker": "caller",
+      "text": "Actually sorry, I meant 65."
+    },
+    {
+      "at": 45.57,
+      "speaker": "agent",
+      "text": "Thanks for the correction. Since our entry age limit is sixty, I am afraid I cannot offer you a policy today. Are you currently living in the Philippines?",
+      "grounded": true,
+      "sought_knowledge": true,
+      "citations": [
+        "web/health-shield-faq.html#Can I add my family?",
+        "web/health-shield-faq.html#\"This is more expensive than I expected.\"",
+        "documents/health_shield_policy_wording.pdf#5 Eligibility",
+        "web/health-shield-faq.html#How long do I have to wait before I can claim?",
+        "web/health-shield-faq.html#\"I am already covered through my employer.\""
+      ]
+    },
+    {
+      "at": 58.73,
+      "speaker": "caller",
+      "text": "Yes, I live here."
+    },
+    {
+      "at": 58.73,
+      "speaker": "agent",
+      "text": "That is good to know. I do appreciate you sharing that with me.\nAs I mentioned, our plans are for people between the ages of eighteen and sixty. Since you are sixty-five, I am afraid I cannot move forward with an application for you today. \nAre you currently in hospital or receiving treatment right now?",
+      "grounded": false,
+      "sought_knowledge": false,
+      "citations": []
+    },
+    {
+      "at": 74.96,
+      "speaker": "caller",
+      "text": "Am I still eligible for this plan?"
+    },
+    {
+      "at": 74.96,
+      "speaker": "agent",
+      "text": "I am afraid that because our entry age limit is sixty, you would not be eligible for this plan. I am sorry that I cannot assist you further with an application today.",
+      "grounded": true,
+      "sought_knowledge": true,
+      "citations": [
+        "documents/health_shield_policy_wording.pdf#Health Shield Policy Wording",
+        "rules/qualification_rules.yaml#health_ph_en.hard_rules",
+        "documents/health_shield_policy_wording.pdf#3 General exclusions",
+        "rules/qualification_rules.yaml#health_ph_en.soft_rules",
+        "documents/health_shield_policy_wording.pdf#1 Definitions"
+      ]
+    }
+  ],
+  "summary": {
+    "pack": "health_shield_en",
+    "turns": 5,
+    "collected": {
+      "age": 65,
+      "residency": "PH"
+    },
+    "corrections": [
+      "age: 28 -> 65"
+    ],
+    "eligible": false,
+    "decided": true,
+    "decline_reason": "Entry age for Health Shield is 18 to 60.",
+    "requirements": [
+      "require_medical_questionnaire"
+    ],
+    "missing": [
+      "currently_admitted"
+    ],
+    "escalated_to": "",
+    "unanswered": [],
+    "citations": [
+      "web/health-shield-faq.html#Can I add my family?",
+      "web/health-shield-faq.html#\"This is more expensive than I expected.\"",
+      "documents/health_shield_policy_wording.pdf#5 Eligibility",
+      "web/health-shield-faq.html#How long do I have to wait before I can claim?",
+      "web/health-shield-faq.html#\"I am already covered through my employer.\"",
+      "documents/health_shield_policy_wording.pdf#Health Shield Policy Wording",
+      "rules/qualification_rules.yaml#health_ph_en.hard_rules",
+      "documents/health_shield_policy_wording.pdf#3 General exclusions",
+      "rules/qualification_rules.yaml#health_ph_en.soft_rules",
+      "documents/health_shield_policy_wording.pdf#1 Definitions"
+    ],
+    "barge_ins": 0,
+    "failed_recognitions": 0,
+    "transcript": "agent: Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?\ncaller: Sure, go ahead.\nagent: Thanks. To start, what made you look into health cover just now?\ncaller: I am 28 years old.\nagent: Got it, thanks for sharing that. What made you look into health cover just now?\ncaller: Actually sorry, I meant 65.\nagent: Thanks for the correction. Since our entry age limit is sixty, I am afraid I cannot offer you a policy today. Are you currently living in the Philippines?\ncaller: Yes, I live here.\nagent: That is good to know. I do appreciate you sharing that with me.\nAs I mentioned, our plans are for people between the ages of eighteen and sixty. Since you are sixty-five, I am afraid I cannot move forward with an application for you today. \nAre you currently in hospital or receiving treatment right now?\ncaller: Am I still eligible for this plan?\nagent: I am afraid that because our entry age limit is sixty, you would not be eligible for this plan. I am sorry that I cannot assist you further with an application today.\nagent: I am sorry, that means we cannot offer this plan. I will note it down and someone can talk you through the alternatives if that would help.",
+    "actions": {
+      "lead_id": "LD-20260805-4937e2",
+      "outcome": "declined",
+      "next_action": "Do not quote. Send the declined-applicant letter and offer the alternatives.",
+      "working_copy": "D:\\ConversaAI\\data\\leads\\LD-20260805-4937e2.json",
+      "evidence_copy": "D:\\ConversaAI\\results\\leads\\LD-20260805-4937e2.json"
+    }
+  },
+  "turn_latency_ms": [
+    1671,
+    1851,
+    2991,
+    2657,
+    3318
+  ]
+}

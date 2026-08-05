@@ -1,0 +1,41 @@
+{
+  "lead_id": "LD-20260805-4937e2",
+  "created_at": "2026-08-05T20:36:10+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {
+    "age": 65,
+    "residency": "PH"
+  },
+  "corrections": [
+    "age: 28 -> 65"
+  ],
+  "eligible": false,
+  "decided": true,
+  "decline_reason": "Entry age for Health Shield is 18 to 60.",
+  "decided_by_rule": "HS-AGE",
+  "requirements": [
+    "require_medical_questionnaire"
+  ],
+  "missing": [
+    "currently_admitted"
+  ],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [
+    "web/health-shield-faq.html#Can I add my family?",
+    "web/health-shield-faq.html#\"This is more expensive than I expected.\"",
+    "documents/health_shield_policy_wording.pdf#5 Eligibility",
+    "web/health-shield-faq.html#How long do I have to wait before I can claim?",
+    "web/health-shield-faq.html#\"I am already covered through my employer.\"",
+    "documents/health_shield_policy_wording.pdf#Health Shield Policy Wording",
+    "rules/qualification_rules.yaml#health_ph_en.hard_rules",
+    "documents/health_shield_policy_wording.pdf#3 General exclusions",
+    "rules/qualification_rules.yaml#health_ph_en.soft_rules",
+    "documents/health_shield_policy_wording.pdf#1 Definitions"
+  ],
+  "summary": "The caller contacted us to find out which health plan fits them and to check their eligibility for coverage. During the call, it was established that the caller is 65 years old and currently resides in the Philippines. Because the entry age limit for Health Shield is 60, the caller does not qualify for this plan and has already been informed of this decision. The next step is to contact the caller to discuss alternative options that may be available to them.",
+  "next_action": "Do not quote. Send the declined-applicant letter and offer the alternatives.",
+  "turns": 5,
+  "contact_held": false
+}

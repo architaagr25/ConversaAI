@@ -1,0 +1,13 @@
+{
+  "event": "escalation",
+  "lead_id": "LD-20260805-a97f5a",
+  "at": "2026-08-05T20:25:30+00:00",
+  "trigger": "ESC-REQUEST",
+  "business_unit": "health_ph_en",
+  "collected": {
+    "age": 30
+  },
+  "unanswered": [],
+  "summary": "(incorporating constraints):**\n    *   *",
+  "next_action": "Handed to a person during the call. No callback needed."
+}

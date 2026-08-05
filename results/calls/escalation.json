@@ -3,69 +3,99 @@
   "pack": "health_shield_en",
   "lines": [
     {
-      "at": 7.06,
+      "at": 8.76,
       "speaker": "agent",
       "text": "Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?"
     },
     {
-      "at": 14.63,
-      "speaker": "caller",
-      "text": "Yes okay.",
-      "spoken": true
-    },
-    {
-      "at": 19.38,
+      "at": 21.73,
       "speaker": "caller",
       "text": "Yes okay"
     },
     {
-      "at": 19.38,
+      "at": 21.73,
       "speaker": "agent",
-      "text": "Great. To start, what made you look into health cover just now?",
+      "text": "Great. To get us started, what made you look into health cover just now?",
       "grounded": false,
+      "sought_knowledge": false,
       "citations": []
     },
     {
-      "at": 24.78,
-      "speaker": "caller",
-      "text": "I am thirty years old.",
-      "spoken": true
-    },
-    {
-      "at": 29.87,
+      "at": 34.24,
       "speaker": "caller",
       "text": "I am 30 years old."
     },
     {
-      "at": 29.87,
+      "at": 34.24,
       "speaker": "agent",
-      "text": "Got it. And are you currently living in the Philippines?",
+      "text": "Got it. Thanks for sharing that with me. Are you currently living in the Philippines?",
       "grounded": false,
+      "sought_knowledge": false,
       "citations": []
     },
     {
-      "at": 37.4,
-      "speaker": "caller",
-      "text": "Actually, can I speak to a real person please?",
-      "spoken": true
-    },
-    {
-      "at": 44.49,
+      "at": 48.71,
       "speaker": "caller",
       "text": "Actually, can I speak to a real person please?"
     },
     {
-      "at": 44.49,
+      "at": 48.71,
       "speaker": "agent",
       "text": "I am putting you through to a colleague now. They will have everything you have told me.",
       "grounded": false,
+      "sought_knowledge": false,
       "citations": []
     }
   ],
-  "summary": {},
+  "summary": {
+    "pack": "health_shield_en",
+    "turns": 3,
+    "collected": {
+      "age": 30
+    },
+    "corrections": [],
+    "eligible": true,
+    "decided": false,
+    "decline_reason": "",
+    "requirements": [],
+    "missing": [
+      "currently_admitted",
+      "residency"
+    ],
+    "escalated_to": "ESC-REQUEST",
+    "unanswered": [],
+    "citations": [],
+    "barge_ins": 0,
+    "failed_recognitions": 0,
+    "transcript": "agent: Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?\ncaller: Yes okay\nagent: Great. To get us started, what made you look into health cover just now?\ncaller: I am 30 years old.\nagent: Got it. Thanks for sharing that with me. Are you currently living in the Philippines?\ncaller: Actually, can I speak to a real person please?\nagent: I am putting you through to a colleague now. They will have everything you have told me.",
+    "actions": {
+      "lead_id": "LD-20260805-a97f5a",
+      "outcome": "escalated",
+      "next_action": "Handed to a person during the call. No callback needed.",
+      "working_copy": "D:\\ConversaAI\\data\\leads\\LD-20260805-a97f5a.json",
+      "evidence_copy": "D:\\ConversaAI\\results\\leads\\LD-20260805-a97f5a.json",
+      "escalation": {
+        "delivered": false,
+        "written_to": "D:\\ConversaAI\\results\\webhooks\\LD-20260805-a97f5a.json",
+        "payload": {
+          "event": "escalation",
+          "lead_id": "LD-20260805-a97f5a",
+          "at": "2026-08-05T20:25:30+00:00",
+          "trigger": "ESC-REQUEST",
+          "business_unit": "health_ph_en",
+          "collected": {
+            "age": 30
+          },
+          "unanswered": [],
+          "summary": "(incorporating constraints):**\n    *   *",
+          "next_action": "Handed to a person during the call. No callback needed."
+        }
+      }
+    }
+  },
   "turn_latency_ms": [
-    10997,
-    11018,
-    11829
+    2721,
+    2588,
+    444
   ]
 }

@@ -1,0 +1,37 @@
+{
+  "lead_id": "LD-20260805-50a92b",
+  "created_at": "2026-08-05T20:31:58+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {
+    "age": 28,
+    "residency": "PH"
+  },
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [
+    "currently_admitted"
+  ],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [
+    "web/health-shield-faq.html#Can I add my family?",
+    "web/health-shield-faq.html#\"This is more expensive than I expected.\"",
+    "documents/health_shield_policy_wording.pdf#5 Eligibility",
+    "web/health-shield-faq.html#How long do I have to wait before I can claim?",
+    "web/health-shield-faq.html#\"I am already covered through my employer.\"",
+    "documents/health_shield_policy_wording.pdf#Health Shield Policy Wording",
+    "rules/qualification_rules.yaml#health_ph_en.hard_rules",
+    "documents/health_shield_policy_wording.pdf#3 General exclusions",
+    "rules/qualification_rules.yaml#health_ph_en.soft_rules",
+    "documents/health_shield_policy_wording.pdf#1 Definitions"
+  ],
+  "summary": "The caller is a 65-year-old resident of the Philippines who wants to know if they are still eligible for the health plan. During the call, it was established that the applicant is 65 years old, but the agent failed to confirm whether the caller is currently admitted to a hospital or receiving treatment. A decision on eligibility could not be made because the admission status is missing, so the next adviser must contact the caller to establish if they are currently admitted and then determine their eligibility.",
+  "next_action": "Call back to complete qualification. Still needed: currently_admitted.",
+  "turns": 5,
+  "contact_held": false
+}

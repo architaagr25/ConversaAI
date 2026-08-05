@@ -88,6 +88,22 @@ slots:
     on_refusal: >
       That is completely fine, we can talk about the plans without it.
 
+  - name: full_name
+    ask: Before I forget, can I take your name?
+    required: false
+    why: An adviser cannot follow up without it.
+    sensitive: true
+    expects: [your name, take your name, who am i speaking]
+
+  - name: contact_number
+    ask: And the best number to reach you on?
+    required: false
+    why: How the callback happens.
+    sensitive: true
+    may_refuse: true
+    on_refusal: That is fine, we can use the details you have already given us.
+    expects: [best number, contact number, reach you on, phone number]
+
   - name: plan_interest
     # The rules file calls this field "plan". Stated rather than assumed,
     # because a silent mismatch means the rule simply never fires and the

@@ -133,14 +133,21 @@ class LanguageModel:
                         extra={"reason": str(exc)[:120]})
         return watch.elapsed_ms
 
-    def _config(self, system: str | None, temperature: float, max_tokens: int | None):
+    def _config(self, system: str | None, temperature: float,
+                max_tokens: int | None, thinking_budget: int | None = None):
         from google.genai import types
 
         thinking = None
-        budget = settings.gemini_thinking_budget
+        budget = settings.gemini_thinking_budget if thinking_budget is None \
+            else thinking_budget
         # A negative budget means "leave the model on its own default", which is
         # the only way to get deliberation back without editing code.
-        if budget >= 0 and not self.deep:
+        #
+        # Worth knowing: deliberation is charged against max_output_tokens. A
+        # short answer limit with thinking left on produced fragments of
+        # reasoning instead of an answer, which looks like the model failing
+        # rather than the budget being wrong.
+        if budget >= 0 and (thinking_budget is not None or not self.deep):
             thinking = types.ThinkingConfig(thinking_budget=budget)
 
         return types.GenerateContentConfig(
@@ -160,6 +167,7 @@ class LanguageModel:
         max_tokens: int | None = 600,
         attempts: int = 3,
         trace: str = "",
+        thinking_budget: int | None = None,
     ) -> Reply:
         """Ask for a complete answer, retrying and then failing over."""
         delay = 1.0
@@ -171,7 +179,8 @@ class LanguageModel:
                     response = self.gemini.models.generate_content(
                         model=self.model,
                         contents=prompt,
-                        config=self._config(system, temperature, max_tokens),
+                        config=self._config(system, temperature, max_tokens,
+                                            thinking_budget),
                     )
                 return Reply(
                     text=(response.text or "").strip(),

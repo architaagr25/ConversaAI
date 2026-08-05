@@ -50,6 +50,10 @@ data/kb/*.npy
 data/kb/*.faiss
 data/kb/*.index
 
+# Working copies of leads, which keep the caller's contact details.
+# The redacted copies in results/leads are the ones meant to be shared.
+data/leads/
+
 # Runtime logs and scratch files
 logs/
 *.log

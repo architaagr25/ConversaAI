@@ -47,6 +47,20 @@ class TestReadingAge:
     def test_an_implausible_age_is_rejected(self):
         assert read_age("I am 250") is None
 
+    def test_trailing_punctuation_does_not_hide_the_number(self):
+        # A recogniser writes "I meant 65." with a full stop, and anchoring on
+        # end-of-string alone lost the correction while parsing the same
+        # sentence without it.
+        assert read_age("I meant 65.") == 65
+        assert read_age("65.") == 65
+
+    def test_a_bare_number_counts_only_when_an_age_was_asked_for(self):
+        assert read_age("I have 2 children and 3 cars") is None
+        assert read_age("Actually sorry, I meant 65.", expecting=True) == 65
+
+    def test_expecting_still_rejects_an_implausible_number(self):
+        assert read_age("the policy number is 8841", expecting=True) is None
+
 
 class TestReadingMoney:
     @pytest.mark.parametrize("said,expected", [

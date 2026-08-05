@@ -1,0 +1,26 @@
+{
+  "lead_id": "LD-20260805-b2fe46",
+  "created_at": "2026-08-05T20:23:14+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {
+    "age": 30
+  },
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [
+    "currently_admitted",
+    "residency"
+  ],
+  "escalated_to": "ESC-REQUEST",
+  "unanswered": [],
+  "citations": [],
+  "summary": "Actually, can I speak to a real person please?\").",
+  "next_action": "Handed to a person during the call. No callback needed.",
+  "turns": 3,
+  "contact_held": false
+}
