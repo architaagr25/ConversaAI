@@ -1,0 +1,216 @@
+# Qualification rules, maintained by the distribution team.
+#
+# These are the rules advisers apply on a call before quoting. They are kept
+# here rather than written into any prompt, so that a rule change is a data
+# change and the same rules can be shown to a compliance reviewer.
+#
+# Last reviewed 2026-03-01 by Distribution Operations.
+
+version: "1.2"
+effective_from: 2026-03-01
+
+units:
+
+  health_ph_en:
+    name: Solara Health Shield
+    currency: PHP
+    hard_rules:
+      - id: HS-AGE
+        field: age
+        test: "18 <= age <= 60"
+        on_fail: decline
+        reason: Entry age for Health Shield is 18 to 60.
+      - id: HS-RES
+        field: residency
+        test: "residency == 'PH'"
+        on_fail: decline
+        reason: Health Shield is available to Philippine residents only.
+      - id: HS-INPATIENT
+        field: currently_admitted
+        test: "currently_admitted == false"
+        on_fail: decline
+        reason: An application cannot be accepted while the applicant is admitted.
+    soft_rules:
+      - id: HS-MED-Q
+        field: age
+        test: "age >= 51"
+        on_pass: require_medical_questionnaire
+        reason: Applicants aged 51 and above complete a medical questionnaire.
+      - id: HS-MED-MAX
+        field: plan
+        test: "plan == 'Max'"
+        on_pass: require_medical_questionnaire
+        reason: Max cover requires a medical questionnaire at any age.
+      - id: HS-AFFORD
+        field: monthly_income
+        test: "monthly_income >= 15000"
+        on_fail: flag_affordability
+        reason: Below this income the Essential plan should be discussed first.
+    required_fields: [full_name, age, residency, monthly_income, plan_interest]
+    dependants:
+      allowed: [spouse, child]
+      child_age_min_months: 6
+      child_age_max_years: 21
+      note: Parents cannot be added as dependants but may apply separately.
+
+  life_ph:
+    name: Solara Life Philippines
+    currency: PHP
+    hard_rules:
+      - id: LP-AGE-TERM
+        field: age
+        test: "18 <= age <= 65"
+        applies_to: [Term Life]
+        on_fail: decline
+        reason: Entry age for Term Life is 18 to 65.
+      - id: LP-AGE-WHOLE
+        field: age
+        test: "18 <= age <= 60"
+        applies_to: [Whole Life]
+        on_fail: decline
+        reason: Entry age for Whole Life is 18 to 60.
+      - id: LP-AGE-EDU
+        field: age
+        test: "21 <= age <= 55"
+        applies_to: [Educational Plan]
+        on_fail: decline
+        reason: Entry age for the Educational Plan is 21 to 55.
+      - id: LP-RES
+        field: residency
+        test: "residency == 'PH'"
+        on_fail: decline
+        reason: Life cover is available to Philippine residents only.
+    soft_rules:
+      - id: LP-MED-SUM
+        field: sum_assured
+        test: "sum_assured > 3000000"
+        on_pass: require_medical_exam
+        reason: Medical examination is required above PHP 3,000,000 sum assured.
+      - id: LP-MED-AGE
+        field: age
+        test: "age >= 51"
+        on_pass: require_medical_exam
+        reason: Applicants aged 51 and above require a medical examination.
+      - id: LP-BANK-SIMPLE
+        field: channel
+        test: "channel == 'bank_partner' and age < 46 and sum_assured <= 3000000"
+        on_pass: simplified_underwriting
+        reason: Bank Partner Plan uses simplified underwriting within these limits.
+    required_fields: [full_name, age, residency, product_interest, sum_assured, beneficiary_named]
+
+  multifinance_id:
+    name: Solara Multifinance Indonesia
+    currency: IDR
+    hard_rules:
+      - id: MF-AGE
+        field: age
+        test: "21 <= age <= 55"
+        on_fail: decline
+        reason: Usia pengajuan 21 sampai 55 tahun.
+      - id: MF-AGE-END
+        field: age_at_tenor_end
+        test: "age_at_tenor_end <= 60"
+        on_fail: decline
+        reason: Usia maksimal 60 tahun saat tenor berakhir.
+      - id: MF-ID
+        field: has_valid_ktp
+        test: "has_valid_ktp == true"
+        on_fail: decline
+        reason: KTP yang masih berlaku wajib untuk pengajuan.
+      - id: MF-INCOME
+        field: monthly_income
+        test: "monthly_income >= 4000000"
+        on_fail: decline
+        reason: Penghasilan minimal Rp 4.000.000 per bulan.
+      - id: MF-DBR
+        field: installment_to_income
+        test: "installment_to_income <= 0.35"
+        on_fail: decline
+        reason: Cicilan tidak boleh melebihi 35 persen dari penghasilan bulanan.
+      - id: MF-ARREARS
+        field: has_existing_arrears
+        test: "has_existing_arrears == false"
+        on_fail: decline
+        reason: Tidak boleh ada tunggakan aktif di lembaga pembiayaan lain.
+    soft_rules:
+      - id: MF-TENURE-EMP
+        field: employment_months
+        test: "employment_months >= 12"
+        on_fail: flag_review
+        reason: Masa kerja minimal 1 tahun untuk karyawan.
+      - id: MF-TENURE-BIZ
+        field: business_months
+        test: "business_months >= 24"
+        on_fail: flag_review
+        reason: Usaha berjalan minimal 2 tahun untuk wiraswasta.
+      - id: MF-VEHICLE-AGE
+        field: vehicle_age_years
+        test: "vehicle_age_years <= 10"
+        applies_to: [Pembiayaan Mobil Bekas]
+        on_fail: decline
+        reason: Usia kendaraan maksimal 10 tahun saat pengajuan.
+    down_payment_minimum:
+      Pembiayaan Mobil Baru: 0.20
+      Pembiayaan Mobil Bekas: 0.25
+      Pembiayaan Motor: 0.15
+      Pembiayaan Multiguna: 0.00
+    tenor_months:
+      Pembiayaan Mobil Baru: [12, 60]
+      Pembiayaan Mobil Bekas: [12, 48]
+      Pembiayaan Motor: [11, 35]
+      Pembiayaan Multiguna: [12, 36]
+    required_fields: [full_name, age, monthly_income, product_interest, employment_type]
+
+# What the agent does when a rule does not pass.
+outcomes:
+  decline:
+    action: Explain which requirement was not met, offer an alternative if one exists, do not quote.
+    escalate: false
+  flag_affordability:
+    action: Continue, but lead with the lower cover level.
+    escalate: false
+  flag_review:
+    action: Continue and capture the lead, marked for adviser review before any offer.
+    escalate: false
+  require_medical_questionnaire:
+    action: Tell the applicant a short health questionnaire is needed, and that Solara pays for any examination.
+    escalate: false
+  require_medical_exam:
+    action: Tell the applicant a medical examination is needed before cover can start.
+    escalate: false
+  simplified_underwriting:
+    action: Confirm the shorter application path applies.
+    escalate: false
+
+# Situations the agent must hand to a person rather than handle itself.
+escalation_triggers:
+  - id: ESC-REQUEST
+    when: The caller asks to speak to a human.
+    action: Transfer without argument. Do not attempt to resolve first.
+  - id: ESC-COMPLAINT
+    when: The caller raises a complaint about Solara or an adviser.
+    action: Transfer to the complaints team. Do not offer compensation or admit fault.
+  - id: ESC-CLAIM-DISPUTE
+    when: The caller disputes a declined claim.
+    action: Transfer to claims. Do not restate the decline reason.
+  - id: ESC-MEDICAL-ADVICE
+    when: The caller asks whether a specific medical condition is serious, or for any medical opinion.
+    action: Decline to advise. Offer to connect them to an adviser.
+  - id: ESC-LEGAL
+    when: The caller mentions legal action, a regulator, or asks for a formal written position.
+    action: Transfer to the escalations desk immediately.
+  - id: ESC-VULNERABLE
+    when: The caller appears distressed, confused, or mentions bereavement or serious illness.
+    action: Slow down, offer a human immediately, do not continue qualifying.
+  - id: ESC-UNKNOWN-REPEAT
+    when: The agent has been unable to answer the same question twice.
+    action: Stop trying. Offer a human rather than a third attempt.
+
+# Things the agent must never do, regardless of what is asked.
+prohibited:
+  - Quoting a premium that has not come from the rate table.
+  - Confirming that a specific condition will be covered on a specific claim.
+  - Advising whether to cancel or replace an existing policy with another insurer.
+  - Giving medical, tax or legal advice.
+  - Promising an approval, a timescale, or an outcome that depends on underwriting.
+  - Discussing another customer's policy, even to a family member.

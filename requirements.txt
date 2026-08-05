@@ -31,6 +31,8 @@ pypdf>=4.3                    # PDF text extraction
 pdfplumber>=0.11              # PDF table extraction, which pypdf does not handle well
 python-dateutil>=2.9          # parses the inconsistent date formats found in source content
 phonenumbers>=8.13            # detects phone numbers during PII scanning
+pyyaml>=6.0                   # reads the qualification rules, which are kept as data not code
+reportlab>=4.2                # builds the sample policy and rate table PDFs the parser is tested on
 
 # --- Service layer ---
 fastapi>=0.115                # HTTP and WebSocket endpoints
