@@ -1,0 +1,30 @@
+﻿================================================================================================
+Voice backend round trip
+================================================================================================
+
+  recogniser        whisper-large-v3-turbo
+  connection warm-up 1283 ms  (paid once, before any call)
+
+language       audio     asr    rtf   words  transcript
+------------------------------------------------------------------------------------------------
+English        4104ms    415ms   0.13   100%  How long is the waiting period for pre-exist
+English        4008ms    301ms   0.10   100%  I am 35 years old and I live in the Philippi
+Taglish        3192ms    285ms   0.12   100%  Magkano po ang premium ko kung monthly ang b
+Taglish        3432ms    362ms   0.14   100%  Ano po ang mangyayari kung malapse ang polic
+Indonesian     3552ms    700ms   0.27   100%  Berapa denda kalau telat bayar cicilan?
+Indonesian     4776ms    311ms   0.08   100%  Saya mau tanya soal tenor dan jatuh tempo an
+
+================================================================================================
+Words that did not survive recognition
+------------------------------------------------------------------------------------------------
+  none
+
+================================================================================================
+  English     100% word accuracy over 2 utterances
+  Taglish     100% word accuracy over 2 utterances
+  Indonesian  100% word accuracy over 2 utterances
+
+  recognition latency: median 362 ms
+
+  Synthetic speech is cleaner than a real caller on a laptop
+  microphone. These numbers are an upper bound, not a forecast.
