@@ -1,0 +1,52 @@
+﻿Embedding comparison
+English, Tagalog and Indonesian retrieval quality, plus query latency
+
+========================================================================
+local: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+========================================================================
+
+  case                    kind      score
+  --------------------------------------------
+  English to English      match     +0.705
+  Indonesian to English   match     +0.723
+  Tagalog to English      match     -0.024  <-- too low to retrieve reliably
+  Taglish to English      match     +0.521
+  Tagalog to Tagalog      match     +0.369  <-- too low to retrieve reliably
+  Indonesian control      control   +0.001
+  Tagalog control         control   +0.078
+
+  weakest match     -0.024
+  strongest control +0.078
+  separation        -0.102   (a match must clear an unrelated sentence by a wide margin)
+  query latency     median 7 ms, worst 8 ms
+
+========================================================================
+hosted: gemini-embedding-001 at 768 dimensions
+========================================================================
+
+  case                    kind      score
+  --------------------------------------------
+  English to English      match     +0.952
+  Indonesian to English   match     +0.941
+  Tagalog to English      match     +0.895
+  Taglish to English      match     +0.962
+  Tagalog to Tagalog      match     +0.955
+  Indonesian control      control   +0.632
+  Tagalog control         control   +0.649
+
+  weakest match     +0.895
+  strongest control +0.649
+  separation        +0.246   (a match must clear an unrelated sentence by a wide margin)
+  query latency     median 489 ms, worst 596 ms
+
+========================================================================
+Summary
+========================================================================
+option      separation   median query
+------------------------------------------------------------------------
+local           -0.102            7ms
+hosted          +0.246          489ms
+
+Widest separation: hosted  (gemini-embedding-001 at 768 dimensions)
+A negative separation means unrelated text scores as highly as a real
+match, so that option cannot be used for retrieval at any speed.

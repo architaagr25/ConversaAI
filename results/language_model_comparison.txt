@@ -1,0 +1,39 @@
+﻿Language model comparison
+==============================================================================
+
+Streaming latency. First token is what the caller experiences as silence.
+
+model                   thinking     1st token    worst     full
+------------------------------------------------------------------------------
+gemini-3.6-flash        default         2937ms   3330ms   2940ms
+gemini-3.6-flash        off          unavailable  400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'Request cont
+gemini-3.5-flash        default         3060ms   3610ms   3061ms
+gemini-3.5-flash        off              985ms   1090ms   1022ms
+gemini-3.1-flash-lite   default          797ms    980ms    801ms
+gemini-3.1-flash-lite   off              993ms   1056ms   1006ms
+
+Honest answer when the information is missing
+------------------------------------------------------------------------------
+  gemini-3.6-flash: I'm sorry, but I don't have information regarding dental coverage.
+  gemini-3.5-flash: I do not have information on dental coverage at this time.
+  gemini-3.1-flash-lite: I’m sorry, I don’t have access to your specific dental coverage details, so I recommend ch
+
+Taglish generation
+------------------------------------------------------------------------------
+  gemini-3.1-flash-lite
+    Maalala ko lang po na due date na ng inyong premium payment sa darating na kinse ng buwan.
+  gemini-3.5-flash: failed, 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': '
+  gemini-3.6-flash: failed, 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'Re
+
+Bahasa Indonesia generation
+------------------------------------------------------------------------------
+  gemini-3.1-flash-lite
+    Halo Kak, cuma mau ngingetin kalau pembayaran cicilan Kakak jatuh temponya tiga hari lagi ya.
+  gemini-3.5-flash
+    Halo Kak, cuma mau ngingetin aja nih kalau angsurannya bakal jatuh tempo tiga hari lagi, jadi mohon dipersiapkan ya biar pembayarannya tetap lancar.
+  gemini-3.6-flash: failed, 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'Re
+
+==============================================================================
+Lowest wait before speech: gemini-3.1-flash-lite with thinking on, 797 ms
+Read the localized samples above before settling on this. Speed only
+wins where the Taglish and Bahasa output is genuinely usable.

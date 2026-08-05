@@ -56,8 +56,12 @@ logs/
 tmp/
 scratch/
 
-# Editor and OS noise
-.vscode/
+# Editor and OS noise.
+# The workspace settings are kept because they point the editor at the project's
+# own interpreter; without that, imports resolve against whatever Python happens
+# to be on PATH and the editor reports errors that do not exist.
+.vscode/*
+!.vscode/settings.json
 .idea/
 *.swp
 Thumbs.db
