@@ -1,0 +1,23 @@
+﻿============================================================================================
+Document extraction
+============================================================================================
+
+file                                          pages  sections  tables  rejoined boilerplate
+--------------------------------------------------------------------------------------------
+documents/health_shield_annex_damaged.pdf   SKIPPED  PdfminerException: Unexpected EOF
+documents/health_shield_policy_wording.pdf        2         8                             3
+documents/health_shield_rate_table.pdf            2         5       4         1           3
+documents/multifinance_agreement_terms.pdf        1         6       1                     1
+forms/lead_form_export.csv                                  3                              
+rules/qualification_rules.yaml                             16                              
+
+============================================================================================
+  files          5 parsed, 1 skipped
+  sections       38
+  tables rejoined across page breaks  1
+  written to     data/processed/document_sections.jsonl
+  flag  documents/health_shield_annex_damaged.pdf: unreadable_source
+  flag  forms/lead_form_export.csv: 25_customer_rows_excluded
+  SKIPPED  documents/health_shield_annex_damaged.pdf: PdfminerException: Unexpected EOF
+
+  A skipped file does not stop the run. It is recorded and the rest continues.

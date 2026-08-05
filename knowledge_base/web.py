@@ -18,8 +18,7 @@ import json
 import logging
 import re
 import time
-from dataclasses import asdict, dataclass, field
-from datetime import datetime, timezone
+from dataclasses import asdict, dataclass
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -27,6 +26,7 @@ from selectolax.parser import HTMLParser
 
 from core.config import PROJECT_ROOT
 from core.timing import track
+from knowledge_base.models import Section, now_iso
 
 log = logging.getLogger(__name__)
 
@@ -65,26 +65,6 @@ USER_AGENT = (
 
 
 @dataclass
-class Section:
-    """One heading and the content beneath it."""
-
-    source_type: str
-    source_ref: str
-    source_origin: str
-    title: str
-    content: str
-    heading_level: int
-    language: str
-    retrieved_at: str
-    extraction_method: str
-    char_count: int = 0
-    quality_flags: list[str] = field(default_factory=list)
-
-    def __post_init__(self) -> None:
-        self.char_count = len(self.content)
-
-
-@dataclass
 class PageReport:
     """What happened to one page, whether or not it worked."""
 
@@ -102,10 +82,6 @@ class PageReport:
         if not self.raw_chars:
             return 0.0
         return 1 - (self.kept_chars / self.raw_chars)
-
-
-def _now() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
 def _clean_text(text: str) -> str:
@@ -280,7 +256,7 @@ def extract_html(
             content=text,
             heading_level=level,
             language=lang,
-            retrieved_at=_now(),
+            retrieved_at=now_iso(),
             extraction_method=method,
         )
         for level, title, text in raw_sections
