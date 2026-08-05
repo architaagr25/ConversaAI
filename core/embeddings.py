@@ -13,6 +13,7 @@ rather than raising.
 from __future__ import annotations
 
 import logging
+import re
 import time
 from abc import ABC, abstractmethod
 from functools import lru_cache
@@ -24,9 +25,22 @@ from core.timing import track
 
 log = logging.getLogger(__name__)
 
-# The hosted service accepts a list per request. Batching keeps indexing to a
-# handful of calls instead of one per chunk, which matters on a throttled tier.
-HOSTED_BATCH = 50
+# The hosted service accepts a list per request, but the free tier counts each
+# item towards a per-minute request quota rather than each call. Smaller
+# batches with a pause between them stay under it; one large batch does not.
+HOSTED_BATCH = 20
+BATCH_PAUSE_SECONDS = 1.5
+
+
+def _suggested_wait(error: Exception) -> float | None:
+    """The delay the service itself asked for, if it said.
+
+    Guessing at backoff means either waiting too long or giving up just short
+    of when the quota would have reset, which is what happened the first time
+    this ran.
+    """
+    match = re.search(r"'retryDelay':\s*'(\d+(?:\.\d+)?)s'", str(error))
+    return float(match.group(1)) if match else None
 
 
 class Embedder(ABC):
@@ -122,10 +136,15 @@ class HostedEmbedder(Embedder):
         )
 
         vectors: list[list[float]] = []
-        for start in range(0, len(texts), HOSTED_BATCH):
+        batches = range(0, len(texts), HOSTED_BATCH)
+
+        for position, start in enumerate(batches):
             batch = texts[start : start + HOSTED_BATCH]
-            delay = 2.0
-            for attempt in range(4):
+            if position:
+                time.sleep(BATCH_PAUSE_SECONDS)
+
+            delay = 5.0
+            for attempt in range(6):
                 try:
                     with track("embed", detail=f"{len(batch)} texts"):
                         response = self.client.models.embed_content(
@@ -135,15 +154,17 @@ class HostedEmbedder(Embedder):
                     break
                 except Exception as exc:
                     throttled = "429" in str(exc) or "RESOURCE_EXHAUSTED" in str(exc)
-                    if throttled and attempt < 3:
-                        log.warning(
-                            "embedding throttled, waiting",
-                            extra={"wait_s": delay, "batch": len(batch)},
-                        )
-                        time.sleep(delay)
-                        delay *= 2
-                        continue
-                    raise
+                    if not throttled or attempt == 5:
+                        raise
+                    # Prefer the service's own estimate over a guess, with a
+                    # margin, since it knows when the window resets.
+                    wait = _suggested_wait(exc)
+                    wait = wait + 2 if wait else delay
+                    log.warning("embedding throttled, waiting",
+                                extra={"wait_s": round(wait, 1),
+                                       "batch": len(batch), "attempt": attempt + 1})
+                    time.sleep(wait)
+                    delay = min(delay * 2, 60)
 
         # Normalised here so similarity is a plain dot product downstream.
         return _normalise(np.asarray(vectors, dtype=np.float32))
