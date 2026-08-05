@@ -1,0 +1,56 @@
+[
+  {
+    "topic": "pre_existing_waiting",
+    "records": [
+      "kb_product_003",
+      "kb_process_009"
+    ],
+    "claims": [
+      "30 days (promotional)",
+      "730 days (published)"
+    ],
+    "quotes": [
+      "Accidents are covered from day one, illnesses after just 30 days, and even pre-existing conditions are covered after onl",
+      "If you have a condition that existed before you joined, it is covered once you have held the policy continuously for 2 y"
+    ],
+    "resolved_by": "authority",
+    "authoritative": "kb_process_009",
+    "superseded": "kb_product_003"
+  },
+  {
+    "topic": "pre_existing_waiting",
+    "records": [
+      "kb_product_003",
+      "kb_policy_rule_025"
+    ],
+    "claims": [
+      "30 days (promotional)",
+      "720 days (published)"
+    ],
+    "quotes": [
+      "Accidents are covered from day one, illnesses after just 30 days, and even pre-existing conditions are covered after onl",
+      "Pre-existing conditions are covered after 24 months of continuous membership, provided the condition was declared at app"
+    ],
+    "resolved_by": "authority",
+    "authoritative": "kb_policy_rule_025",
+    "superseded": "kb_product_003"
+  },
+  {
+    "topic": "pre_existing_waiting",
+    "records": [
+      "kb_product_003",
+      "kb_policy_rule_071"
+    ],
+    "claims": [
+      "30 days (promotional)",
+      "720 days (binding)"
+    ],
+    "quotes": [
+      "Accidents are covered from day one, illnesses after just 30 days, and even pre-existing conditions are covered after onl",
+      "2.3 A Waiting Period of twenty-four (24) months applies to any Pre-existing Condition declared at application."
+    ],
+    "resolved_by": "authority",
+    "authoritative": "kb_policy_rule_071",
+    "superseded": "kb_product_003"
+  }
+]
