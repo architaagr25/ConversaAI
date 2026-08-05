@@ -1,0 +1,44 @@
+﻿====================================================================================
+Building the knowledge base
+====================================================================================
+
+  sections in            106
+  superseded duplicates  4  (stored, not searched)
+  sections split         0 -> 0 chunks
+  records out            106
+
+  new                    0
+  content changed        0
+  unchanged              106
+
+  record length          min 52, median 269, max 853
+
+  searchable records by unit and category
+    unit              category                   n
+    ----------------------------------------------
+    group             policy_rule                8
+    group             partnership_benefits       7
+    group             qualification              3
+    health_ph_en      policy_rule               12
+    health_ph_en      product                    9
+    health_ph_en      qualification              7
+    health_ph_en      pricing                    6
+    health_ph_en      process                    4
+    health_ph_en      objection                  3
+    health_ph_en      partnership_benefits       1
+    health_ph_en      corporate                  1
+    life_ph           partnership_benefits       5
+    life_ph           pricing                    4
+    life_ph           policy_rule                4
+    life_ph           qualification              2
+    life_ph           process                    1
+    multifinance_id   pricing                   11
+    multifinance_id   policy_rule                7
+    multifinance_id   qualification              5
+    multifinance_id   process                    1
+    multifinance_id   corporate                  1
+
+====================================================================================
+  106 records stored, 102 searchable
+  written to  data/kb/knowledge_base.sqlite
+              data/kb/records.jsonl
