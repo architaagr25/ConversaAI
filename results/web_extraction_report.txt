@@ -1,0 +1,30 @@
+﻿================================================================================================
+Web extraction
+================================================================================================
+
+Local corpus
+------------------------------------------------------------------------------------------------
+page                                             raw    kept  stripped  sections  empty      method
+------------------------------------------------------------------------------------------------
+web/health-shield-campaign.html                 4459    1722      61%         6      1  structural
+web/health-shield-faq.html                      7342    3863      47%        15      3  structural
+web/health-shield-plans.html                    6693    3126      53%         9      2  structural
+web/life-philippines.html                       7393    4108      44%        15      3  structural
+web/multifinance-indonesia.html                 6875    3534      49%        15      3  structural
+web/partners.html                               5573    2524      55%         8      2  structural
+
+Live public pages
+------------------------------------------------------------------------------------------------
+page                                             raw    kept  stripped  sections  empty      method
+------------------------------------------------------------------------------------------------
+.../en.wikipedia.org/wiki/Health_insurance    591538   72129      88%        25      3  structural
+...://en.wikipedia.org/wiki/Life_insurance    319802   41936      87%        29      4  structural
+https://id.wikipedia.org/wiki/Asuransi        214463   13304      94%        21      4  structural
+
+================================================================================================
+  pages processed    9 ok, 0 failed
+  sections kept      143
+  empty dropped      25
+  boilerplate removed 87% (1,017,892 of 1,164,138 chars)
+
+  written to data/processed/web_sections.jsonl and _public.jsonl
