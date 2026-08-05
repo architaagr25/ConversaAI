@@ -3,6 +3,9 @@
 pythonpath = ["."]
 testpaths = ["tests"]
 addopts = "-q"
+# The call loop is async, so its tests are too.
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
 
 [tool.ruff]
 line-length = 95

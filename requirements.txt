@@ -48,3 +48,4 @@ pydub>=0.25.1                 # format conversion and chunking, backed by FFmpeg
 
 # --- Testing ---
 pytest>=8.2
+pytest-asyncio>=0.24        # the call loop is async, so its tests are too

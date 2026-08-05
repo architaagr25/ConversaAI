@@ -1,4 +1,4 @@
-"""
+﻿"""
 Audio and turn-taking tests.
 
 Endpointing decides when the caller has finished. Getting it wrong is not a
@@ -30,9 +30,16 @@ from voice_agent.audio import (
 )
 
 
-def tone(ms: int, hz: int = 220, amplitude: int = 12000,
+from conftest import voiced as tone  # noqa: E402
+
+
+def sine(ms: int, hz: int = 220, amplitude: int = 12000,
          sample_rate: int = SAMPLE_RATE) -> bytes:
-    """A loud periodic signal, which the detector treats as voiced."""
+    """A pure tone, for the format tests where content does not matter.
+
+    Deliberately not used for anything involving the detector: a sine wave has
+    no harmonic structure, so it is not recognised as speech.
+    """
     count = int(sample_rate * ms / 1000)
     return b"".join(
         struct.pack("<h", int(amplitude * math.sin(2 * math.pi * hz * n / sample_rate)))
@@ -47,7 +54,7 @@ def frames(audio: bytes):
 
 class TestFormats:
     def test_a_wav_round_trips(self):
-        pcm = tone(100)
+        pcm = sine(100)
         recovered, rate = from_wav(to_wav(pcm))
         assert recovered == pcm
         assert rate == SAMPLE_RATE
@@ -57,22 +64,22 @@ class TestFormats:
 
     def test_downsampling_by_a_whole_factor(self):
         # 48 kHz is what browsers usually capture at.
-        out = resample(tone(100, sample_rate=48_000), 48_000, 16_000)
+        out = resample(sine(100, sample_rate=48_000), 48_000, 16_000)
         assert duration_ms(out) == pytest.approx(100, abs=2)
 
     def test_downsampling_averages_rather_than_dropping_samples(self):
         # Taking every third sample folds high frequencies back into the
         # speech range, which recognition handles noticeably worse.
-        loud = tone(100, hz=7000, sample_rate=48_000)
+        loud = sine(100, hz=7000, sample_rate=48_000)
         out = resample(loud, 48_000, 16_000)
         assert len(out) == pytest.approx(len(loud) // 3, abs=4)
 
     def test_upsampling(self):
-        out = resample(tone(100, sample_rate=8_000), 8_000, 16_000)
+        out = resample(sine(100, sample_rate=8_000), 8_000, 16_000)
         assert duration_ms(out) == pytest.approx(100, abs=2)
 
     def test_a_matching_rate_is_untouched(self):
-        pcm = tone(50)
+        pcm = sine(50)
         assert resample(pcm, SAMPLE_RATE, SAMPLE_RATE) is pcm
 
     def test_empty_audio_does_not_raise(self):
