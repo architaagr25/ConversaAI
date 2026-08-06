@@ -57,6 +57,10 @@ SPEECH_FRAMES_TO_START = 3
 # click that opens a turn from nothing, which is what this is for.
 MIN_VOICED_FRAMES = 5
 
+# And at least this much of the recording has to be voice. See _finish for why
+# a count on its own was not enough.
+MIN_VOICED_SHARE = 0.20
+
 # How much silence closes it. 700 ms is a pause; 300 ms is drawing breath
 # between clauses and cutting there produces half sentences.
 # 700 ms of quiet before the turn is treated as over. Briefly 500, to make the
@@ -224,12 +228,32 @@ class Endpointer:
         # followed was long enough and loud enough to reach the recogniser.
         # The recogniser does not return nothing for that: it returns a
         # plausible sentence, and the agent answered a question nobody asked.
-        if voiced < MIN_VOICED_FRAMES:
+        frames = max(1, len(audio) // FRAME_BYTES)
+        share = voiced / frames
+
+        # Two gates rather than one, because a count and a proportion catch
+        # different things and a single number cannot do both.
+        #
+        # The count rejects the brief click. The proportion rejects the case
+        # that kept getting through: a recording several seconds long with a
+        # handful of voiced frames scattered in it. That clears any absolute
+        # floor low enough not to reject a one word answer, and it is the shape
+        # of a room, not of a person. Whisper handed that does not return
+        # nothing. It returns a confident sentence, the agent answers it, and
+        # the caller watches it hold a conversation with an empty room.
+        #
+        # Twenty per cent is set from what the two look like. A spoken answer,
+        # including the fixed 700 ms of silence that ends every turn, runs from
+        # about a third voiced upwards. Noise-triggered recordings sit near a
+        # tenth. Nothing observed has fallen between them.
+        if voiced < MIN_VOICED_FRAMES or share < MIN_VOICED_SHARE:
             # Numbers in the message rather than only in the fields, because
             # the console formatter shows the message and tuning this needs
             # the counts.
             log.info(f"ignoring a recording with too little voice in it: "
-                     f"{voiced} voiced frames, floor {MIN_VOICED_FRAMES}, "
+                     f"{voiced} of {frames} frames voiced "
+                     f"({round(share * 100)}%, floors {MIN_VOICED_FRAMES} and "
+                     f"{round(MIN_VOICED_SHARE * 100)}%), "
                      f"{round(len(audio) / (SAMPLE_RATE * SAMPLE_WIDTH) * 1000)} ms")
             return None
 

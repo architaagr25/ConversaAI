@@ -61,6 +61,36 @@ FRAGMENTS = {
 }
 
 
+def is_prompt_echo(text: str, prompt: str) -> bool:
+    """Whether the recogniser handed back its own hint instead of speech.
+
+    The hint is what makes cicilan and bancassurance come out spelled right,
+    and it is also a list of words the recogniser has been told to expect. Give
+    it audio with nothing in it and it does not return nothing: it returns the
+    words it was primed with. The English market's hint ends "Essential, Plus,
+    Max", and the agent spent a call answering "and the plus, max" over and
+    over, which nobody had said. It sounds like the microphone picking up the
+    speakers, and it is not — it is the hint coming back.
+
+    Only for short fragments. A caller who says "the Plus plan, please"
+    contains hint words too and is a caller: "plan" and "please" are not in the
+    hint, and that is the whole difference. Two words or fewer are left alone
+    as well, since "grace period" is a real thing to say.
+    """
+    if not prompt:
+        return False
+
+    import re
+
+    words = re.findall(r"[a-z]+", text.lower())
+    real = [w for w in words if w not in FRAGMENTS]
+    if len(real) < 2 or len(words) > 6:
+        return False
+
+    primed = set(re.findall(r"[a-z]+", prompt.lower()))
+    return all(w in primed for w in real)
+
+
 def is_probably_silence(text: str) -> bool:
     """Whether a transcript is what a recogniser says when it heard nothing."""
     cleaned = text.strip().lower().strip("¡!¿?\"'")
@@ -164,6 +194,16 @@ class Transcriber:
                         temperature=0.0,
                     )
                 heard = (response.text or "").strip()
+                if is_prompt_echo(heard, prompt or ""):
+                    # Treated exactly like silence, because that is what the
+                    # audio was. The caller said nothing, so asking them to
+                    # repeat themselves would be answering a question nobody
+                    # asked, in a slightly politer way.
+                    log.info(f"recogniser handed back its own hint, ignoring: "
+                             f"{heard[:40]!r} from {round(audio_ms)} ms")
+                    return Transcript(text="", milliseconds=span.milliseconds,
+                                      model=self.model, audio_ms=audio_ms,
+                                      error="silence")
                 if is_probably_silence(heard):
                     # The text goes in the message, not only in the fields.
                     # The console shows the message, and "a silence artefact
