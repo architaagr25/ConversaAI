@@ -1,0 +1,33 @@
+{
+  "lead_id": "LD-20260806-da17bb",
+  "created_at": "2026-08-06T04:51:02+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {},
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [
+    "age",
+    "currently_admitted",
+    "residency"
+  ],
+  "escalated_to": "",
+  "unanswered": [
+    "of France"
+  ],
+  "citations": [
+    "documents/health_shield_policy_wording.pdf#3 General exclusions",
+    "web/health-shield-faq.html#Is dental included?",
+    "web/health-shield-plans.html#What is not covered",
+    "documents/health_shield_policy_wording.pdf#6 Claims",
+    "documents/health_shield_policy_wording.pdf#5 Eligibility"
+  ],
+  "summary": "The caller is inquiring about health cover and specifically asked if the plan covers dental treatment, which was clarified as not being covered except in cases of reconstructive work following an accident. The caller's eligibility for a plan could not be determined due to missing information, including their age, current admission status, and residency, with the caller providing an unclear response regarding their age. The next step is for the adviser to contact the caller to gather the necessary information to assess their eligibility. The adviser should not re-evaluate the eligibility decision that has already been made and should instead focus on obtaining the missing details to move forward with the caller's inquiry.",
+  "next_action": "Call back to complete qualification. Still needed: age, currently_admitted, residency.",
+  "turns": 3,
+  "contact_held": false
+}

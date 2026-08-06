@@ -62,9 +62,12 @@ async def call(socket: WebSocket) -> None:
     await socket.accept()
     pack_id = socket.query_params.get("pack", "health_shield_en")
     trace = socket.query_params.get("trace", "web-call")
+    # Off by default. Barge-in needs headphones; on speakers it means the
+    # agent interrupts itself.
+    barge_in = socket.query_params.get("bargein", "0") in ("1", "true", "yes")
 
     try:
-        session = CallSession(pack_id)
+        session = CallSession(pack_id, allow_barge_in=barge_in)
     except Exception as exc:
         await socket.send_text(json.dumps(
             {"kind": "error", "text": f"could not start: {exc}"}))

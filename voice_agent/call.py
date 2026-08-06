@@ -19,13 +19,14 @@ microphone, a recogniser or a network.
 from __future__ import annotations
 
 import logging
+import time
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import AsyncIterator
 
 from core.timing import Stopwatch
 from voice_agent.agent import Agent
-from voice_agent.audio import Endpointer, Utterance
+from voice_agent.audio import SAMPLE_RATE, SAMPLE_WIDTH, Endpointer, Utterance
 from voice_agent.speak import Speaker
 from voice_agent.transcribe import Transcriber, hint_for
 
@@ -43,6 +44,19 @@ log = logging.getLogger(__name__)
 # agent off mid-word.
 VAD_HANGOVER_FRAMES = 4
 BARGE_IN_FRAMES = 12
+
+# Added to the length of the reply before listening resumes, for the tail of
+# the sound still in the room.
+SETTLE_SECONDS = 0.4
+
+# Roughly how long a piece of synthesised audio lasts. The bytes arrive far
+# faster than they play, so the length of the file is what matters, not how
+# long it took to make.
+MP3_BYTES_PER_SECOND = 4000
+
+
+def _audio_length_ms(audio: bytes) -> float:
+    return len(audio) / MP3_BYTES_PER_SECOND * 1000 if audio else 0.0
 
 
 class CallState(Enum):
@@ -83,7 +97,8 @@ class CallSession:
     def __init__(self, pack_id: str = "health_shield_en",
                  agent: Agent | None = None,
                  transcriber: Transcriber | None = None,
-                 speaker: Speaker | None = None) -> None:
+                 speaker: Speaker | None = None,
+                 allow_barge_in: bool = False) -> None:
         self.agent = agent or Agent(pack_id)
         self.transcriber = transcriber or Transcriber()
         self.speaker = speaker or Speaker(self.agent.pack.language)
@@ -96,6 +111,19 @@ class CallSession:
         self._speech_run = 0
         self._cancel_speaking = False
         self._turn_number = 0
+
+        # Half duplex unless the caller says they are on headphones. On
+        # speakers the microphone hears the agent, the recogniser turns that
+        # into words, and the agent answers itself. Enforced here as well as in
+        # the browser, because the browser can be an old cached page and this
+        # cannot.
+        self.allow_barge_in = allow_barge_in
+        # Counted in bytes rather than seconds. Audio arrives buffered and in
+        # bursts, so a wall clock window either expires before the buffered
+        # echo is read or swallows the caller's next sentence, depending on
+        # timing nobody controls. Bytes line up with the audio itself.
+        self._discard_bytes = 0
+        self._discard_until = 0.0
 
     # -- lifecycle ------------------------------------------------------------
 
@@ -133,6 +161,10 @@ class CallSession:
             return
 
         if self.state is CallState.SPEAKING:
+            if not self.allow_barge_in:
+                # Not listening at all. Anything arriving now is the agent's
+                # own voice coming back through the room.
+                return
             async for event in self._watch_for_interruption(chunk):
                 yield event
             return
@@ -142,6 +174,21 @@ class CallSession:
             # caller who carries straight on is not cut off.
             self.endpointer.feed_stream(chunk)
             return
+
+        # Throw away as much audio as the agent's own reply lasted. That audio
+        # is the reply coming back through the room, and the caller has not
+        # started talking yet because they are still listening to it.
+        #
+        # Bounded two ways, and whichever comes first wins. A browser streams
+        # continuously, so counting bytes matches the audio exactly. Anything
+        # that stops sending while it waits, which is what the test client
+        # does, would leave the byte budget untouched forever and go
+        # permanently deaf, so the clock releases it instead.
+        if self._discard_bytes > 0:
+            self._discard_bytes -= len(chunk)
+            if time.monotonic() < self._discard_until:
+                return
+            self._discard_bytes = 0
 
         for utterance in self.endpointer.feed_stream(chunk):
             async for event in self._handle(utterance):
@@ -196,6 +243,14 @@ class CallSession:
             trace=turn_trace,
         )
 
+        if transcript.error == "silence":
+            # There was no speech, only room tone or the tail of the agent's
+            # own voice. Saying "sorry, I did not catch that" here is its own
+            # loop: the caller said nothing, so there is nothing to repeat.
+            self.state = CallState.LISTENING
+            yield Event("state", state=self.state.value)
+            return
+
         if not transcript:
             # Recognition produced nothing. Asking the caller to repeat is the
             # right response; dropping the line is not.
@@ -248,12 +303,23 @@ class CallSession:
         still being written, which is exactly when an impatient caller
         interrupts.
         """
+        spoken_ms = 0.0
         async for speech in self.speaker.stream(text):
             if self._cancel_speaking:
                 log.debug("stopped speaking part way through")
                 break
+            spoken_ms += _audio_length_ms(speech.audio)
             yield Event("audio", text=speech.text, audio=speech.audio,
                         detail={"ms": round(speech.milliseconds)})
+
+        # The audio is handed over faster than it plays, so the room carries it
+        # for roughly as long as it lasts. Ignore that much incoming audio,
+        # plus a little for the tail.
+        if not self.allow_barge_in:
+            seconds = spoken_ms / 1000 + SETTLE_SECONDS
+            self._discard_bytes = int(seconds * SAMPLE_RATE * SAMPLE_WIDTH)
+            self._discard_until = time.monotonic() + seconds
+            self.endpointer.reset()
 
     # -- ending ---------------------------------------------------------------
 

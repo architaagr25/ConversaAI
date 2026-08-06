@@ -1,0 +1,33 @@
+{
+  "lead_id": "LD-20260806-3bab88",
+  "created_at": "2026-08-06T04:54:13+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {},
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [
+    "age",
+    "currently_admitted",
+    "residency"
+  ],
+  "escalated_to": "",
+  "unanswered": [
+    "Capital of France."
+  ],
+  "citations": [
+    "documents/health_shield_policy_wording.pdf#3 General exclusions",
+    "web/health-shield-faq.html#Is dental included?",
+    "web/health-shield-plans.html#What is not covered",
+    "documents/health_shield_policy_wording.pdf#6 Claims",
+    "documents/health_shield_policy_wording.pdf#5 Eligibility"
+  ],
+  "summary": "The caller is looking for a health plan and had a specific question about dental treatment coverage, which was answered by the agent. During the conversation, it was established that the caller's age and other details, such as their current admission status and residency, are required to determine their eligibility, but this information was not provided. The caller also asked an unrelated question about the capital of France, which the agent was unable to answer. The next step is for the adviser to follow up with the caller to gather the necessary information to proceed with their eligibility assessment.",
+  "next_action": "Call back to complete qualification. Still needed: age, currently_admitted, residency.",
+  "turns": 3,
+  "contact_held": false
+}

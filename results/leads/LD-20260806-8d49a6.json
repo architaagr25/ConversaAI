@@ -1,0 +1,34 @@
+{
+  "lead_id": "LD-20260806-8d49a6",
+  "created_at": "2026-08-06T04:33:20+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {
+    "plan_interest": "Max",
+    "age": 24,
+    "residency": "PH",
+    "currently_admitted": true
+  },
+  "corrections": [],
+  "eligible": false,
+  "decided": true,
+  "decline_reason": "An application cannot be accepted while the applicant is admitted.",
+  "decided_by_rule": "HS-INPATIENT",
+  "requirements": [
+    "require_medical_questionnaire"
+  ],
+  "missing": [],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [
+    "documents/health_shield_rate_table.pdf#Dependant monthly premium",
+    "documents/health_shield_rate_table.pdf#Rider monthly premium",
+    "documents/health_shield_rate_table.pdf#Standard monthly premium by entry age",
+    "forms/lead_form_export.csv#Product Interest",
+    "web/health-shield-plans.html#Compare plans"
+  ],
+  "summary": "The caller is interested in health cover options, specifically the Plus and Max plans, but it has been established that they are currently receiving treatment and therefore do not qualify for the plans. The eligibility decision has already been made and it was communicated to the caller that an application cannot be accepted while they are admitted. The next step is to follow up with the caller to discuss alternative options, as previously offered, without revisiting the eligibility decision. The caller's details and circumstances have been noted, and the new adviser can refer to the previous conversation to provide further assistance.",
+  "next_action": "Do not quote. Send the declined-applicant letter and offer the alternatives.",
+  "turns": 8,
+  "contact_held": false
+}

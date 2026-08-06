@@ -26,7 +26,13 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from core.config import settings  # noqa: E402
-from voice_agent.audio import FRAME_BYTES, FRAME_MS, SAMPLE_RATE, silence, to_wav  # noqa: E402
+from voice_agent.audio import (  # noqa: E402
+    FRAME_BYTES,
+    FRAME_MS,
+    SAMPLE_RATE,
+    silence,
+    to_wav,
+)
 
 OUT = Path(__file__).resolve().parents[1] / "results" / "calls"
 
@@ -115,6 +121,7 @@ class Call:
         self.awaiting_reply = 0.0
         self.first_reply_at = 0.0
         self.turn_acknowledged = False
+        self.pending_playback = 0.0
 
     def note(self, speaker: str, text: str, **detail) -> None:
         self.lines.append({"at": round(time.perf_counter() - self.started, 2),
@@ -153,7 +160,12 @@ async def drain_replies(socket, call: Call, quiet_for: float = 2.5) -> None:
             # is where a two millisecond response time came from.
             if call.turn_acknowledged and not call.first_reply_at:
                 call.first_reply_at = time.perf_counter()
-            call.audio.extend(to_pcm(message))
+            pcm = to_pcm(message)
+            call.audio.extend(pcm)
+            # A real caller listens to the whole reply before answering. The
+            # server ignores that much incoming audio for the same reason, so
+            # a client that talks over its own playback is heard by nobody.
+            call.pending_playback += len(pcm) / (SAMPLE_RATE * 2)
             continue
 
         event = json.loads(message)
@@ -175,6 +187,23 @@ async def drain_replies(socket, call: Call, quiet_for: float = 2.5) -> None:
         elif kind == "ended":
             call.state = "ended"
             return
+
+
+async def wait_for_playback(call: Call) -> None:
+    """Sit through the agent's reply, the way a caller does.
+
+    The server ignores incoming audio for as long as its own reply lasts,
+    because on speakers that audio is the reply coming back. A client that
+    starts talking the moment the bytes arrive is therefore heard by nobody:
+    the first run after this guard went in produced a call with no turns at all.
+    """
+    if call.pending_playback <= 0:
+        return
+    # A margin wider than the server's own settle period, so the caller always
+    # starts after it is listening again. Too narrow and the opening words are
+    # cut off: one run turned "What is the capital of France?" into "of France".
+    await asyncio.sleep(call.pending_playback + 1.2)
+    call.pending_playback = 0.0
 
 
 async def speak_line(socket, call: Call, text: str) -> float:
@@ -224,6 +253,7 @@ async def place(name: str, lines: list[str], pack: str, voice: str,
         await drain_replies(socket, call, quiet_for=1.5)
 
         for line in lines:
+            await wait_for_playback(call)
             call.turn_acknowledged = False
             call.first_reply_at = 0.0
             # From the moment the caller stops talking, which includes the

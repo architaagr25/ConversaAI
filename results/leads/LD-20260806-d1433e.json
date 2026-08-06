@@ -1,0 +1,27 @@
+{
+  "lead_id": "LD-20260806-d1433e",
+  "created_at": "2026-08-06T04:40:22+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {},
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [
+    "age",
+    "currently_admitted",
+    "residency"
+  ],
+  "escalated_to": "",
+  "unanswered": [
+    "What is the capital of France?"
+  ],
+  "citations": [],
+  "summary": "The caller initially asked for information unrelated to their health plan, specifically the capital of France, which could not be answered by the agent. The caller was then asked a few questions to determine their eligibility for a health plan, but not enough information was collected to make a decision, with their age, current admission status, and residency still unknown. The caller's eligibility decision has already been made as not enough information was collected, and this decision should not be revisited. The next step is for someone to call the caller back to gather the remaining necessary information to proceed with their health plan inquiry.",
+  "next_action": "Call back to complete qualification. Still needed: age, currently_admitted, residency.",
+  "turns": 1,
+  "contact_held": false
+}

@@ -93,9 +93,40 @@ class TestFormats:
         assert struct.unpack("<h", mono[:2])[0] == pytest.approx(2000, abs=2)
 
 
+class TestLoudness:
+    def test_silence_is_quiet(self):
+        from voice_agent.audio import rms
+        assert rms(silence(200)) == 0.0
+
+    def test_speech_is_loud(self):
+        from voice_agent.audio import MIN_UTTERANCE_RMS, rms
+        assert rms(tone(400)) > MIN_UTTERANCE_RMS
+
+    def test_room_tone_stays_under_the_threshold(self):
+        # The tail of the agent's own voice in the room sits down here, and a
+        # recogniser handed it returns "Thank you" rather than nothing.
+        from conftest import quiet
+        from voice_agent.audio import MIN_UTTERANCE_RMS, rms
+        assert rms(quiet(400)) < MIN_UTTERANCE_RMS
+
+    def test_empty_audio(self):
+        from voice_agent.audio import rms
+        assert rms(b"") == 0.0
+
+
 class TestEndpointer:
     def test_it_starts_idle(self):
         assert Endpointer().state is Listening.IDLE
+
+    def test_audio_too_quiet_to_be_speech_is_dropped(self):
+        # Loud enough to look like speech to the detector, too quiet to be
+        # worth transcribing.
+        endpointer = Endpointer()
+        faint = tone(700, amplitude=90)
+        found = None
+        for frame in frames(faint + silence(1200)):
+            found = endpointer.feed(frame) or found
+        assert found is None
 
     def test_silence_alone_never_opens_a_turn(self):
         endpointer = Endpointer()

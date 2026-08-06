@@ -65,10 +65,19 @@
     <div class="controls">
       <select id="pack">
         <option value="health_shield_en">Health Shield &mdash; English</option>
+        <option value="life_ph">Solara Life Philippines &mdash; Taglish</option>
       </select>
       <button id="start" class="primary">Start call</button>
       <button id="stop" class="danger" disabled>Hang up</button>
       <span class="state"><span id="dot" class="dot"></span><span id="stateLabel">not connected</span></span>
+    </div>
+    <div class="controls" style="margin-top:12px">
+      <label class="note" style="display:flex; gap:7px; align-items:center; cursor:pointer">
+        <input type="checkbox" id="bargein">
+        Let me interrupt while it is speaking
+      </label>
+      <span class="note">&mdash; only with headphones. On speakers the microphone
+        hears the agent and it starts answering itself.</span>
     </div>
     <div class="hint" id="hint">Your browser will ask for microphone access.
       Nothing is recorded until you start the call.</div>
@@ -96,6 +105,7 @@ const els = {
   state: document.getElementById('stateLabel'),
   log: document.getElementById('log'),
   hint: document.getElementById('hint'),
+  bargein: document.getElementById('bargein'),
   summaryPanel: document.getElementById('summaryPanel'),
   summary: document.getElementById('summary'),
 };
@@ -143,11 +153,27 @@ function addNote(text) {
   els.log.scrollTop = els.log.scrollHeight;
 }
 
+// The microphone is switched off while the agent talks, unless the caller has
+// said they are on headphones. On laptop speakers the microphone hears the
+// agent, the recogniser turns that into words, and the agent answers itself.
+// Browser echo cancellation is not enough: it is tuned for a person talking
+// over a person, not for a speaker sitting next to a microphone.
+function setMicLive(live) {
+  if (!micStream) return;
+  micStream.getAudioTracks().forEach(t => { t.enabled = live; });
+}
+
 // Playback runs off a queue so sentences arriving separately still play in
 // order, and so an interruption can drop everything not yet started.
 async function playNext() {
-  if (playing || !queue.length) return;
+  if (playing || !queue.length) {
+    // Nothing left to play, so it is safe to listen again.
+    if (!queue.length && !playing && !bargeInAllowed()) setMicLive(true);
+    return;
+  }
   playing = true;
+  if (!bargeInAllowed()) setMicLive(false);
+
   const bytes = queue.shift();
   try {
     playCtx = playCtx || new AudioContext();
@@ -156,7 +182,13 @@ async function playNext() {
     source.buffer = buffer;
     source.connect(playCtx.destination);
     currentSource = source;
-    source.onended = () => { currentSource = null; playing = false; playNext(); };
+    source.onended = () => {
+      currentSource = null;
+      playing = false;
+      // A short pause before listening again, so the tail of the agent's
+      // own audio in the room does not become the start of a turn.
+      setTimeout(playNext, bargeInAllowed() ? 0 : 250);
+    };
     source.start();
   } catch (e) {
     playing = false;
@@ -164,11 +196,16 @@ async function playNext() {
   }
 }
 
+function bargeInAllowed() {
+  return els.bargein && els.bargein.checked;
+}
+
 function stopPlayback() {
   queue = [];
   if (currentSource) { try { currentSource.stop(); } catch (e) {} }
   currentSource = null;
   playing = false;
+  setMicLive(true);
 }
 
 async function start() {
@@ -198,7 +235,8 @@ async function start() {
   els.stop.disabled = false;
 
   const url = (location.protocol === 'https:' ? 'wss://' : 'ws://') +
-    location.host + '/call?pack=' + encodeURIComponent(els.pack.value);
+    location.host + '/call?pack=' + encodeURIComponent(els.pack.value) +
+    '&bargein=' + (bargeInAllowed() ? '1' : '0');
   socket = new WebSocket(url);
   socket.binaryType = 'arraybuffer';
 
@@ -232,6 +270,10 @@ async function start() {
 
   node.onaudioprocess = (e) => {
     if (!socket || socket.readyState !== WebSocket.OPEN) return;
+    // A disabled track still fires this callback, it just delivers silence.
+    // Sending that silence is harmless but pointless, and skipping it keeps
+    // the endpointer from seeing a long quiet stretch it has to reason about.
+    if (micStream && !micStream.getAudioTracks().some(t => t.enabled)) return;
     const input = e.inputBuffer.getChannelData(0);
     const pcm = new Int16Array(input.length);
     for (let i = 0; i < input.length; i++) {

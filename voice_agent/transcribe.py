@@ -29,6 +29,36 @@ MIN_AUDIO_BYTES = 4_000
 
 TRANSIENT = ("429", "500", "502", "503", "504", "timeout", "unavailable")
 
+# What Whisper returns when handed near-silence. It does not return nothing; it
+# returns one of these, confidently, because the training data is full of
+# subtitle files whose quiet passages carry exactly these captions.
+#
+# This is how a call turns into the agent talking to itself: room tone becomes
+# "Thank you", the agent answers it, its own reply reaches the microphone, and
+# round it goes. Seen in a real call before this filter existed.
+# Only English subtitle artefacts. "Salamat po" and "terima kasih" were on
+# this list briefly and should not have been: they are ordinary things a
+# caller says, and filtering them would make the localised agents ignore a
+# genuine thank-you. Quiet audio is already rejected before it gets here, on
+# loudness, which is the right place to catch the case these were guarding.
+HALLUCINATIONS = {
+    "thank you", "thanks", "thank you.", "thanks for watching",
+    "thanks for watching!", "thank you for watching", "you", "bye", "bye.",
+    ".", "...", ". . .", "[silence]", "[music]", "(music)", "[blank_audio]",
+    "subtitles by the amara.org community", "amara.org", "please subscribe",
+}
+
+
+def is_probably_silence(text: str) -> bool:
+    """Whether a transcript is what a recogniser says when it heard nothing."""
+    cleaned = text.strip().lower().strip("¡!¿?\"'")
+    if not cleaned:
+        return True
+    if cleaned in HALLUCINATIONS:
+        return True
+    # A handful of characters that are all punctuation is not speech.
+    return not any(c.isalnum() for c in cleaned)
+
 
 @dataclass
 class Transcript:
@@ -116,8 +146,17 @@ class Transcriber:
                         **({"prompt": prompt} if prompt else {}),
                         temperature=0.0,
                     )
+                heard = (response.text or "").strip()
+                if is_probably_silence(heard):
+                    log.info("recogniser returned a silence artefact, ignoring",
+                             extra={"text": heard[:40],
+                                    "audio_ms": round(audio_ms)})
+                    return Transcript(text="", milliseconds=span.milliseconds,
+                                      model=self.model, audio_ms=audio_ms,
+                                      error="silence")
+
                 return Transcript(
-                    text=(response.text or "").strip(),
+                    text=heard,
                     milliseconds=span.milliseconds,
                     model=self.model,
                     language=language or "",

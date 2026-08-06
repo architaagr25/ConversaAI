@@ -1,4 +1,4 @@
-"""
+﻿"""
 Call loop tests, including barge-in.
 
 The whole session runs on stubs here. What is being tested is when the agent
@@ -28,15 +28,16 @@ class StubSpeaker:
 
 
 class StubTranscriber:
-    def __init__(self, replies=None):
+    def __init__(self, replies=None, error=""):
         self.replies = list(replies or ["I am thirty five years old"])
+        self.error = error
         self.calls = 0
 
     def transcribe(self, wav, **kwargs):
         self.calls += 1
         text = self.replies.pop(0) if self.replies else ""
         return Transcript(text=text, milliseconds=50.0, audio_ms=1000.0,
-                          error="" if text else "nothing recognised")
+                          error=self.error or ("" if text else "nothing recognised"))
 
     def warmup(self):
         return 0.0
@@ -90,8 +91,26 @@ def session():
                        speaker=StubSpeaker())
 
 
+@pytest.fixture
+def duplex_session():
+    """A session on headphones, where interrupting is allowed."""
+    return CallSession(agent=StubAgent(), transcriber=StubTranscriber(),
+                       speaker=StubSpeaker(), allow_barge_in=True)
+
+
 async def drain(generator):
     return [event async for event in generator]
+
+
+def listen_now(session):
+    """Skip the settle window.
+
+    After speaking, the session stays deaf for as long as the reply lasts plus
+    a moment for the sound to leave the room. Tests run faster than real time,
+    so that window has to be stepped over rather than waited out.
+    """
+    session._discard_bytes = 0
+    return session
 
 
 class TestSentenceSplitting:
@@ -132,6 +151,7 @@ class TestCallFlow:
 
     async def test_speech_produces_a_reply(self, session):
         await drain(session.start())
+        listen_now(session)
         events = []
         for chunk in (tone(700), silence(1200)):
             events += await drain(session.on_audio(chunk))
@@ -141,6 +161,7 @@ class TestCallFlow:
 
     async def test_the_transcript_records_both_sides(self, session):
         await drain(session.start())
+        listen_now(session)
         for chunk in (tone(700), silence(1200)):
             await drain(session.on_audio(chunk))
         transcript = session.record.transcript()
@@ -149,6 +170,7 @@ class TestCallFlow:
     async def test_an_escalation_ends_the_call(self, session):
         session.agent.escalate_next = "ESC-REQUEST"
         await drain(session.start())
+        listen_now(session)
         events = []
         for chunk in (tone(700), silence(1200)):
             events += await drain(session.on_audio(chunk))
@@ -167,10 +189,27 @@ class TestRecognitionFailure:
                               transcriber=StubTranscriber(replies=[""]),
                               speaker=StubSpeaker())
         await drain(session.start())
+        listen_now(session)
         for chunk in (tone(700), silence(1200)):
             await drain(session.on_audio(chunk))
         assert session.record.failed_recognitions == 1
         assert any("say it again" in s for s in session.speaker.said)
+
+    async def test_silence_produces_no_reply_at_all(self):
+        # The caller said nothing, so there is nothing to repeat. Asking them
+        # to say it again is its own loop: the room stays quiet, the recogniser
+        # returns another artefact, and the agent asks again.
+        session = CallSession(agent=StubAgent(),
+                              transcriber=StubTranscriber(replies=[""],
+                                                          error="silence"),
+                              speaker=StubSpeaker())
+        await drain(session.start())
+        said_before = len(session.speaker.said)
+        for chunk in (tone(700), silence(1200)):
+            await drain(session.on_audio(chunk))
+        assert len(session.speaker.said) == said_before
+        assert session.state is CallState.LISTENING
+        assert session.record.failed_recognitions == 0
 
     async def test_the_call_carries_on(self):
         # Dropping the line because one utterance was not understood is far
@@ -179,21 +218,26 @@ class TestRecognitionFailure:
                               transcriber=StubTranscriber(replies=["", "I am 35"]),
                               speaker=StubSpeaker())
         await drain(session.start())
-        for chunk in (tone(700), silence(1200), tone(700), silence(1200)):
-            await drain(session.on_audio(chunk))
+        for _ in range(2):
+            # Between turns, as a caller waiting for the agent to finish would.
+            listen_now(session)
+            for chunk in (tone(700), silence(1200)):
+                await drain(session.on_audio(chunk))
         assert session.state is CallState.LISTENING
         assert session.transcriber.calls == 2
 
 
 @pytest.mark.asyncio
 class TestBargeIn:
-    async def test_sustained_speech_interrupts(self, session):
+    async def test_sustained_speech_interrupts(self, duplex_session):
+        session = duplex_session
         session.state = CallState.SPEAKING
         events = await drain(session.on_audio(tone(400)))
         assert any(e.kind == "barge_in" for e in events)
         assert session.state is CallState.LISTENING
 
-    async def test_a_brief_noise_does_not_interrupt(self, session):
+    async def test_a_brief_noise_does_not_interrupt(self, duplex_session):
+        session = duplex_session
         # The microphone is hearing the agent too, and echo cancellation is
         # good but not perfect. A short burst must not end a reply mid-word.
         # Kept well under the threshold because the detector reports speech for
@@ -211,7 +255,8 @@ class TestBargeIn:
         real_speech_needed = BARGE_IN_FRAMES - VAD_HANGOVER_FRAMES
         assert real_speech_needed >= SPEECH_FRAMES_TO_START * 2
 
-    async def test_silence_during_a_reply_does_not_interrupt(self, session):
+    async def test_silence_during_a_reply_does_not_interrupt(self, duplex_session):
+        session = duplex_session
         session.state = CallState.SPEAKING
         events = await drain(session.on_audio(silence(2000)))
         assert not any(e.kind == "barge_in" for e in events)
@@ -225,7 +270,8 @@ class TestBargeIn:
         events = await drain(session._speak("One. Two. Three. Four."))
         assert len(events) == 0
 
-    async def test_an_interruption_is_counted(self, session):
+    async def test_an_interruption_is_counted(self, duplex_session):
+        session = duplex_session
         session.state = CallState.SPEAKING
         await drain(session.on_audio(tone(400)))
         assert session.record.barge_ins == 1
@@ -246,6 +292,7 @@ class TestClosing:
 
     async def test_the_summary_reports_the_call(self, session):
         await drain(session.start())
+        listen_now(session)
         for chunk in (tone(700), silence(1200)):
             await drain(session.on_audio(chunk))
         summary = session.summary()

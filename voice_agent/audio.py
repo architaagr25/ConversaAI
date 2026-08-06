@@ -51,6 +51,12 @@ SILENCE_FRAMES_TO_END = 35
 # Below this an utterance is a click or a cough, not a turn.
 MIN_UTTERANCE_MS = 250
 
+# Below this loudness there is nothing worth transcribing. Room tone and the
+# tail of the agent's own voice reaching the microphone both sit well under
+# it, and a recogniser handed near-silence does not return nothing: it returns
+# "Thank you" or "..." with confidence, which the agent then answers.
+MIN_UTTERANCE_RMS = 220
+
 # Above this something has gone wrong, or the caller is reading an essay.
 # Either way the turn has to end so the agent can respond.
 MAX_UTTERANCE_MS = 25_000
@@ -185,6 +191,12 @@ class Endpointer:
                       extra={"ms": round(duration)})
             return None
 
+        loudness = rms(audio)
+        if loudness < MIN_UTTERANCE_RMS:
+            log.debug("ignoring audio too quiet to be speech",
+                      extra={"rms": round(loudness), "ms": round(duration)})
+            return None
+
         return Utterance(audio=audio, duration_ms=duration,
                          started_at=started, ended_by=reason)
 
@@ -278,6 +290,24 @@ def to_mono(pcm: bytes, channels: int) -> bytes:
         return b""
     averaged = samples[:usable].reshape(-1, channels).mean(axis=1)
     return averaged.astype(np.int16).tobytes()
+
+
+def rms(pcm: bytes) -> float:
+    """Loudness, as root mean square amplitude.
+
+    The detector answers "does this sound like speech", which room tone and a
+    speaker in the same room can both pass. This answers "is there enough
+    signal here to be worth anything", which they do not.
+    """
+    if not pcm:
+        return 0.0
+
+    import numpy as np
+
+    samples = np.frombuffer(pcm, dtype=np.int16).astype(np.float32)
+    if samples.size == 0:
+        return 0.0
+    return float(np.sqrt(np.mean(samples ** 2)))
 
 
 def duration_ms(pcm: bytes, sample_rate: int = SAMPLE_RATE) -> float:

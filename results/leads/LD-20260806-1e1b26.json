@@ -1,0 +1,21 @@
+{
+  "lead_id": "LD-20260806-1e1b26",
+  "created_at": "2026-08-06T04:34:07+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {},
+  "corrections": [],
+  "eligible": null,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [],
+  "summary": "The caller was contacted to determine which health plan fits them, but the call was immediately cut short as it was not a convenient time. Because the call ended so quickly, not enough information was collected to make an eligibility decision, leaving the missing requirements unknown. The next adviser needs to call the customer back as arranged to ask the initial questions and establish their needs.",
+  "next_action": "Call back to complete qualification. Still needed: the remaining questions.",
+  "turns": 0,
+  "contact_held": false
+}
