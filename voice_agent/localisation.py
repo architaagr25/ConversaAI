@@ -116,6 +116,32 @@ def check_register(text: str, language: str = "fil") -> RegisterCheck:
     return result
 
 
+def detect_region(text: str, variants: dict) -> str:
+    """Which regional variety the customer is speaking, if any.
+
+    Detected from what they say rather than guessed from a name, which would
+    be both unreliable and offensive. A single marker is enough: somebody who
+    opens with "punten" or answers "nggih" has told you where they are from,
+    and a caller who uses none is speaking standard Indonesian.
+
+    Only the greeting and the politeness words change. Switching the whole
+    reply into a regional language because of one word would be worse than
+    not trying, since the finance vocabulary has no regional equivalent
+    anybody uses.
+    """
+    lowered = f" {text.lower()} "
+    best, hits = "standard", 0
+
+    for name, config in (variants or {}).items():
+        found = sum(1 for marker in config.get("markers", [])
+                    if f" {marker.lower()} " in lowered
+                    or lowered.startswith(f" {marker.lower()}"))
+        if found > hits:
+            best, hits = name, found
+
+    return best
+
+
 def taglish_balance(text: str) -> float:
     """Roughly what share of the words are English.
 

@@ -36,10 +36,17 @@ PROBES = {
         ("escalation", "Pwede po bang makausap ang tao?"),
     ],
     "multifinance_id": [
-        ("cooperative", "Iya betul, saya nasabahnya."),
-        ("hardship", "Lagi susah pak, belum gajian."),
+        ("formal", "Iya betul, saya nasabahnya."),
+        ("colloquial", "Iya nih, gimana ya, cicilannya belum kebayar."),
+        ("hardship", "Lagi susah pak, belum gajian bulan ini."),
+        ("indirect refusal", "Belum sempat pak, nanti aja ya."),
         ("question", "Berapa dendanya kalau telat seminggu?"),
+        ("loanwords", "Sisa tenornya berapa dan DP saya kemarin sudah masuk?"),
         ("objection", "Kok mahal banget sih dendanya."),
+        ("javanese accent", "Nuwun sewu, kulo dereng saget mbayar cicilan niki."),
+        ("javanese follow up", "Nggih, monggo dijelaske malih."),
+        ("sundanese accent", "Punten, abdi teh can tiasa mayar ayeuna."),
+        ("unsupported", "Bisa nggak saya tukar tambah kendaraannya?"),
         ("escalation", "Bisa bicara sama orangnya langsung?"),
     ],
 }
@@ -90,6 +97,8 @@ def main() -> int:
             marks.append(f"english drift {sorted(set(check.english_drift))[:4]}")
         if language in ("fil", "tl"):
             marks.append(f"english share {taglish_balance(turn.agent):.0%}")
+        if agent.conversation.region != "standard":
+            marks.append(f"region {agent.conversation.region}")
         if turn.escalated_to:
             marks.append(f"escalated {turn.escalated_to}")
         elif turn.grounded:

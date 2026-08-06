@@ -68,6 +68,11 @@ class Pack:
     must_never: list[str]
     # Only the localised packs carry these; English needs neither.
     speech_conventions: dict = field(default_factory=dict)
+    regional: dict = field(default_factory=dict)
+
+    @property
+    def regional_variants(self) -> dict:
+        return self.regional.get("variants") or {}
 
     @property
     def required_slots(self) -> list[Slot]:
@@ -150,6 +155,7 @@ def load_pack(pack_id: str) -> Pack:
         closing=data["closing"],
         must_never=data["must_never"],
         speech_conventions=data.get("speech_conventions") or {},
+        regional=data.get("regional") or {},
     )
 
 
@@ -192,6 +198,22 @@ def build_system_prompt(pack: Pack) -> str:
         sections.append(
             "Saying numbers, dates and money out loud. These are what give a "
             "translated script away:\n" + "\n".join(lines))
+
+    if pack.regional_variants:
+        lines = [pack.regional.get("note", "").strip()]
+        for name, config in pack.regional_variants.items():
+            if name == "standard":
+                continue
+            lines.append(
+                f"- {name}: greet with \"{config.get('greeting')}\", thank with "
+                f"\"{config.get('thanks')}\", use "
+                f"{', '.join(config.get('politeness', []))}. "
+                + config.get("note", "").strip())
+        sections.append(
+            "Regional speech. The customer's own words say where they are "
+            "from; never guess it from a name. Change the greeting and the "
+            "politeness words only, and keep the finance vocabulary as it is:\n"
+            + "\n".join(line for line in lines if line))
 
     sections.append("Never:\n" + _bullets(persona.get("never", [])))
 

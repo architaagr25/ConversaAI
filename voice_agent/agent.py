@@ -86,6 +86,7 @@ class Conversation:
     # a phone agent does, so after two attempts it moves on.
     asked: dict = field(default_factory=dict)
     gave_up_on: list[str] = field(default_factory=list)
+    region: str = "standard"
     started_at: float = field(default_factory=time.time)
 
     @property
@@ -436,6 +437,7 @@ class Agent:
                 self.retriever.search, caller_text,
                 self.conversation.business_unit, None, trace)
 
+        self._note_region(caller_text)
         trigger = self._check_escalation(caller_text)
         filled = self._extract_slots(caller_text)
         for name, value in filled.items():
@@ -482,6 +484,34 @@ class Agent:
         self._note_what_was_asked()
         self._reassess()
         return turn
+
+    def _note_region(self, text: str) -> None:
+        """Track the regional variety the customer is speaking.
+
+        Sticky against absence, not against evidence. A customer who opened
+        with "punten" and then says a sentence with no markers has not moved to
+        Jakarta, so silence never resets it. But markers for a different
+        variety are a real signal and do change it: without that, one wrong
+        early guess follows the customer for the rest of the call, and a
+        Sundanese speaker gets answered in Javanese, which is worse than not
+        trying to match at all.
+        """
+        variants = self.pack.regional_variants
+        if not variants:
+            return
+
+        from voice_agent.localisation import detect_region
+
+        found = detect_region(text, variants)
+        if found == "standard" or found == self.conversation.region:
+            return
+
+        if self.conversation.region != "standard":
+            log.info("customer switched regional variety",
+                     extra={"was": self.conversation.region, "now": found})
+        else:
+            log.info("regional speech detected", extra={"region": found})
+        self.conversation.region = found
 
     def _note_what_was_asked(self) -> None:
         """Count how many times each slot has been asked, and give up at two.
@@ -536,6 +566,16 @@ class Agent:
         if self.conversation.assessment and self.conversation.assessment.decided:
             parts.append("Eligibility outcome to convey when the moment fits: "
                          + outcome_wording(self.conversation.assessment))
+
+        region = self.conversation.region
+        variant = self.pack.regional_variants.get(region)
+        if variant and region != "standard":
+            parts.append(
+                f"This customer speaks {region}. Greet with "
+                f"\"{variant.get('greeting')}\", thank with "
+                f"\"{variant.get('thanks')}\", and use "
+                f"{', '.join(variant.get('politeness', []))} where they fit. "
+                f"Keep the finance vocabulary unchanged.")
 
         parts.append(context)
         parts.append(f"Caller just said: {caller_text}\n\nYour reply:")

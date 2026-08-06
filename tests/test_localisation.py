@@ -10,7 +10,8 @@ from __future__ import annotations
 
 import pytest
 
-from voice_agent.localisation import check_register, taglish_balance
+from voice_agent.agent import Agent
+from voice_agent.localisation import check_register, detect_region, taglish_balance
 from voice_agent.pack import build_system_prompt, load_pack
 
 
@@ -72,6 +73,61 @@ class TestIndonesianRegister:
     def test_mixing_formal_and_casual_is_caught(self):
         result = check_register("Mohon Bapak segera bayar, cicilan kamu telat.", "id")
         assert result.mixed
+
+
+class TestRegionalDetection:
+    @pytest.fixture
+    def variants(self):
+        return load_pack("multifinance_id").regional_variants
+
+    def test_javanese_markers_are_recognised(self, variants):
+        assert detect_region("Nuwun sewu, kulo dereng saget mbayar", variants) \
+            == "javanese"
+
+    def test_sundanese_markers_are_recognised(self, variants):
+        assert detect_region("Punten, abdi teh can tiasa mayar", variants) \
+            == "sundanese"
+
+    def test_plain_indonesian_is_standard(self, variants):
+        assert detect_region("Iya betul, saya nasabahnya", variants) == "standard"
+
+    def test_one_marker_is_enough(self, variants):
+        # Somebody who answers "nggih" has told you where they are from.
+        assert detect_region("Nggih pak", variants) == "javanese"
+
+    def test_the_strongest_signal_wins(self, variants):
+        assert detect_region("Punten, hatur nuhun, mangga", variants) == "sundanese"
+
+
+class TestRegionStickiness:
+    def _agent(self):
+        return Agent("multifinance_id")
+
+    def test_a_marker_sets_the_region(self):
+        agent = self._agent()
+        agent._note_region("Nuwun sewu pak")
+        assert agent.conversation.region == "javanese"
+
+    def test_a_turn_with_no_markers_does_not_reset_it(self):
+        # A customer who says one plain sentence has not moved to Jakarta.
+        agent = self._agent()
+        agent._note_region("Nuwun sewu pak")
+        agent._note_region("Berapa cicilan saya bulan ini?")
+        assert agent.conversation.region == "javanese"
+
+    def test_markers_for_another_variety_do_change_it(self):
+        # Sticky against absence, not against evidence. Without this a wrong
+        # early guess follows the customer all call, and a Sundanese speaker
+        # gets answered in Javanese.
+        agent = self._agent()
+        agent._note_region("Nuwun sewu pak")
+        agent._note_region("Punten, abdi teh can tiasa mayar ayeuna")
+        assert agent.conversation.region == "sundanese"
+
+    def test_a_pack_without_variants_is_unaffected(self):
+        agent = Agent("health_shield_en")
+        agent._note_region("Nuwun sewu")
+        assert agent.conversation.region == "standard"
 
 
 class TestTaglishBalance:

@@ -1,0 +1,40 @@
+{
+  "lead_id": "LD-20260806-b810be",
+  "created_at": "2026-08-06T05:04:11+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {
+    "age": 20,
+    "plan_interest": "Max"
+  },
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [
+    "require_medical_questionnaire"
+  ],
+  "missing": [
+    "currently_admitted",
+    "residency"
+  ],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [
+    "web/partners.html#How to apply",
+    "web/partners.html#Becoming an accredited agent",
+    "web/health-shield-plans.html#How to apply",
+    "web/health-shield-faq.html#Do I need a medical examination to apply?",
+    "rules/qualification_rules.yaml#prohibited",
+    "documents/health_shield_rate_table.pdf#Rider monthly premium",
+    "documents/health_shield_rate_table.pdf#Standard monthly premium by entry age",
+    "documents/health_shield_rate_table.pdf#Dependant monthly premium",
+    "web/health-shield-plans.html#Compare plans",
+    "forms/lead_form_export.csv#Product Interest"
+  ],
+  "summary": "The caller is looking to invest in a health plan and is interested in the Plus and Max options, but the conversation was cut short as the agent couldn't provide the information they needed. It was established that the caller is 20 years old, but their current admission status and residency details are still unclear. The next step is for the adviser to follow up with the caller to gather the necessary information and discuss their health plan options further. The adviser should focus on obtaining the missing details, specifically whether the caller is currently admitted to a hospital and their residency status, in order to proceed with the caller's inquiry.",
+  "next_action": "Call back to complete qualification. Still needed: currently_admitted, residency.",
+  "turns": 7,
+  "contact_held": false
+}
