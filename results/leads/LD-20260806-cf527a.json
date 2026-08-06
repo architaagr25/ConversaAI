@@ -1,0 +1,31 @@
+{
+  "lead_id": "LD-20260806-cf527a",
+  "created_at": "2026-08-06T10:44:02+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {
+    "plan_interest": "Max"
+  },
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [
+    "require_medical_questionnaire"
+  ],
+  "missing": [
+    "age",
+    "currently_admitted",
+    "residency"
+  ],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [
+    "web/health-shield-plans.html#Compare plans"
+  ],
+  "summary": "The caller wants to look into health cover, specifically mentioning \"and Plus, Max\". It was established that the caller was confused by the questions, stating \"I'm not sure what you're doing\", and they did not provide their age, residency status, or whether they are currently admitted. The next adviser needs to call the customer back to collect this missing information, as not enough was collected to decide on eligibility.",
+  "next_action": "Call back to complete qualification. Still needed: age, currently_admitted, residency.",
+  "turns": 4,
+  "contact_held": false
+}

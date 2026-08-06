@@ -148,7 +148,7 @@ The headline numbers:
 | | |
 | --- | --- |
 | Retrieval | 21 correct, 2 partial, 0 incorrect, out of 23 |
-| Speech recognition | 97% against a second provider's 69%, over 18 utterances |
+| Speech recognition | 97% against a second provider's 73%, over 18 utterances |
 | Live nudges | 100% precision and recall over 33 turns, 13 of which should stay silent |
 | Recorded calls | 9, across three markets |
 | Automated checks | 535 |

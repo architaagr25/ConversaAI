@@ -17,18 +17,63 @@ ENGLISH = config_for("health_ph_en").prompt
 INDONESIAN = config_for("multifinance_id").prompt
 
 
+# The hint the English market used when this was seen. Kept as a fixture
+# rather than read from the market, because the market no longer has these
+# words in it and that is the actual fix. This is here to prove the filter
+# behind it works.
+HINT_THAT_CAUSED_IT = (
+    "Solara Health Shield, premium, waiting period, pre-existing condition, "
+    "rider, deductible, accredited hospital, grace period, Essential, Plus, Max"
+)
+
+
 class TestWhatCameBackFromTheHint:
     def test_the_phrase_seen_on_a_live_call(self):
-        assert is_prompt_echo("and the plus, max", ENGLISH)
+        assert is_prompt_echo("and the plus, max", HINT_THAT_CAUSED_IT)
 
     def test_plan_names_on_their_own(self):
-        assert is_prompt_echo("Essential, Plus, Max", ENGLISH)
+        assert is_prompt_echo("Essential, Plus, Max", HINT_THAT_CAUSED_IT)
 
     def test_a_pair_of_primed_terms(self):
-        assert is_prompt_echo("premium, deductible", ENGLISH)
+        assert is_prompt_echo("premium, deductible", HINT_THAT_CAUSED_IT)
 
     def test_it_works_for_the_indonesian_hint_too(self):
         assert is_prompt_echo("cicilan, angsuran", INDONESIAN)
+
+
+class TestTheHintsThemselves:
+    """The filter is the net. This is the hole it was falling through.
+
+    A word in the hint is a word the recogniser will reach for when it cannot
+    make out the audio, so the hint has to earn every entry: only terms a
+    general recogniser genuinely gets wrong. Ordinary words in it are pure
+    cost.
+    """
+
+    def test_plan_names_are_not_primed(self):
+        # They are ordinary English, spelled correctly with no help at all,
+        # and they were what came back on a live call.
+        for word in ("essential", "plus", "max"):
+            assert word not in ENGLISH.lower()
+
+    def test_ordinary_insurance_words_are_not_primed(self):
+        for word in ("premium", "rider", "deductible", "hospital"):
+            assert word not in ENGLISH.lower()
+
+    def test_the_terms_that_earn_their_place_are_kept(self):
+        assert "Solara Health Shield" in ENGLISH
+        assert "bancassurance" in ENGLISH
+        assert "cicilan" in INDONESIAN
+        # Short, unusual, and genuinely lost without help.
+        assert "nuwun sewu" in INDONESIAN
+
+    def test_every_hint_stays_short(self):
+        # Length is the cost. A long hint is a long list of things the
+        # recogniser can hand back instead of an answer.
+        from voice_agent.asr import MARKETS
+
+        for market in MARKETS.values():
+            assert len(market.prompt.split(",")) <= 14, market.business_unit
 
 
 class TestWhatIsACaller:

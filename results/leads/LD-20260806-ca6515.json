@@ -1,0 +1,21 @@
+{
+  "lead_id": "LD-20260806-ca6515",
+  "created_at": "2026-08-06T11:13:11+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {},
+  "corrections": [],
+  "eligible": null,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [],
+  "summary": "The caller was unable to speak at the time of the call, stating, \"No problem at all. I will arrange for someone to call you back. Thanks for your time.\" Because the call was cut short immediately, it was not established what the caller wants, and not enough information was collected to make an eligibility decision. The next adviser should call the customer back to determine their health plan needs and gather the missing information required to assess their eligibility.",
+  "next_action": "Call back to complete qualification. Still needed: the remaining questions.",
+  "turns": 0,
+  "contact_held": false
+}

@@ -8,7 +8,7 @@ Speech is synthesised, which makes it cleaner than a caller on a laptop micropho
 
 | Market | Language hint | Why |
 | --- | --- | --- |
-| English, Philippines | `en` | Callers use English throughout on this product, so the hint is safe and slightly improves the handling of Filipino place names. |
+| English, Philippines | `en` | Callers use English throughout on this product, so the hint is safe. Kept to the product name and the terms a general recogniser actually gets wrong: anything else in here is what comes back when it cannot make out the audio. |
 | Taglish, Philippines | **none, deliberately** | Taglish switches language inside a sentence. Forcing Tagalog makes the recogniser render the English words phonetically, and forcing English does the reverse. Letting it decide per segment is the only setting that handles both halves. |
 | Bahasa Indonesia | `id` | The speech is one language even when it borrows English finance words, so the hint helps. Regional politeness markers are in the prompt because they are short, unusual and easily lost. |
 
@@ -22,8 +22,8 @@ Speech is synthesised, which makes it cleaner than a caller on a laptop micropho
 | Taglish, Philippines | plain tagalog | 0% | 100% |
 | Taglish, Philippines | code switch | 22% | 100% |
 | Taglish, Philippines | heavy code switch | 36% | 93% |
-| Taglish, Philippines | domain terms | 27% | 100% |
-| Taglish, Philippines | english heavy | 67% | 100% |
+| Taglish, Philippines | domain terms | 73% | 100% |
+| Taglish, Philippines | english heavy | 92% | 100% |
 | Taglish, Philippines | amounts | 0% | 100% |
 | Bahasa Indonesia | plain | 100% | 100% |
 | Bahasa Indonesia | loanwords | 100% | 100% |
@@ -39,8 +39,8 @@ Speech is synthesised, which makes it cleaner than a caller on a laptop micropho
 
 | Provider | Model | Mean accuracy | Median latency |
 | --- | --- | --- | --- |
-| deepgram | `nova-2` | 69% | 4481 ms |
-| groq | `whisper-large-v3-turbo` | 97% | 559 ms |
+| deepgram | `nova-2` | 73% | 3141 ms |
+| groq | `whisper-large-v3-turbo` | 97% | 346 ms |
 
 ## Standard against regional speech
 
@@ -48,7 +48,7 @@ Averaging these together hides the case that matters. Javanese and Sundanese are
 
 | Provider | Standard | Regional |
 | --- | --- | --- |
-| deepgram | 68% (14 cases) | 74% (4 cases) |
+| deepgram | 73% (14 cases) | 74% (4 cases) |
 | groq | 99% (14 cases) | 90% (4 cases) |
 
 ## Observed errors
@@ -59,14 +59,15 @@ Every word that did not survive, and why. Grouped by kind rather than listed, be
 
 | Kind | Count | Examples |
 | --- | --- | --- |
-| one language dropped | 20 | magkano (code switch), po (code switch), ang (code switch), ko (code switch) |
+| one language dropped | 16 | magkano (code switch), po (code switch), ang (code switch), ko (code switch) |
 | whole utterance lost | 15 | magkano (plain tagalog), po (plain tagalog), ang (plain tagalog), hulog (plain tagalog) |
-| dropped | 6 | sino (domain terms), po (domain terms), at (domain terms), pwede (domain terms) |
-| regional word, dropped | 3 | kulo (javanese greeting), can (sundanese greeting), tiasa (sundanese greeting) |
+| dropped | 2 | sino (domain terms), pwede (domain terms) |
+| regional word, dropped | 2 | kulo (javanese greeting), can (sundanese greeting) |
 | heard as beneficiary | 1 | benepisyaryo (domain terms) |
-| heard as ang | 1 | bang (domain terms) |
+| heard as puede | 1 | pwede (english heavy) |
 | regional word, heard as nun | 1 | nuwun (javanese greeting) |
 | regional word, heard as gih | 1 | nggih (javanese reply) |
+| regional word, heard as kiyasa | 1 | tiasa (sundanese greeting) |
 | regional word, heard as ayuna | 1 | ayeuna (sundanese greeting) |
 | regional word, heard as abdi | 1 | bade (sundanese reply) |
 | regional word, heard as meyar | 1 | mayar (sundanese reply) |
@@ -110,14 +111,14 @@ Every word that did not survive, and why. Grouped by kind rather than listed, be
 **Taglish, Philippines / domain terms / deepgram**
 
 - said: Sino po ang benepisyaryo at pwede po bang palitan ang beneficiary?
-- heard: Sinupu ang beneficiary.
-- lost: sino (dropped), po (dropped), benepisyaryo (heard as beneficiary), at (dropped), pwede (dropped), po (dropped), bang (heard as ang), palitan (dropped)
+- heard: Sinupu ang beneficiary at kwedipo bang palitan ang beneficiary.
+- lost: sino (dropped), benepisyaryo (heard as beneficiary), pwede (dropped)
 
 **Taglish, Philippines / english heavy / deepgram**
 
 - said: Ang beneficiary po ba pwede more than one, o isa lang po?
-- heard: An beneficiary POBAP already more than one
-- lost: ang (one language dropped), pwede (one language dropped), isa (one language dropped), lang (one language dropped)
+- heard: An beneficiary POBA puede more than one, or isalang PO?
+- lost: pwede (heard as puede)
 
 **Taglish, Philippines / amounts / deepgram**
 
@@ -135,7 +136,7 @@ Every word that did not survive, and why. Grouped by kind rather than listed, be
 **Bahasa Indonesia / javanese greeting / deepgram**
 
 - said: Nuwun sewu, kulo dereng saget mbayar cicilan niki.
-- heard: Nun Sewu, Pulau Dereng Saget membayar Cicilaniki.
+- heard: Nun Sewu, Pulau Dereng Saget membayar cicilan Niki
 - lost: nuwun (regional word, heard as nun), kulo (regional word, dropped)
 
 **Bahasa Indonesia / javanese reply / deepgram**
@@ -153,8 +154,8 @@ Every word that did not survive, and why. Grouped by kind rather than listed, be
 **Bahasa Indonesia / sundanese greeting / deepgram**
 
 - said: Punten, abdi teh can tiasa mayar ayeuna.
-- heard: Punten Abdi Teh Kentyasa Mayar Ayuna.
-- lost: can (regional word, dropped), tiasa (regional word, dropped), ayeuna (regional word, heard as ayuna)
+- heard: Punten Abdi Teh Kent kiyasa Mayar Ayuna.
+- lost: can (regional word, dropped), tiasa (regional word, heard as kiyasa), ayeuna (regional word, heard as ayuna)
 
 **Bahasa Indonesia / sundanese reply / deepgram**
 
@@ -167,7 +168,7 @@ Every word that did not survive, and why. Grouped by kind rather than listed, be
 
 What each provider returned for the sentences that move between languages mid-sentence.
 
-- **deepgram** kept both languages in 1 of 4 switching sentences.
+- **deepgram** kept both languages in 2 of 4 switching sentences.
 - **groq** kept both languages in 4 of 4 switching sentences.
 
 **plain tagalog / groq**
@@ -207,7 +208,7 @@ What each provider returned for the sentences that move between languages mid-se
 
 **domain terms / deepgram**
 - said: Sino po ang benepisyaryo at pwede po bang palitan ang beneficiary?
-- heard: Sinupu ang beneficiary.
+- heard: Sinupu ang beneficiary at kwedipo bang palitan ang beneficiary.
 - languages: switched between tagalog 50%, english 50%
 
 **english heavy / groq**
@@ -217,8 +218,8 @@ What each provider returned for the sentences that move between languages mid-se
 
 **english heavy / deepgram**
 - said: Ang beneficiary po ba pwede more than one, o isa lang po?
-- heard: An beneficiary POBAP already more than one
-- languages: english throughout  <- one language lost
+- heard: An beneficiary POBA puede more than one, or isalang PO?
+- languages: switched between tagalog 50%, english 50%
 
 **amounts / groq**
 - said: Isang libo dalawang daan po ang kaya kong bayaran kada buwan.

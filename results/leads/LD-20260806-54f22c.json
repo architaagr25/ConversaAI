@@ -1,0 +1,30 @@
+{
+  "lead_id": "LD-20260806-54f22c",
+  "created_at": "2026-08-06T11:31:05+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {
+    "plan_interest": "Max",
+    "age": 21,
+    "residency": "PH",
+    "currently_admitted": false
+  },
+  "corrections": [],
+  "eligible": true,
+  "decided": true,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [
+    "require_medical_questionnaire"
+  ],
+  "missing": [],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [
+    "web/health-shield-plans.html#Compare plans"
+  ],
+  "summary": "The caller wants to get a quote for the Plus plan, stating \"I have my eye on plus plan\" and that they are \"not interested in the Max plan.\" It was established that the caller is 21 years old, lives in the Philippines, is not currently in the hospital or receiving treatment, and they meet the eligibility criteria. The next step is for the adviser to call the lead back within one working day to provide them with an exact quote for the Plus plan.",
+  "next_action": "Quote from the rate table, then arrange: require medical questionnaire.",
+  "turns": 10,
+  "contact_held": false
+}

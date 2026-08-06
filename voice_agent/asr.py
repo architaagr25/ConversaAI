@@ -46,19 +46,30 @@ class MarketASR:
     regional_varieties: list[str] = field(default_factory=list)
 
 
+# A hint is not free, and this is the thing to know about it before adding a
+# word. The recogniser is being told what to expect, and when it cannot make
+# out the audio it falls back on exactly that. Whatever is in here is what
+# comes back when a caller mumbles or the line is poor.
+#
+# So the rule is: only words a general recogniser gets wrong. "Cicilan" and
+# "bancassurance" earn their place. "Premium", "rider" and "Essential, Plus,
+# Max" did not — they are ordinary English, spelled correctly without any help,
+# and they were what came back. A live call spent several turns answering "and
+# the plus, max", which nobody had said. The plan names were the whole of the
+# cost and none of the benefit.
 MARKETS: dict[str, MarketASR] = {
     "health_ph_en": MarketASR(
         business_unit="health_ph_en",
         label="English, Philippines",
         language_hint="en",
-        prompt=(
-            "Solara Health Shield, premium, waiting period, pre-existing "
-            "condition, rider, deductible, accredited hospital, grace period, "
-            "Essential, Plus, Max"
-        ),
+        # The product name and one term of art. Everything else this market
+        # says is ordinary English and needs no help.
+        prompt="Solara Health Shield, pre-existing condition, bancassurance",
         why=(
             "Callers use English throughout on this product, so the hint is "
-            "safe and slightly improves the handling of Filipino place names."
+            "safe. Kept to the product name and the terms a general recogniser "
+            "actually gets wrong: anything else in here is what comes back "
+            "when it cannot make out the audio."
         ),
     ),
 
@@ -67,10 +78,12 @@ MARKETS: dict[str, MarketASR] = {
         label="Taglish, Philippines",
         # Deliberately unset. See why.
         language_hint=None,
+        # Tagalog finance words and the English terms of art. "Premium",
+        # "rider" and "bayad" came out of here: all three are spelled right
+        # without help, in either language.
         prompt=(
-            "Solara Life, magkano, premium, hulog, bayad, benepisyaryo, "
-            "beneficiary, rider, ma-lapse, lapse, reinstatement, "
-            "bancassurance, sum assured, kada buwan, takdang araw, grace period"
+            "Solara Life, magkano, hulog, benepisyaryo, ma-lapse, "
+            "reinstatement, bancassurance, sum assured, kada buwan"
         ),
         why=(
             "Taglish switches language inside a sentence. Forcing Tagalog "
@@ -85,9 +98,14 @@ MARKETS: dict[str, MarketASR] = {
         business_unit="multifinance_id",
         label="Bahasa Indonesia",
         language_hint="id",
+        # "Tenor", "denda" and "uang muka" came out. They are everyday
+        # Indonesian and the recogniser has never had trouble with them. What
+        # is left is the vocabulary that is specific to this business, plus the
+        # regional politeness markers, which are short and genuinely lost
+        # without help.
         prompt=(
-            "Solara Multifinance, cicilan, angsuran, tenor, denda, jatuh "
-            "tempo, DP, uang muka, pembiayaan, BPKB, plafon, restrukturisasi, "
+            "Solara Multifinance, cicilan, angsuran, jatuh tempo, "
+            "pembiayaan, BPKB, plafon, restrukturisasi, "
             "nuwun sewu, monggo, nggih, punten, hatur nuhun"
         ),
         why=(

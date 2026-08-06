@@ -182,8 +182,12 @@ seconds and failed over anyway, so the caller heard three seconds of silence to
 reach the same answer.
 
 **Groq Whisper for recognition, Deepgram measured against it.** 97% against
-69% overall, and the gap is entirely Taglish and regional speech. Latency
-decides it independently: 559 ms against 4481 ms.
+73% overall, and the gap is entirely Taglish and regional speech. Latency
+decides it independently: 346 ms against 3141 ms.
+
+**Short domain hints.** A hint is also a list of words the recogniser hands
+back when it cannot make out the audio, so it carries only terms a general
+recogniser gets wrong. Cutting the ordinary words out left accuracy at 97%.
 
 **Hosted embeddings, not local.** A local model scored −0.024 on
 Tagalog against English, worse than random. Hosted scored +0.895.

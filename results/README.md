@@ -86,8 +86,8 @@ Two providers over 18 utterances, identical audio to both:
 
 | Provider | Overall | Standard | Regional | Median latency |
 | --- | --- | --- | --- | --- |
-| Groq Whisper | **97%** | 99% | 90% | **559 ms** |
-| Deepgram | 69% | 68% | 74% | 4481 ms |
+| Groq Whisper | **97%** | 99% | 90% | **346 ms** |
+| Deepgram | 73% | 73% | 74% | 3141 ms |
 
 They are level on English and standard Indonesian. Everything separating them
 is Taglish and regional speech, which is the part of the brief that matters.
@@ -96,6 +96,14 @@ Deepgram returned nothing at all for plain Tagalog.
 Four native-language calls, two per market, including a Javanese caller outside
 Jakarta. Three localisation examples per market, drawn from those calls rather
 than written for the report.
+
+The domain hint each market sends is deliberately short, and that is a
+correctness decision rather than a tidiness one. Whatever is in the hint is
+what the recogniser reaches for when it cannot make out the audio: a live call
+came back with "and the plus, max", which nobody had said, out of a hint ending
+"Essential, Plus, Max". The hints now carry only terms a general recogniser
+gets wrong. Accuracy was unchanged at 97% after the cut, which says the
+ordinary words were never earning anything.
 
 **Reproduce:** `.venv\Scripts\python scripts/evaluate_asr.py`
 
