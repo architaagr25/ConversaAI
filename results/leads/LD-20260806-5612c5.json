@@ -1,0 +1,30 @@
+{
+  "lead_id": "LD-20260806-5612c5",
+  "created_at": "2026-08-06T09:03:06+00:00",
+  "business_unit": "life_ph",
+  "pack_id": "life_ph",
+  "collected": {},
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [
+    "residency"
+  ],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [
+    "web/life-philippines.html#Magkano po ang premium ko?",
+    "web/life-philippines.html#Paying your premium",
+    "web/life-philippines.html#Ano po ang mangyayari kung ma-lapse ang policy ko?",
+    "forms/lead_form_export.csv#business_unit",
+    "web/life-philippines.html#Beneficiaries",
+    "rules/qualification_rules.yaml#life_ph.soft_rules"
+  ],
+  "summary": "Tumawag ang caller upang pag-usapan ang premium payment ngunit hindi naging malinaw kung siya ang policyholder dahil ang sabi niya ay \"depot\", \"Penta sa isingko po ako\", \"sa Maynila po ako nakatira\", at \"Sumahal po yata para sa aking ngayon.\" Batay sa usapan, hindi sapat ang nakolektang impormasyon para makapagpasya sa eligibility dahil kulang pa ang detalye tungkol sa kanyang residency. Ang susunod na hakbang para sa hahawak ng lead na ito ay tawagan muli ang caller sa kanyang gustong oras upang kumpirmahin ang kanyang pagkakakilanlan at kunin ang nawawalang impormasyon ukol sa kanyang residency.",
+  "next_action": "Call back to complete qualification. Still needed: residency.",
+  "turns": 4,
+  "contact_held": false
+}

@@ -3,73 +3,67 @@
   "pack": "life_ph",
   "lines": [
     {
-      "at": 9.4,
+      "at": 3.24,
       "speaker": "agent",
       "text": "Magandang araw po, si Ella po ito from Solara Life Philippines. Tumatawag po ako tungkol sa premium payment ninyo. May oras po ba kayo sandali?"
     },
     {
-      "at": 37.44,
+      "at": 27.0,
       "speaker": "caller",
-      "text": "Oppo, bayadepo"
+      "text": "depot"
     },
     {
-      "at": 37.44,
+      "at": 27.0,
       "speaker": "agent",
-      "text": "Salamat po sa inyong tugon. Kayo po ba si Ma'am o Sir, ang policyholder na tumatawag?",
-      "grounded": true,
-      "sought_knowledge": true,
+      "text": "Pasensya na po, pero hindi ko po sigurado iyan. Ayoko pong magbigay ng maling impormasyon sa inyo.\nKayo po ba si Ma'am o Sir, ang policyholder?",
+      "grounded": false,
+      "sought_knowledge": false,
       "refused": false,
-      "citations": [
-        "forms/lead_form_export.csv#Product Interest",
-        "forms/lead_form_export.csv#business_unit",
-        "forms/lead_form_export.csv#fields",
-        "web/life-philippines.html#Beneficiaries",
-        "web/partners.html#Training and support"
-      ]
+      "citations": []
     },
     {
-      "at": 60.89,
+      "at": 53.72,
       "speaker": "caller",
-      "text": "40-5 po ako."
+      "text": "Penta sa isingko po ako"
     },
     {
-      "at": 60.89,
+      "at": 53.72,
       "speaker": "agent",
-      "text": "Salamat po sa paglilinaw. Kayo po ba ang policyholder na siyang may-ari ng policy na ating pinag-uusapan?",
+      "text": "Pasensya na po, hindi ko po masyadong narinig ang sinabi ninyo. Kayo po ba ang policyholder na siyang may-ari ng policy na ito?",
       "grounded": true,
       "sought_knowledge": true,
       "refused": false,
       "citations": [
         "web/life-philippines.html#Magkano po ang premium ko?",
         "web/life-philippines.html#Paying your premium",
-        "web/partners.html#Commission structure",
         "web/life-philippines.html#Ano po ang mangyayari kung ma-lapse ang policy ko?",
-        "forms/lead_form_export.csv#fields"
+        "forms/lead_form_export.csv#business_unit",
+        "web/life-philippines.html#Beneficiaries"
       ]
     },
     {
-      "at": 85.23,
+      "at": 76.25,
       "speaker": "caller",
       "text": "sa Maynila po ako nakatira."
     },
     {
-      "at": 85.23,
+      "at": 76.25,
       "speaker": "agent",
-      "text": "Salamat po sa impormasyon. Kumpirmado po ba na kayo ang policyholder ng account na ito?",
+      "text": "Salamat po sa pagbabahagi ninyo ng impormasyon. Maaari ko po bang malaman kung kayo ang policyholder ng account na ito para masimulan na po natin ang ating usapan?",
       "grounded": false,
       "sought_knowledge": true,
       "refused": false,
       "citations": []
     },
     {
-      "at": 109.9,
+      "at": 104.7,
       "speaker": "caller",
-      "text": "Medyo mahal po yata para sa akin ngayon"
+      "text": "Sumahal po yata para sa aking ngayon."
     },
     {
-      "at": 109.9,
+      "at": 104.7,
       "speaker": "agent",
-      "text": "Naiintindihan ko po ang inyong sitwasyon. Maaari ko po bang malaman kung kaya niyo po itong mabayaran bago matapos ang grace period na tatlumpu't isang araw?",
+      "text": "Naiintindihan ko po ang inyong sitwasyon. Mayroon po tayong grace period na thirty-one days para sa inyong premium, kung saan tuloy pa rin po ang inyong coverage.\nKaya niyo po bang mabayaran ang inyong premium bago matapos ang grace period na ito?",
       "grounded": true,
       "sought_knowledge": true,
       "refused": false,
@@ -77,34 +71,14 @@
         "web/life-philippines.html#Magkano po ang premium ko?",
         "web/life-philippines.html#Paying your premium",
         "web/life-philippines.html#Ano po ang mangyayari kung ma-lapse ang policy ko?",
-        "rules/qualification_rules.yaml#life_ph.soft_rules",
-        "rules/qualification_rules.yaml#prohibited"
-      ]
-    },
-    {
-      "at": 137.11,
-      "speaker": "caller",
-      "text": "Ano po ang mangyayari kung malapse ang policy ko?"
-    },
-    {
-      "at": 137.11,
-      "speaker": "agent",
-      "text": "Naiintindihan ko po ang inyong pag-aalala. Kung ma-lapse po ang inyong policy, hihinto ang inyong coverage, ngunit kung may cash value na po ito, maaari itong ituloy gamit ang automatic premium loan o kaya ay i-reinstate sa loob ng tatlong taon.\nNais ko lang pong itanong, saan po kayo mas madaling magbayad, sa bank, sa branch, o online?",
-      "grounded": true,
-      "sought_knowledge": true,
-      "refused": false,
-      "citations": [
-        "web/life-philippines.html#Ano po ang mangyayari kung ma-lapse ang policy ko?",
-        "web/life-philippines.html#Lapse and reinstatement",
-        "rules/qualification_rules.yaml#prohibited",
-        "web/partners.html#Commission structure",
-        "web/life-philippines.html#Paying your premium"
+        "forms/lead_form_export.csv#business_unit",
+        "rules/qualification_rules.yaml#life_ph.soft_rules"
       ]
     }
   ],
   "summary": {
     "pack": "life_ph",
-    "turns": 5,
+    "turns": 4,
     "collected": {},
     "corrections": [],
     "eligible": true,
@@ -117,35 +91,45 @@
     "escalated_to": "",
     "unanswered": [],
     "citations": [
-      "forms/lead_form_export.csv#Product Interest",
-      "forms/lead_form_export.csv#business_unit",
-      "forms/lead_form_export.csv#fields",
-      "web/life-philippines.html#Beneficiaries",
-      "web/partners.html#Training and support",
       "web/life-philippines.html#Magkano po ang premium ko?",
       "web/life-philippines.html#Paying your premium",
-      "web/partners.html#Commission structure",
       "web/life-philippines.html#Ano po ang mangyayari kung ma-lapse ang policy ko?",
-      "rules/qualification_rules.yaml#life_ph.soft_rules",
-      "rules/qualification_rules.yaml#prohibited",
-      "web/life-philippines.html#Lapse and reinstatement"
+      "forms/lead_form_export.csv#business_unit",
+      "web/life-philippines.html#Beneficiaries",
+      "rules/qualification_rules.yaml#life_ph.soft_rules"
     ],
     "barge_ins": 0,
     "failed_recognitions": 0,
-    "transcript": "agent: Magandang araw po, si Ella po ito from Solara Life Philippines. Tumatawag po ako tungkol sa premium payment ninyo. May oras po ba kayo sandali?\ncaller: Oppo, bayadepo\nagent: Salamat po sa inyong tugon. Kayo po ba si Ma'am o Sir, ang policyholder na tumatawag?\ncaller: 40-5 po ako.\nagent: Salamat po sa paglilinaw. Kayo po ba ang policyholder na siyang may-ari ng policy na ating pinag-uusapan?\ncaller: sa Maynila po ako nakatira.\nagent: Salamat po sa impormasyon. Kumpirmado po ba na kayo ang policyholder ng account na ito?\ncaller: Medyo mahal po yata para sa akin ngayon\nagent: Naiintindihan ko po ang inyong sitwasyon. Maaari ko po bang malaman kung kaya niyo po itong mabayaran bago matapos ang grace period na tatlumpu't isang araw?\ncaller: Ano po ang mangyayari kung malapse ang policy ko?\nagent: Naiintindihan ko po ang inyong pag-aalala. Kung ma-lapse po ang inyong policy, hihinto ang inyong coverage, ngunit kung may cash value na po ito, maaari itong ituloy gamit ang automatic premium loan o kaya ay i-reinstate sa loob ng tatlong taon.\nNais ko lang pong itanong, saan po kayo mas madaling magbayad, sa bank, sa branch, o online?\nagent: Sige po, tatawag na lang po ulit kami sa oras na sinabi ninyo. Salamat po, ingat.",
+    "nudges": [],
+    "live_analysis": {
+      "fired": [],
+      "suppressed": [],
+      "counts": {
+        "fired": 0,
+        "suppressed": 0
+      },
+      "turns_analysed": 4,
+      "turns_skipped": 0,
+      "deliberated": 0,
+      "latency_ms": {
+        "p50": 0.10250002378597856,
+        "p95": 0.12330000754445791,
+        "max": 0.12330000754445791
+      }
+    },
+    "transcript": "agent: Magandang araw po, si Ella po ito from Solara Life Philippines. Tumatawag po ako tungkol sa premium payment ninyo. May oras po ba kayo sandali?\ncaller: depot\nagent: Pasensya na po, pero hindi ko po sigurado iyan. Ayoko pong magbigay ng maling impormasyon sa inyo.\nKayo po ba si Ma'am o Sir, ang policyholder?\ncaller: Penta sa isingko po ako\nagent: Pasensya na po, hindi ko po masyadong narinig ang sinabi ninyo. Kayo po ba ang policyholder na siyang may-ari ng policy na ito?\ncaller: sa Maynila po ako nakatira.\nagent: Salamat po sa pagbabahagi ninyo ng impormasyon. Maaari ko po bang malaman kung kayo ang policyholder ng account na ito para masimulan na po natin ang ating usapan?\ncaller: Sumahal po yata para sa aking ngayon.\nagent: Naiintindihan ko po ang inyong sitwasyon. Mayroon po tayong grace period na thirty-one days para sa inyong premium, kung saan tuloy pa rin po ang inyong coverage.\nKaya niyo po bang mabayaran ang inyong premium bago matapos ang grace period na ito?\nagent: Sige po, tatawag na lang po ulit kami sa oras na sinabi ninyo. Salamat po, ingat.",
     "actions": {
-      "lead_id": "LD-20260806-af3871",
+      "lead_id": "LD-20260806-5612c5",
       "outcome": "incomplete",
       "next_action": "Call back to complete qualification. Still needed: residency.",
-      "working_copy": "D:\\ConversaAI\\data\\leads\\LD-20260806-af3871.json",
-      "evidence_copy": "D:\\ConversaAI\\results\\leads\\LD-20260806-af3871.json"
+      "working_copy": "D:\\ConversaAI\\data\\leads\\LD-20260806-5612c5.json",
+      "evidence_copy": "D:\\ConversaAI\\results\\leads\\LD-20260806-5612c5.json"
     }
   },
   "turn_latency_ms": [
-    4065,
-    4949,
-    5462,
-    5892,
-    4722
+    4239,
+    4070,
+    5045,
+    6333
   ]
 }

@@ -1,25 +1,18 @@
 Call: id_collections
 Pack: multifinance_id
 
-[  3.23s] Agent: Selamat siang, dengan Bapak atau Ibu yang bersangkutan? Saya Dimas dari Solara Multifinance. Saya menghubungi terkait cicilan bulan ini. Apakah ada waktu sebentar?
-[ 39.60s] Caller: Sosan
-[ 39.60s] Agent: Selamat siang. Mohon maaf, untuk yang itu saya belum ada datanya, saya cek dulu ya. Sebelumnya, boleh saya konfirmasi, betul ini dengan nasabah yang bersangkutan?
-[ 77.11s] Caller: Nanti aja ya, lagi susah bulan ini
-[ 77.11s] Agent: Saya mengerti kondisi Bapak. Kalau boleh tahu, apakah Bapak sudah tahu kalau cicilannya sudah jatuh tempo?
+[  7.15s] Agent: Selamat siang, dengan Bapak atau Ibu yang bersangkutan? Saya Dimas dari Solara Multifinance. Saya menghubungi terkait cicilan bulan ini. Apakah ada waktu sebentar?
+[ 53.84s] Caller: Belum sempat pak, nanti aja ya, lagi susah bulan ini
+[ 53.84s] Agent: Saya mengerti kondisinya sedang sulit ya, Pak. Kalau boleh saya tahu, apakah Bapak sudah tahu kalau cicilannya sudah jatuh tempo? Dan mohon maaf sebelumnya, apakah betul ini dengan Bapak yang bersangkutan?
            source: documents/multifinance_agreement_terms.pdf#Pasal 1 Kewajiban Pembayaran
            source: documents/multifinance_agreement_terms.pdf#Multifinance Agreement Terms
            source: rules/qualification_rules.yaml#multifinance_id.hard_rules
            source: web/multifinance-indonesia.html#Pembayaran angsuran
-           source: web/multifinance-indonesia.html#Pembiayaan Motor
-[106.06s] Caller: Mungkin minggu depan setelah gajian
-[106.06s] Agent: Terima kasih atas informasinya, Bapak. Boleh saya konfirmasi sekali lagi, apakah betul saya sedang berbicara dengan Bapak Sosan selaku nasabah yang bersangkutan?
-           source: documents/multifinance_agreement_terms.pdf#Pasal 2 Denda Keterlambatan
-           source: documents/multifinance_agreement_terms.pdf#Pasal 4 Pelunasan Dipercepat
-           source: web/multifinance-indonesia.html#Pembiayaan Mobil Baru
-           source: web/multifinance-indonesia.html#Keterlambatan pembayaran
-           source: web/multifinance-indonesia.html#BPKB saya ditahan sampai kapan?
-[140.85s] Caller: Kalau telat bayar cicilan seminggu
-[140.85s] Agent: Untuk keterlambatan pembayaran, akan dikenakan denda sebesar nol koma lima persen per hari dari jumlah cicilan yang tertunggak, dihitung sejak hari pertama setelah tanggal jatuh tempo. Namun, total denda tersebut tidak akan melebihi tiga puluh persen dari nilai satu angsuran Bapak. Apakah ada hal lain yang ingin Bapak tanyakan terkait hal ini?
+           source: web/multifinance-indonesia.html#Dokumen yang diperlukan
+[ 88.85s] Caller: gajian
+[ 88.85s] Agent: Terima kasih informasinya, Pak. Mohon maaf, untuk memastikan data saya, boleh saya konfirmasi apakah betul ini dengan Bapak yang bersangkutan?
+[120.00s] Caller: kalau telat bayar cicilan seminggu?
+[120.00s] Agent: Jika Bapak terlambat satu minggu, akan dikenakan denda sebesar nol koma lima persen per hari dari jumlah angsuran yang tertunggak, Pak. Perhitungannya dimulai sejak hari pertama setelah tanggal jatuh tempo dan total denda maksimal adalah tiga puluh persen dari nilai satu angsuran. Apakah Bapak bisa memastikan kembali, apakah betul saya sedang berbicara dengan nasabah yang bersangkutan?
            source: documents/multifinance_agreement_terms.pdf#Pasal 2 Denda Keterlambatan
            source: documents/multifinance_agreement_terms.pdf#Pasal 1 Kewajiban Pembayaran
            source: web/multifinance-indonesia.html#Keterlambatan pembayaran
@@ -29,7 +22,7 @@ Pack: multifinance_id
 Summary
 ----------------------------------------
 pack: multifinance_id
-turns: 4
+turns: 3
 collected: {}
 corrections: []
 eligible: True
@@ -39,7 +32,9 @@ requirements: []
 missing: ['age', 'age_at_tenor_end', 'has_existing_arrears', 'has_valid_ktp', 'installment_to_income', 'monthly_income']
 escalated_to: 
 unanswered: []
-citations: ['documents/multifinance_agreement_terms.pdf#Pasal 1 Kewajiban Pembayaran', 'documents/multifinance_agreement_terms.pdf#Multifinance Agreement Terms', 'rules/qualification_rules.yaml#multifinance_id.hard_rules', 'web/multifinance-indonesia.html#Pembayaran angsuran', 'web/multifinance-indonesia.html#Pembiayaan Motor', 'documents/multifinance_agreement_terms.pdf#Pasal 2 Denda Keterlambatan', 'documents/multifinance_agreement_terms.pdf#Pasal 4 Pelunasan Dipercepat', 'web/multifinance-indonesia.html#Pembiayaan Mobil Baru', 'web/multifinance-indonesia.html#Keterlambatan pembayaran', 'web/multifinance-indonesia.html#BPKB saya ditahan sampai kapan?', 'web/multifinance-indonesia.html#Kesulitan membayar']
+citations: ['documents/multifinance_agreement_terms.pdf#Pasal 1 Kewajiban Pembayaran', 'documents/multifinance_agreement_terms.pdf#Multifinance Agreement Terms', 'rules/qualification_rules.yaml#multifinance_id.hard_rules', 'web/multifinance-indonesia.html#Pembayaran angsuran', 'web/multifinance-indonesia.html#Dokumen yang diperlukan', 'documents/multifinance_agreement_terms.pdf#Pasal 2 Denda Keterlambatan', 'web/multifinance-indonesia.html#Keterlambatan pembayaran', 'web/multifinance-indonesia.html#Kesulitan membayar']
 barge_ins: 0
 failed_recognitions: 0
-actions: {'lead_id': 'LD-20260806-179b9e', 'outcome': 'incomplete', 'next_action': 'Call back to complete qualification. Still needed: age, age_at_tenor_end, has_existing_arrears, has_valid_ktp, installment_to_income, monthly_income.', 'working_copy': 'D:\\ConversaAI\\data\\leads\\LD-20260806-179b9e.json', 'evidence_copy': 'D:\\ConversaAI\\results\\leads\\LD-20260806-179b9e.json'}
+nudges: [{'kind': 'hardship', 'advice': 'Genuine difficulty, not an objection. Stop asking for payment and offer the restructuring options.', 'priority': 80, 'confidence': 0.72, 'evidence': 'lagi susah', 'turn': 1, 'audience': 'supervisor', 'latency_ms': 2061.4353000419214}]
+live_analysis: {'fired': [{'kind': 'hardship', 'advice': 'Genuine difficulty, not an objection. Stop asking for payment and offer the restructuring options.', 'priority': 80, 'confidence': 0.72, 'evidence': 'lagi susah', 'turn': 1, 'audience': 'supervisor', 'latency_ms': 2061.4353000419214}], 'suppressed': [{'kind': 'churn_risk', 'reason': 'another nudge this turn', 'turn': 1}, {'kind': 'soft_refusal', 'reason': 'another nudge this turn', 'turn': 1}], 'counts': {'fired': 1, 'suppressed': 2}, 'turns_analysed': 3, 'turns_skipped': 0, 'deliberated': 1, 'latency_ms': {'p50': 0.10230002226307988, 'p95': 2061.4353000419214, 'max': 2061.4353000419214}}
+actions: {'lead_id': 'LD-20260806-33372d', 'outcome': 'incomplete', 'next_action': 'Call back to complete qualification. Still needed: age, age_at_tenor_end, has_existing_arrears, has_valid_ktp, installment_to_income, monthly_income.', 'working_copy': 'D:\\ConversaAI\\data\\leads\\LD-20260806-33372d.json', 'evidence_copy': 'D:\\ConversaAI\\results\\leads\\LD-20260806-33372d.json'}

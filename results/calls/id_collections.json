@@ -3,33 +3,19 @@
   "pack": "multifinance_id",
   "lines": [
     {
-      "at": 3.23,
+      "at": 7.15,
       "speaker": "agent",
       "text": "Selamat siang, dengan Bapak atau Ibu yang bersangkutan? Saya Dimas dari Solara Multifinance. Saya menghubungi terkait cicilan bulan ini. Apakah ada waktu sebentar?"
     },
     {
-      "at": 39.6,
+      "at": 53.84,
       "speaker": "caller",
-      "text": "Sosan"
+      "text": "Belum sempat pak, nanti aja ya, lagi susah bulan ini"
     },
     {
-      "at": 39.6,
+      "at": 53.84,
       "speaker": "agent",
-      "text": "Selamat siang. Mohon maaf, untuk yang itu saya belum ada datanya, saya cek dulu ya. Sebelumnya, boleh saya konfirmasi, betul ini dengan nasabah yang bersangkutan?",
-      "grounded": false,
-      "sought_knowledge": false,
-      "refused": false,
-      "citations": []
-    },
-    {
-      "at": 77.11,
-      "speaker": "caller",
-      "text": "Nanti aja ya, lagi susah bulan ini"
-    },
-    {
-      "at": 77.11,
-      "speaker": "agent",
-      "text": "Saya mengerti kondisi Bapak. Kalau boleh tahu, apakah Bapak sudah tahu kalau cicilannya sudah jatuh tempo?",
+      "text": "Saya mengerti kondisinya sedang sulit ya, Pak. Kalau boleh saya tahu, apakah Bapak sudah tahu kalau cicilannya sudah jatuh tempo? Dan mohon maaf sebelumnya, apakah betul ini dengan Bapak yang bersangkutan?",
       "grounded": true,
       "sought_knowledge": true,
       "refused": false,
@@ -38,38 +24,32 @@
         "documents/multifinance_agreement_terms.pdf#Multifinance Agreement Terms",
         "rules/qualification_rules.yaml#multifinance_id.hard_rules",
         "web/multifinance-indonesia.html#Pembayaran angsuran",
-        "web/multifinance-indonesia.html#Pembiayaan Motor"
+        "web/multifinance-indonesia.html#Dokumen yang diperlukan"
       ]
     },
     {
-      "at": 106.06,
+      "at": 88.85,
       "speaker": "caller",
-      "text": "Mungkin minggu depan setelah gajian"
+      "text": "gajian"
     },
     {
-      "at": 106.06,
+      "at": 88.85,
       "speaker": "agent",
-      "text": "Terima kasih atas informasinya, Bapak. Boleh saya konfirmasi sekali lagi, apakah betul saya sedang berbicara dengan Bapak Sosan selaku nasabah yang bersangkutan?",
-      "grounded": true,
-      "sought_knowledge": true,
+      "text": "Terima kasih informasinya, Pak. Mohon maaf, untuk memastikan data saya, boleh saya konfirmasi apakah betul ini dengan Bapak yang bersangkutan?",
+      "grounded": false,
+      "sought_knowledge": false,
       "refused": false,
-      "citations": [
-        "documents/multifinance_agreement_terms.pdf#Pasal 2 Denda Keterlambatan",
-        "documents/multifinance_agreement_terms.pdf#Pasal 4 Pelunasan Dipercepat",
-        "web/multifinance-indonesia.html#Pembiayaan Mobil Baru",
-        "web/multifinance-indonesia.html#Keterlambatan pembayaran",
-        "web/multifinance-indonesia.html#BPKB saya ditahan sampai kapan?"
-      ]
+      "citations": []
     },
     {
-      "at": 140.85,
+      "at": 120.0,
       "speaker": "caller",
-      "text": "Kalau telat bayar cicilan seminggu"
+      "text": "kalau telat bayar cicilan seminggu?"
     },
     {
-      "at": 140.85,
+      "at": 120.0,
       "speaker": "agent",
-      "text": "Untuk keterlambatan pembayaran, akan dikenakan denda sebesar nol koma lima persen per hari dari jumlah cicilan yang tertunggak, dihitung sejak hari pertama setelah tanggal jatuh tempo. Namun, total denda tersebut tidak akan melebihi tiga puluh persen dari nilai satu angsuran Bapak. Apakah ada hal lain yang ingin Bapak tanyakan terkait hal ini?",
+      "text": "Jika Bapak terlambat satu minggu, akan dikenakan denda sebesar nol koma lima persen per hari dari jumlah angsuran yang tertunggak, Pak. Perhitungannya dimulai sejak hari pertama setelah tanggal jatuh tempo dan total denda maksimal adalah tiga puluh persen dari nilai satu angsuran. Apakah Bapak bisa memastikan kembali, apakah betul saya sedang berbicara dengan nasabah yang bersangkutan?",
       "grounded": true,
       "sought_knowledge": true,
       "refused": false,
@@ -84,7 +64,7 @@
   ],
   "summary": {
     "pack": "multifinance_id",
-    "turns": 4,
+    "turns": 3,
     "collected": {},
     "corrections": [],
     "eligible": true,
@@ -106,29 +86,75 @@
       "documents/multifinance_agreement_terms.pdf#Multifinance Agreement Terms",
       "rules/qualification_rules.yaml#multifinance_id.hard_rules",
       "web/multifinance-indonesia.html#Pembayaran angsuran",
-      "web/multifinance-indonesia.html#Pembiayaan Motor",
+      "web/multifinance-indonesia.html#Dokumen yang diperlukan",
       "documents/multifinance_agreement_terms.pdf#Pasal 2 Denda Keterlambatan",
-      "documents/multifinance_agreement_terms.pdf#Pasal 4 Pelunasan Dipercepat",
-      "web/multifinance-indonesia.html#Pembiayaan Mobil Baru",
       "web/multifinance-indonesia.html#Keterlambatan pembayaran",
-      "web/multifinance-indonesia.html#BPKB saya ditahan sampai kapan?",
       "web/multifinance-indonesia.html#Kesulitan membayar"
     ],
     "barge_ins": 0,
     "failed_recognitions": 0,
-    "transcript": "agent: Selamat siang, dengan Bapak atau Ibu yang bersangkutan? Saya Dimas dari Solara Multifinance. Saya menghubungi terkait cicilan bulan ini. Apakah ada waktu sebentar?\ncaller: Sosan\nagent: Selamat siang. Mohon maaf, untuk yang itu saya belum ada datanya, saya cek dulu ya. Sebelumnya, boleh saya konfirmasi, betul ini dengan nasabah yang bersangkutan?\ncaller: Nanti aja ya, lagi susah bulan ini\nagent: Saya mengerti kondisi Bapak. Kalau boleh tahu, apakah Bapak sudah tahu kalau cicilannya sudah jatuh tempo?\ncaller: Mungkin minggu depan setelah gajian\nagent: Terima kasih atas informasinya, Bapak. Boleh saya konfirmasi sekali lagi, apakah betul saya sedang berbicara dengan Bapak Sosan selaku nasabah yang bersangkutan?\ncaller: Kalau telat bayar cicilan seminggu\nagent: Untuk keterlambatan pembayaran, akan dikenakan denda sebesar nol koma lima persen per hari dari jumlah cicilan yang tertunggak, dihitung sejak hari pertama setelah tanggal jatuh tempo. Namun, total denda tersebut tidak akan melebihi tiga puluh persen dari nilai satu angsuran Bapak. Apakah ada hal lain yang ingin Bapak tanyakan terkait hal ini?\nagent: Baik Pak, Bu, nanti kami hubungi lagi di waktu yang lebih pas. Terima kasih.",
+    "nudges": [
+      {
+        "kind": "hardship",
+        "advice": "Genuine difficulty, not an objection. Stop asking for payment and offer the restructuring options.",
+        "priority": 80,
+        "confidence": 0.72,
+        "evidence": "lagi susah",
+        "turn": 1,
+        "audience": "supervisor",
+        "latency_ms": 2061.4353000419214
+      }
+    ],
+    "live_analysis": {
+      "fired": [
+        {
+          "kind": "hardship",
+          "advice": "Genuine difficulty, not an objection. Stop asking for payment and offer the restructuring options.",
+          "priority": 80,
+          "confidence": 0.72,
+          "evidence": "lagi susah",
+          "turn": 1,
+          "audience": "supervisor",
+          "latency_ms": 2061.4353000419214
+        }
+      ],
+      "suppressed": [
+        {
+          "kind": "churn_risk",
+          "reason": "another nudge this turn",
+          "turn": 1
+        },
+        {
+          "kind": "soft_refusal",
+          "reason": "another nudge this turn",
+          "turn": 1
+        }
+      ],
+      "counts": {
+        "fired": 1,
+        "suppressed": 2
+      },
+      "turns_analysed": 3,
+      "turns_skipped": 0,
+      "deliberated": 1,
+      "latency_ms": {
+        "p50": 0.10230002226307988,
+        "p95": 2061.4353000419214,
+        "max": 2061.4353000419214
+      }
+    },
+    "transcript": "agent: Selamat siang, dengan Bapak atau Ibu yang bersangkutan? Saya Dimas dari Solara Multifinance. Saya menghubungi terkait cicilan bulan ini. Apakah ada waktu sebentar?\ncaller: Belum sempat pak, nanti aja ya, lagi susah bulan ini\nagent: Saya mengerti kondisinya sedang sulit ya, Pak. Kalau boleh saya tahu, apakah Bapak sudah tahu kalau cicilannya sudah jatuh tempo? Dan mohon maaf sebelumnya, apakah betul ini dengan Bapak yang bersangkutan?\ncaller: gajian\nagent: Terima kasih informasinya, Pak. Mohon maaf, untuk memastikan data saya, boleh saya konfirmasi apakah betul ini dengan Bapak yang bersangkutan?\ncaller: kalau telat bayar cicilan seminggu?\nagent: Jika Bapak terlambat satu minggu, akan dikenakan denda sebesar nol koma lima persen per hari dari jumlah angsuran yang tertunggak, Pak. Perhitungannya dimulai sejak hari pertama setelah tanggal jatuh tempo dan total denda maksimal adalah tiga puluh persen dari nilai satu angsuran. Apakah Bapak bisa memastikan kembali, apakah betul saya sedang berbicara dengan nasabah yang bersangkutan?\nagent: Baik Pak, Bu, nanti kami hubungi lagi di waktu yang lebih pas. Terima kasih.",
     "actions": {
-      "lead_id": "LD-20260806-179b9e",
+      "lead_id": "LD-20260806-33372d",
       "outcome": "incomplete",
       "next_action": "Call back to complete qualification. Still needed: age, age_at_tenor_end, has_existing_arrears, has_valid_ktp, installment_to_income, monthly_income.",
-      "working_copy": "D:\\ConversaAI\\data\\leads\\LD-20260806-179b9e.json",
-      "evidence_copy": "D:\\ConversaAI\\results\\leads\\LD-20260806-179b9e.json"
+      "working_copy": "D:\\ConversaAI\\data\\leads\\LD-20260806-33372d.json",
+      "evidence_copy": "D:\\ConversaAI\\results\\leads\\LD-20260806-33372d.json"
     }
   },
   "turn_latency_ms": [
-    4920,
-    4906,
-    5263,
-    6948
+    4600,
+    3916,
+    7017
   ]
 }

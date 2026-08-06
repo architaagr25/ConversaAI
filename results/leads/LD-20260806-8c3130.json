@@ -1,0 +1,37 @@
+{
+  "lead_id": "LD-20260806-8c3130",
+  "created_at": "2026-08-06T08:55:10+00:00",
+  "business_unit": "multifinance_id",
+  "pack_id": "multifinance_id",
+  "collected": {},
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [
+    "age",
+    "age_at_tenor_end",
+    "has_existing_arrears",
+    "has_valid_ktp",
+    "installment_to_income",
+    "monthly_income"
+  ],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [
+    "documents/multifinance_agreement_terms.pdf#Pasal 1 Kewajiban Pembayaran",
+    "documents/multifinance_agreement_terms.pdf#Multifinance Agreement Terms",
+    "rules/qualification_rules.yaml#multifinance_id.hard_rules",
+    "web/multifinance-indonesia.html#Pembayaran angsuran",
+    "web/multifinance-indonesia.html#Dokumen yang diperlukan",
+    "documents/multifinance_agreement_terms.pdf#Pasal 2 Denda Keterlambatan",
+    "documents/multifinance_agreement_terms.pdf#Pasal 5 Restrukturisasi",
+    "web/multifinance-indonesia.html#Keterlambatan pembayaran"
+  ],
+  "summary": "Penelepon menghubungi untuk menanyakan denda keterlambatan pembayaran dengan mengatakan, \"Berapa denda kalau telat bayar cicilan seminggu?\", namun ia enggan berbicara lebih lanjut saat ini dan menyatakan, \"Belum sempat pak, nanti aja ya, lagi susah bulan ini\". Berdasarkan percakapan tersebut, identitas penelepon belum dapat dikonfirmasi dan data penting seperti usia, usia di akhir tenor, status tunggakan saat ini, kepemilikan KTP yang valid, rasio cicilan terhadap pendapatan, serta pendapatan bulanan belum berhasil dikumpulkan, sehingga keputusan kelayakan belum dapat ditentukan. Langkah selanjutnya untuk penasihat adalah menghubungi kembali nasabah di waktu yang lebih tepat untuk mengonfirmasi identitasnya serta mengumpulkan seluruh data yang hilang tersebut guna menentukan kelayakan.",
+  "next_action": "Call back to complete qualification. Still needed: age, age_at_tenor_end, has_existing_arrears, has_valid_ktp, installment_to_income, monthly_income.",
+  "turns": 2,
+  "contact_held": false
+}

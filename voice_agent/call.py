@@ -28,6 +28,8 @@ from core.timing import Stopwatch
 from voice_agent.agent import Agent
 from voice_agent.audio import SAMPLE_RATE, SAMPLE_WIDTH, Endpointer, Utterance
 from voice_agent.speak import Speaker
+from insights.live import LiveAnalyst
+from insights.signals import TurnInput
 from voice_agent.asr import MarketTranscriber
 
 log = logging.getLogger(__name__)
@@ -83,6 +85,7 @@ class CallRecord:
     lines: list[dict] = field(default_factory=list)
     barge_ins: int = 0
     failed_recognitions: int = 0
+    nudges: list[dict] = field(default_factory=list)
 
     def add(self, speaker: str, text: str, **detail) -> None:
         self.lines.append({"speaker": speaker, "text": text, **detail})
@@ -98,12 +101,18 @@ class CallSession:
                  agent: Agent | None = None,
                  transcriber: MarketTranscriber | None = None,
                  speaker: Speaker | None = None,
-                 allow_barge_in: bool = False) -> None:
+                 allow_barge_in: bool = False,
+                 analyst: LiveAnalyst | None = None) -> None:
         self.agent = agent or Agent(pack_id)
         # Recognition settings come from the market rather than from here, so
         # the language hint and the domain terms are decided in one place.
         self.transcriber = transcriber or MarketTranscriber()
         self.speaker = speaker or Speaker(self.agent.pack.language)
+
+        # Analysis runs beside the call, never inside it. Constructed here so
+        # a caller of this class can pass one with different settings, or
+        # None to turn the whole side channel off.
+        self.analyst = analyst if analyst is not None else LiveAnalyst()
 
         self.endpointer = Endpointer()
         self.state = CallState.IDLE
@@ -113,6 +122,7 @@ class CallSession:
         self._speech_run = 0
         self._cancel_speaking = False
         self._turn_number = 0
+        self.insights: list = []
 
         # Half duplex unless the caller says they are on headphones. On
         # speakers the microphone hears the agent, the recogniser turns that
@@ -311,9 +321,20 @@ class CallSession:
                             "refused": turn.said_it_did_not_know,
                             "citations": turn.citations})
 
+        # Handed over before the audio goes out, so the analysis and the
+        # speaking overlap. Doing it after would put it on the caller's clock
+        # for no benefit, since nothing in the reply depends on it.
+        self._submit_for_analysis(transcript.text, turn, turn_trace)
+
         self.state = CallState.SPEAKING
         yield Event("state", state=self.state.value)
         async for event in self._speak(turn.agent):
+            yield event
+
+        # Collected after speaking rather than before. The analysis had the
+        # length of the reply to finish in, which is most of a second, so by
+        # here it usually has.
+        for event in self._drain_insights():
             yield event
 
         if turn.escalated_to:
@@ -325,6 +346,49 @@ class CallSession:
 
         self.state = CallState.LISTENING
         yield Event("state", state=self.state.value)
+
+    # -- the side channel ------------------------------------------------------
+
+    def _submit_for_analysis(self, caller_text: str, turn, trace: str) -> None:
+        if not self.analyst:
+            return
+        conversation = self.agent.conversation
+        self.analyst.submit(TurnInput(
+            caller=caller_text,
+            agent=turn.agent,
+            turn_number=self._turn_number,
+            business_unit=self.agent.pack.business_unit,
+            language=self.agent.pack.language,
+            agent_refused=turn.said_it_did_not_know,
+            grounded=turn.grounded,
+            escalated_to=turn.escalated_to,
+            corrections=list(getattr(conversation, "corrections", [])),
+            asked_before=[t.caller for t in conversation.turns[:-1] if t.caller],
+            must_never=self.agent.pack.must_never,
+        ), trace=trace)
+
+    def _drain_insights(self) -> list[Event]:
+        """Whatever the analysis finished, as events for whoever is watching."""
+        if not self.analyst:
+            return []
+        events = []
+        for insight in self.analyst.collect():
+            self.insights.append(insight)
+            for nudge in insight.nudges:
+                self.record.nudges.append(nudge.__dict__)
+                events.append(Event("nudge", text=nudge.advice, detail={
+                    "kind": nudge.kind, "priority": nudge.priority,
+                    "confidence": round(nudge.confidence, 2),
+                    "evidence": nudge.evidence, "turn": nudge.turn,
+                    "audience": nudge.audience,
+                    "ms": round(nudge.latency_ms)}))
+            context = {s.kind: s.detail.get("value") for s in insight.signals
+                       if s.kind in ("sentiment", "intent")}
+            if context:
+                events.append(Event("insight", text="", detail={
+                    "turn": insight.turn, "ms": round(insight.milliseconds),
+                    **context}))
+        return events
 
     async def _speak(self, text: str) -> AsyncIterator[Event]:
         """Emit audio piece by piece, stopping if the caller interrupts.
@@ -381,6 +445,14 @@ class CallSession:
             async for event in self._speak(closing):
                 yield event
 
+        # A short wait for anything still running, then stop. The last turn is
+        # often the interesting one and is usually still being analysed when
+        # the caller hangs up.
+        if self.analyst:
+            self.analyst.stop()
+            for event in self._drain_insights():
+                yield event
+
         self.state = CallState.ENDED
         yield Event("state", state=self.state.value)
         yield Event("ended", detail={"reason": "closed"})
@@ -403,4 +475,6 @@ class CallSession:
             "citations": conversation.citations,
             "barge_ins": self.record.barge_ins,
             "failed_recognitions": self.record.failed_recognitions,
+            "nudges": self.record.nudges,
+            "live_analysis": self.analyst.report() if self.analyst else {},
         }

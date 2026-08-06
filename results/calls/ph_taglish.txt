@@ -1,44 +1,33 @@
 Call: ph_taglish
 Pack: life_ph
 
-[  9.40s] Agent: Magandang araw po, si Ella po ito from Solara Life Philippines. Tumatawag po ako tungkol sa premium payment ninyo. May oras po ba kayo sandali?
-[ 37.44s] Caller: Oppo, bayadepo
-[ 37.44s] Agent: Salamat po sa inyong tugon. Kayo po ba si Ma'am o Sir, ang policyholder na tumatawag?
-           source: forms/lead_form_export.csv#Product Interest
+[  3.24s] Agent: Magandang araw po, si Ella po ito from Solara Life Philippines. Tumatawag po ako tungkol sa premium payment ninyo. May oras po ba kayo sandali?
+[ 27.00s] Caller: depot
+[ 27.00s] Agent: Pasensya na po, pero hindi ko po sigurado iyan. Ayoko pong magbigay ng maling impormasyon sa inyo.
+Kayo po ba si Ma'am o Sir, ang policyholder?
+[ 53.72s] Caller: Penta sa isingko po ako
+[ 53.72s] Agent: Pasensya na po, hindi ko po masyadong narinig ang sinabi ninyo. Kayo po ba ang policyholder na siyang may-ari ng policy na ito?
+           source: web/life-philippines.html#Magkano po ang premium ko?
+           source: web/life-philippines.html#Paying your premium
+           source: web/life-philippines.html#Ano po ang mangyayari kung ma-lapse ang policy ko?
            source: forms/lead_form_export.csv#business_unit
-           source: forms/lead_form_export.csv#fields
            source: web/life-philippines.html#Beneficiaries
-           source: web/partners.html#Training and support
-[ 60.89s] Caller: 40-5 po ako.
-[ 60.89s] Agent: Salamat po sa paglilinaw. Kayo po ba ang policyholder na siyang may-ari ng policy na ating pinag-uusapan?
-           source: web/life-philippines.html#Magkano po ang premium ko?
-           source: web/life-philippines.html#Paying your premium
-           source: web/partners.html#Commission structure
-           source: web/life-philippines.html#Ano po ang mangyayari kung ma-lapse ang policy ko?
-           source: forms/lead_form_export.csv#fields
-[ 85.23s] Caller: sa Maynila po ako nakatira.
-[ 85.23s] Agent: Salamat po sa impormasyon. Kumpirmado po ba na kayo ang policyholder ng account na ito?
+[ 76.25s] Caller: sa Maynila po ako nakatira.
+[ 76.25s] Agent: Salamat po sa pagbabahagi ninyo ng impormasyon. Maaari ko po bang malaman kung kayo ang policyholder ng account na ito para masimulan na po natin ang ating usapan?
            (no supporting record, agent said so)
-[109.90s] Caller: Medyo mahal po yata para sa akin ngayon
-[109.90s] Agent: Naiintindihan ko po ang inyong sitwasyon. Maaari ko po bang malaman kung kaya niyo po itong mabayaran bago matapos ang grace period na tatlumpu't isang araw?
+[104.70s] Caller: Sumahal po yata para sa aking ngayon.
+[104.70s] Agent: Naiintindihan ko po ang inyong sitwasyon. Mayroon po tayong grace period na thirty-one days para sa inyong premium, kung saan tuloy pa rin po ang inyong coverage.
+Kaya niyo po bang mabayaran ang inyong premium bago matapos ang grace period na ito?
            source: web/life-philippines.html#Magkano po ang premium ko?
            source: web/life-philippines.html#Paying your premium
            source: web/life-philippines.html#Ano po ang mangyayari kung ma-lapse ang policy ko?
+           source: forms/lead_form_export.csv#business_unit
            source: rules/qualification_rules.yaml#life_ph.soft_rules
-           source: rules/qualification_rules.yaml#prohibited
-[137.11s] Caller: Ano po ang mangyayari kung malapse ang policy ko?
-[137.11s] Agent: Naiintindihan ko po ang inyong pag-aalala. Kung ma-lapse po ang inyong policy, hihinto ang inyong coverage, ngunit kung may cash value na po ito, maaari itong ituloy gamit ang automatic premium loan o kaya ay i-reinstate sa loob ng tatlong taon.
-Nais ko lang pong itanong, saan po kayo mas madaling magbayad, sa bank, sa branch, o online?
-           source: web/life-philippines.html#Ano po ang mangyayari kung ma-lapse ang policy ko?
-           source: web/life-philippines.html#Lapse and reinstatement
-           source: rules/qualification_rules.yaml#prohibited
-           source: web/partners.html#Commission structure
-           source: web/life-philippines.html#Paying your premium
 
 Summary
 ----------------------------------------
 pack: life_ph
-turns: 5
+turns: 4
 collected: {}
 corrections: []
 eligible: True
@@ -48,7 +37,9 @@ requirements: []
 missing: ['residency']
 escalated_to: 
 unanswered: []
-citations: ['forms/lead_form_export.csv#Product Interest', 'forms/lead_form_export.csv#business_unit', 'forms/lead_form_export.csv#fields', 'web/life-philippines.html#Beneficiaries', 'web/partners.html#Training and support', 'web/life-philippines.html#Magkano po ang premium ko?', 'web/life-philippines.html#Paying your premium', 'web/partners.html#Commission structure', 'web/life-philippines.html#Ano po ang mangyayari kung ma-lapse ang policy ko?', 'rules/qualification_rules.yaml#life_ph.soft_rules', 'rules/qualification_rules.yaml#prohibited', 'web/life-philippines.html#Lapse and reinstatement']
+citations: ['web/life-philippines.html#Magkano po ang premium ko?', 'web/life-philippines.html#Paying your premium', 'web/life-philippines.html#Ano po ang mangyayari kung ma-lapse ang policy ko?', 'forms/lead_form_export.csv#business_unit', 'web/life-philippines.html#Beneficiaries', 'rules/qualification_rules.yaml#life_ph.soft_rules']
 barge_ins: 0
 failed_recognitions: 0
-actions: {'lead_id': 'LD-20260806-af3871', 'outcome': 'incomplete', 'next_action': 'Call back to complete qualification. Still needed: residency.', 'working_copy': 'D:\\ConversaAI\\data\\leads\\LD-20260806-af3871.json', 'evidence_copy': 'D:\\ConversaAI\\results\\leads\\LD-20260806-af3871.json'}
+nudges: []
+live_analysis: {'fired': [], 'suppressed': [], 'counts': {'fired': 0, 'suppressed': 0}, 'turns_analysed': 4, 'turns_skipped': 0, 'deliberated': 0, 'latency_ms': {'p50': 0.10250002378597856, 'p95': 0.12330000754445791, 'max': 0.12330000754445791}}
+actions: {'lead_id': 'LD-20260806-5612c5', 'outcome': 'incomplete', 'next_action': 'Call back to complete qualification. Still needed: residency.', 'working_copy': 'D:\\ConversaAI\\data\\leads\\LD-20260806-5612c5.json', 'evidence_copy': 'D:\\ConversaAI\\results\\leads\\LD-20260806-5612c5.json'}
