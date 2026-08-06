@@ -66,6 +66,8 @@ class Pack:
     business_action: dict
     closing: dict
     must_never: list[str]
+    # Only the localised packs carry these; English needs neither.
+    speech_conventions: dict = field(default_factory=dict)
 
     @property
     def required_slots(self) -> list[Slot]:
@@ -147,6 +149,7 @@ def load_pack(pack_id: str) -> Pack:
         business_action=data["business_action"],
         closing=data["closing"],
         must_never=data["must_never"],
+        speech_conventions=data.get("speech_conventions") or {},
     )
 
 
@@ -171,6 +174,25 @@ def build_system_prompt(pack: Pack) -> str:
     )
 
     sections.append("How you speak:\n" + _bullets(persona.get("style", [])))
+
+    # Politeness in Filipino and Indonesian is grammar, not decoration. Left
+    # out of the prompt, the model mixes formal and informal inside one
+    # sentence, which reads as careless to a native speaker and is the fastest
+    # way to sound like a translated script.
+    if persona.get("register"):
+        sections.append(
+            "Politeness and address. Getting this wrong is worse than being "
+            "slow:\n" + _bullets(persona["register"]))
+
+    if pack.speech_conventions:
+        lines = []
+        for topic, rules in pack.speech_conventions.items():
+            lines.append(f"{topic}:")
+            lines.extend(f"  - {r.strip()}" for r in rules)
+        sections.append(
+            "Saying numbers, dates and money out loud. These are what give a "
+            "translated script away:\n" + "\n".join(lines))
+
     sections.append("Never:\n" + _bullets(persona.get("never", [])))
 
     sections.append(
