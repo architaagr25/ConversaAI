@@ -329,7 +329,11 @@ async function start() {
     }
     const msg = JSON.parse(event.data);
     // The summary is still wanted after hanging up; nothing else is.
-    if (hangingUp && msg.kind !== 'summary') return;
+    // Nudges get through after hang up as well. The last turn of a call is
+    // often the one worth advising on, and its analysis is still finishing
+    // when the button is pressed, so filtering it out here threw away the
+    // nudge every time the interesting thing happened last.
+    if (hangingUp && !['summary', 'nudge', 'insight'].includes(msg.kind)) return;
     if (msg.kind === 'state') setState(msg.state);
     else if (msg.kind === 'speaking') pendingLabel = msg.text;
     else if (msg.kind === 'transcript')

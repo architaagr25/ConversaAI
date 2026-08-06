@@ -44,12 +44,18 @@ VAD_AGGRESSIVENESS = 2
 # long enough to ignore a keyboard press.
 SPEECH_FRAMES_TO_START = 3
 
-# 160 ms of detected voice across the whole recording before it counts as a
+# 100 ms of detected voice across the whole recording before it counts as a
 # turn. Checked at the end rather than the start, because the start has to stay
 # sensitive: raising the three frames above clips the first consonant off every
 # answer, and that is a cost paid on every turn to fix a problem that happens
-# on a few. "No" and "Opo" carry well over this.
-MIN_VOICED_FRAMES = 8
+# on a few.
+#
+# Started at eight frames and that rejected real speech on a live microphone.
+# The voice detector is far less confident about a laptop microphone in a room
+# than about clean audio, so a spoken sentence can carry only a handful of
+# frames it is willing to call speech. Five still rejects the three-frame
+# click that opens a turn from nothing, which is what this is for.
+MIN_VOICED_FRAMES = 5
 
 # How much silence closes it. 700 ms is a pause; 300 ms is drawing breath
 # between clauses and cutting there produces half sentences.
@@ -206,11 +212,12 @@ class Endpointer:
         # The recogniser does not return nothing for that: it returns a
         # plausible sentence, and the agent answered a question nobody asked.
         if voiced < MIN_VOICED_FRAMES:
-            log.info("ignoring a recording with too little voice in it",
-                     extra={"voiced_frames": voiced,
-                            "floor": MIN_VOICED_FRAMES,
-                            "ms": round(len(audio) / (SAMPLE_RATE * SAMPLE_WIDTH)
-                                        * 1000)})
+            # Numbers in the message rather than only in the fields, because
+            # the console formatter shows the message and tuning this needs
+            # the counts.
+            log.info(f"ignoring a recording with too little voice in it: "
+                     f"{voiced} voiced frames, floor {MIN_VOICED_FRAMES}, "
+                     f"{round(len(audio) / (SAMPLE_RATE * SAMPLE_WIDTH) * 1000)} ms")
             return None
 
         # Trailing silence goes before the length is judged. It is real audio
@@ -232,9 +239,9 @@ class Endpointer:
 
         loudness = rms(audio)
         if loudness < MIN_UTTERANCE_RMS:
-            log.info("ignoring audio too quiet to be speech",
-                     extra={"rms": round(loudness), "floor": MIN_UTTERANCE_RMS,
-                            "ms": round(duration)})
+            log.info(f"ignoring audio too quiet to be speech: rms "
+                     f"{round(loudness)}, floor {MIN_UTTERANCE_RMS}, "
+                     f"{round(duration)} ms")
             return None
 
         return Utterance(audio=audio, duration_ms=duration,
