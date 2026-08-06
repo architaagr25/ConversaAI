@@ -356,17 +356,17 @@ Confidence floor: 0.6. Below it the agent declines rather than answering from th
 
 **Question.** I want to speak to a real person please
 
-**Expected.** `ESC-REQUEST`
+**Expected.** `declines to answer`
 
-**Returned.** Escalation: ESC-REQUEST
+**Returned.** Actions the agent must never take
 
-**Source.** `rules/qualification_rules.yaml#ESC-REQUEST`
+**Source.** `rules/qualification_rules.yaml#prohibited`
 
-**Authority.** operational · **similarity** 0.687 · **answered** yes
+**Authority.** operational · **similarity** 0.576 · **answered** no
 
-**Why this record.** Must transfer without arguing. Tests that escalation rules are retrievable.
+**Why this record.** Written expecting ESC-REQUEST to be returned, which was wrong, and the two decisions sat here contradicting each other for a while. An escalation rule says where a call goes. It does not answer anything, and a caller asking for a person is not asking a question. Retrieval returning it meant the routing rules appeared as sources underneath the agent's replies, which is a citation that claims the answer came from somewhere it did not. They are stored, versioned and traceable, and excluded from search. So the right result here is a decline. That escalation still happens is a separate thing, tested in test_agent.py: it fires from the pack's own triggers, not from a search.
 
-**Verdict.** correct — expected record ranked first
+**Verdict.** correct — declined as it should
 
 ---
 

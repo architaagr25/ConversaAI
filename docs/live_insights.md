@@ -57,8 +57,8 @@ error rate.
 
 | Tier | What it does | p50 | p95 | Runs on |
 | --- | --- | --- | --- | --- |
-| Lexical | Phrase and state matching over the turn | 0.02 ms | 0.20 ms | every turn |
-| Model | Sentiment, intent, hang-up risk | ~1000 ms | ~3700 ms | 8 of 29 turns |
+| Lexical | Phrase and state matching over the turn | 0.02 ms | 0.04 ms | every turn |
+| Model | Sentiment, intent, hang-up risk | 3244 ms | 6039 ms | 9 of 33 turns |
 
 The first tier is effectively free and catches most of what matters on these
 calls: somebody saying they cannot pay this month, somebody asking for a
@@ -67,7 +67,7 @@ person, somebody repeating a question they already asked.
 The second tier is asked only where the first found something it could not
 settle, or where a long turn matched nothing at all — which is the case phrase
 lists are worst at, an objection in words nobody wrote down. On the evaluation
-set it is reached on **28% of turns**. Running it on every turn would roughly
+set it is reached on **27% of turns**. Running it on every turn would roughly
 triple the cost of a call to change almost no decisions.
 
 Phrases are per language. An Indonesian customer refusing says *"belum

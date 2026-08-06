@@ -35,8 +35,8 @@ Measured separately because the two tiers are three orders of magnitude apart, a
 
 | Component | p50 | p95 | Runs on |
 | --- | --- | --- | --- |
-| lexical signals | 0.10 ms | 0.12 ms | every turn |
-| model deliberation | 1102 ms | 8964 ms | 27% of turns |
+| lexical signals | 0.02 ms | 0.04 ms | every turn |
+| model deliberation | 3244 ms | 6039 ms | 27% of turns |
 
 The second tier is reached on 9 of 33 turns. Running it on every turn would roughly triple the cost of a call to change almost no decisions.
 

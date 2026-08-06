@@ -124,8 +124,8 @@ about is one it gets right. Several negatives are deliberate near misses —
 
 | Component | p50 | p95 | Runs on |
 | --- | --- | --- | --- |
-| Lexical signals | 0.02 ms | 0.20 ms | every turn |
-| Model deliberation | ~1100 ms | ~9000 ms | 9 of 33 turns |
+| Lexical signals | 0.02 ms | 0.04 ms | every turn |
+| Model deliberation | 3244 ms | 6039 ms | 9 of 33 turns |
 
 None of it is on the caller's critical path. Work is handed to a background
 worker the moment a turn completes, while the reply is already being spoken.
