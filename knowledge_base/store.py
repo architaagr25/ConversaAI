@@ -74,6 +74,11 @@ def stable_id(source_ref: str, chunk_index: int) -> str:
     return f"kb_{digest}_{chunk_index:02d}"
 
 
+def is_routing_rule(source_ref: str) -> bool:
+    """Whether a record decides where a call goes rather than answering it."""
+    return "#ESC-" in source_ref
+
+
 def content_hash(text: str) -> str:
     normalised = " ".join(re.findall(r"[a-z0-9]+", text.lower()))
     return hashlib.sha256(normalised.encode()).hexdigest()[:16]
@@ -222,6 +227,15 @@ def expand_to_chunks(records: list[dict], report: BuildReport) -> list[dict]:
         if not retrievable:
             report.superseded += 1
 
+        # Escalation triggers are routing rules, not answers. They say what to
+        # do when a caller asks for a person; they say nothing a caller should
+        # hear. Left searchable they ranked into ordinary answers, so the agent
+        # was handed "hand this call over" as source material and the caller
+        # was shown it as a citation.
+        if is_routing_rule(record.get("source_ref", "")):
+            retrievable = 0
+            report.routing_rules = getattr(report, "routing_rules", 0) + 1
+
         chunks = chunk_text(record["content"])
         if len(chunks) > 1:
             report.chunked += 1
@@ -347,6 +361,8 @@ def main() -> int:
 
     print(f"\n  sections in            {report.total_in}")
     print(f"  superseded duplicates  {report.superseded}  (stored, not searched)")
+    print(f"  routing rules          {getattr(report, 'routing_rules', 0)}"
+          f"  (stored, not searched)")
     print(f"  sections split         {report.chunked} -> {report.chunks_created} chunks")
     print(f"  records out            {report.records_out}")
 
