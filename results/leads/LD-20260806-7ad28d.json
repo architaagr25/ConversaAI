@@ -1,0 +1,29 @@
+{
+  "lead_id": "LD-20260806-7ad28d",
+  "created_at": "2026-08-06T09:48:05+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {
+    "age": 21,
+    "plan_interest": "Max"
+  },
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [
+    "require_medical_questionnaire"
+  ],
+  "missing": [
+    "currently_admitted",
+    "residency"
+  ],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [],
+  "summary": "The caller wants to find out which health plan fits them but did not provide clear answers to the eligibility questions. During the call, it was established that the caller is 21 years old, but they gave unresponsive answers such as \"No!\", \"Sons, Plus, Max\", and \"Go get, take it\" when asked about their motivation and residency. There is not enough information collected to decide on eligibility because the currently_admitted and residency statuses remain missing. The next step is for the picking-up adviser to contact the caller again to establish these missing details and determine their eligibility.",
+  "next_action": "Call back to complete qualification. Still needed: currently_admitted, residency.",
+  "turns": 5,
+  "contact_held": false
+}

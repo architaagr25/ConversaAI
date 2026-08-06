@@ -242,3 +242,43 @@ class TestStreaming:
     def test_a_partial_frame_is_carried_forward(self):
         endpointer = Endpointer()
         assert list(endpointer.feed_stream(b"\x00" * (FRAME_BYTES - 2))) == []
+
+
+class TestNoiseDoesNotBecomeATurn:
+    """A recording has to contain voice, not merely have started with some.
+
+    The failure this prevents: left alone for a minute or two the agent
+    answered a question nobody had asked. Sixty milliseconds of detected voice
+    opens a turn, which a fan or a keyboard click clears, and the recording
+    that followed was long enough and loud enough to reach the recogniser.
+    A recogniser given noise does not return nothing, it returns a sentence.
+    """
+
+    def _drain(self, endpointer, audio):
+        return list(endpointer.feed_stream(audio))
+
+    def test_a_short_noise_burst_is_not_a_turn(self):
+        from conftest import voiced
+        from voice_agent.audio import Endpointer, silence
+
+        endpointer = Endpointer()
+        # Just past the three frames that open a turn, then nothing.
+        found = self._drain(endpointer, voiced(80) + silence(1500))
+        assert found == []
+
+    def test_a_real_answer_still_gets_through(self):
+        from conftest import voiced
+        from voice_agent.audio import Endpointer, silence
+
+        endpointer = Endpointer()
+        # About as short as a real reply gets: "No", "Opo".
+        found = self._drain(endpointer, voiced(300) + silence(1500))
+        assert len(found) == 1
+
+    def test_a_long_quiet_stretch_produces_nothing_at_all(self):
+        from voice_agent.audio import Endpointer, silence
+
+        endpointer = Endpointer()
+        # Two minutes of nobody saying anything, which is the case that
+        # produced an invented answer.
+        assert self._drain(endpointer, silence(120_000)) == []

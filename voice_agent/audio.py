@@ -44,6 +44,13 @@ VAD_AGGRESSIVENESS = 2
 # long enough to ignore a keyboard press.
 SPEECH_FRAMES_TO_START = 3
 
+# 160 ms of detected voice across the whole recording before it counts as a
+# turn. Checked at the end rather than the start, because the start has to stay
+# sensitive: raising the three frames above clips the first consonant off every
+# answer, and that is a cost paid on every turn to fix a problem that happens
+# on a few. "No" and "Opo" carry well over this.
+MIN_VOICED_FRAMES = 8
+
 # How much silence closes it. 700 ms is a pause; 300 ms is drawing breath
 # between clauses and cutting there produces half sentences.
 # 700 ms of quiet before the turn is treated as over. Briefly 500, to make the
@@ -104,6 +111,10 @@ class Endpointer:
     _vad: object | None = field(default=None, repr=False)
     _speech_run: int = 0
     _silence_run: int = 0
+    # How many frames in this recording the detector called speech, as opposed
+    # to how long the recording is. The difference is the whole point: a fan
+    # or a keyboard click produces a long recording with almost no voice in it.
+    _voiced: int = 0
     _buffer: bytearray = field(default_factory=bytearray, repr=False)
     # Frames from just before speech was declared, so the first consonant is
     # not clipped off the front of the recording.
@@ -147,10 +158,13 @@ class Endpointer:
                 self._buffer = bytearray(b"".join(self._preroll))
                 self._preroll.clear()
                 self._silence_run = 0
+                self._voiced = self._speech_run
             return None
 
         self._buffer.extend(frame)
         self._silence_run = 0 if speech else self._silence_run + 1
+        if speech:
+            self._voiced += 1
 
         if self._silence_run >= self.silence_frames_to_end:
             return self._finish("silence")
@@ -178,11 +192,26 @@ class Endpointer:
     def _finish(self, reason: str) -> Utterance | None:
         audio = bytes(self._buffer)
         started = self._started_at
+        voiced = self._voiced
 
         self.state = Listening.IDLE
         self._buffer = bytearray()
-        self._speech_run = self._silence_run = 0
+        self._speech_run = self._silence_run = self._voiced = 0
         self._preroll.clear()
+
+        # Enough voice in the recording to be a word, rather than enough noise
+        # to have started one. Sixty milliseconds of detected voice opens a
+        # turn, which a fan or a keyboard click clears, and the recording that
+        # followed was long enough and loud enough to reach the recogniser.
+        # The recogniser does not return nothing for that: it returns a
+        # plausible sentence, and the agent answered a question nobody asked.
+        if voiced < MIN_VOICED_FRAMES:
+            log.info("ignoring a recording with too little voice in it",
+                     extra={"voiced_frames": voiced,
+                            "floor": MIN_VOICED_FRAMES,
+                            "ms": round(len(audio) / (SAMPLE_RATE * SAMPLE_WIDTH)
+                                        * 1000)})
+            return None
 
         # Trailing silence goes before the length is judged. It is real audio
         # that says nothing, it costs recognition time, and counting it makes a
@@ -193,15 +222,19 @@ class Endpointer:
                 audio = audio[:len(audio) - trim]
 
         duration = len(audio) / (SAMPLE_RATE * SAMPLE_WIDTH) * 1000
+        # These two were at debug, which meant a call where nothing was heard
+        # produced a completely silent log and there was no way to tell a quiet
+        # microphone from a broken one.
         if duration < MIN_UTTERANCE_MS:
-            log.debug("ignoring a burst too short to be speech",
-                      extra={"ms": round(duration)})
+            log.info("ignoring a burst too short to be speech",
+                     extra={"ms": round(duration), "floor_ms": MIN_UTTERANCE_MS})
             return None
 
         loudness = rms(audio)
         if loudness < MIN_UTTERANCE_RMS:
-            log.debug("ignoring audio too quiet to be speech",
-                      extra={"rms": round(loudness), "ms": round(duration)})
+            log.info("ignoring audio too quiet to be speech",
+                     extra={"rms": round(loudness), "floor": MIN_UTTERANCE_RMS,
+                            "ms": round(duration)})
             return None
 
         return Utterance(audio=audio, duration_ms=duration,

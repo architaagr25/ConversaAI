@@ -80,6 +80,15 @@
       <span class="note">&mdash; only with headphones. On speakers the microphone
         hears the agent and it starts answering itself.</span>
     </div>
+    <div style="margin-top:10px">
+      <div style="height:6px;background:#eef2f7;border-radius:3px;overflow:hidden">
+        <div id="level" style="height:100%;width:0;background:#cbd5e1;
+             transition:width .06s linear"></div>
+      </div>
+      <div class="hint"><span id="levelLabel">microphone level</span>
+        &mdash; half the bar is the level the server counts as speech.</div>
+    </div>
+
     <div class="hint" id="hint">Your browser will ask for microphone access.
       Nothing is recorded until you start the call.</div>
   </div>
@@ -205,6 +214,25 @@ function addNote(text) {
 function setMicLive(live) {
   if (!micStream) return;
   micStream.getAudioTracks().forEach(t => { t.enabled = live; });
+}
+
+// The server ignores anything quieter than this as not-speech. Shown rather
+// than hidden because "it cannot hear me" and "my microphone is too quiet"
+// look identical from the outside, and only one of them is a bug.
+const RMS_FLOOR = 220;
+
+function showLevel(pcm) {
+  let sum = 0;
+  for (let i = 0; i < pcm.length; i++) sum += pcm[i] * pcm[i];
+  const rms = Math.sqrt(sum / pcm.length);
+  const bar = document.getElementById('level');
+  if (!bar) return;
+  // Scaled against the floor, so half the bar is exactly the threshold.
+  bar.style.width = Math.min(100, (rms / RMS_FLOOR) * 50) + '%';
+  bar.style.background = rms >= RMS_FLOOR ? '#16a34a' : '#cbd5e1';
+  const label = document.getElementById('levelLabel');
+  if (label) label.textContent = rms >= RMS_FLOOR
+    ? 'hearing you' : 'too quiet to count as speech';
 }
 
 // Playback runs off a queue so sentences arriving separately still play in
@@ -347,6 +375,7 @@ async function start() {
       pcm[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
     }
     socket.send(pcm.buffer);
+    showLevel(pcm);
   };
 
   source.connect(node);
