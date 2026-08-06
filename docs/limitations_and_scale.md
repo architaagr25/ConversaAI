@@ -90,7 +90,75 @@ caller finishing to the first word back. A person expects under two.
 
 ---
 
-## 2. What is measured, and what is asserted
+## 2. With noisy audio
+
+Everything above was found on a quiet laptop microphone in a quiet room. Noise
+is not a degradation of that, it is a different failure, and it fails in a
+direction that is easy to miss.
+
+### Nothing returns an error
+
+This is the thing to understand about noise here. Voice activity detection is a
+classifier, not a threshold, and a fan, a keyboard, a television or a second
+person talking are all things it will call speech. The pipeline behind it does
+not reject what it is handed. A recogniser given a few seconds of room tone
+returns a fluent sentence, confidently, because its training data is full of
+subtitle files whose quiet passages carry captions. The agent then answers a
+question nobody asked.
+
+Three gates were added after watching exactly that happen, and each was written
+for a case seen rather than imagined:
+
+**A proportion of voice, not just an amount.** A three second recording with
+five voiced frames scattered through it clears any absolute floor low enough to
+accept a one word answer. At least a fifth of the recording has to be voice.
+Spoken answers run a third and up; noise-triggered recordings sit near a tenth.
+
+**A loudness floor.** Room tone on a laptop sits at 20 to 40 RMS, a person
+speaking sits above 120. The floor is 100. It was 220 at one point, set against
+synthesised audio, and it rejected a real caller at 188 — which is its own
+lesson about tuning a gate against material that is cleaner than the real
+thing.
+
+**The recogniser's own hint, coming back.** The domain hint improves spelling
+of terms like *cicilan*. It is also a list of words the recogniser reaches for
+when it cannot make out the audio. A live call answered "and the plus, max"
+repeatedly, out of a hint ending "Essential, Plus, Max". Hints are now cut to
+terms a general recogniser genuinely gets wrong, and a transcript made entirely
+of hint words is discarded.
+
+### What noise still costs
+
+**Short replies degrade first, and they degrade worst.** "Opo", "iya", "yes" —
+one syllable against background is where recognition fails, and it is the most
+common reply on a qualification call. Every gate above trades recall for
+precision, so each one also throws away some real speech. That trade is
+deliberate: a discarded "yes" makes the agent ask again, and an invented answer
+goes into a lead record and nobody ever knows.
+
+**Endpointing gets slower or wrong.** Background speech keeps the detector from
+seeing the run of silence that ends a turn, so turns run long or merge.
+
+**Barge-in becomes unusable on speakers.** It is off by default for this
+reason. In a noisy room with interruption enabled, the agent stops mid-sentence
+for a door closing.
+
+**Nudge recall drops with ASR quality**, and nothing in the nudge evaluation
+measures that. Its 45 probes are clean text, so 100% precision and recall is a
+statement about the detectors given a correct transcript, not about the system
+in a call centre. That gap is the single largest untested risk here.
+
+### What would actually fix it
+
+Not more thresholds. A trained voice activity model rather than a classifier
+tuned by hand, per-caller noise profiling over the first seconds of a call, and
+an ASR provider with word-level confidence so a low-confidence transcript can
+be treated as a non-answer instead of an answer. All three need either paid
+services or training data, and neither was available here.
+
+---
+
+## 3. What is measured, and what is asserted
 
 Worth separating, because a reader cannot tell from the outside.
 
@@ -104,7 +172,7 @@ prohibitions match regulation. All four need a domain expert and none had one.
 
 ---
 
-## 3. At ten times the volume
+## 4. At ten times the volume
 
 Assume ten concurrent calls rather than one, and roughly a thousand a day.
 

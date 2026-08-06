@@ -114,8 +114,8 @@ ordinary words were never earning anything.
 **Where:** [nudge_evaluation.md](nudge_evaluation.md) &middot;
 [../docs/live_insights.md](../docs/live_insights.md)
 
-Analysis during the call, not after it. **100% precision, 100% recall** on 33
-labelled turns, of which **13 should produce nothing**.
+Analysis during the call, not after it. **100% precision, 100% recall** on 45
+labelled turns, of which **19 should produce nothing**.
 
 The negatives are the point. A detector scored only against turns that ought to
 fire reports perfect accuracy and is unusable, because every case it was asked
@@ -124,8 +124,20 @@ about is one it gets right. Several negatives are deliberate near misses —
 
 | Component | p50 | p95 | Runs on |
 | --- | --- | --- | --- |
-| Lexical signals | 0.02 ms | 0.04 ms | every turn |
-| Model deliberation | 3244 ms | 6039 ms | 9 of 33 turns |
+| Lexical signals | 0.45 ms | 9.23 ms | every turn |
+| Model deliberation | 2027 ms | 12257 ms | 9 of 45 turns |
+
+Full pipeline timings, leg by leg, are in
+[latency_report.md](latency_report.md): audio chunk handling, transcription,
+signal extraction, model, nudge generation and delivery, measured over the
+recorded calls replayed frame by frame.
+
+Two of the 45 probes are compliance cases and seven concern money left on the
+table — a second vehicle, dependants, cover already held elsewhere. Both are
+harder than they look, and for the same reason: a missed opportunity is defined
+by what the agent did *not* say next, so it is judged on the caller's sentence
+and the reply together. Three of the negatives are the same caller sentences
+with a reply that did follow up.
 
 None of it is on the caller's critical path. Work is handed to a background
 worker the moment a turn completes, while the reply is already being spoken.

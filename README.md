@@ -149,15 +149,17 @@ The headline numbers:
 | --- | --- |
 | Retrieval | 21 correct, 2 partial, 0 incorrect, out of 23 |
 | Speech recognition | 97% against a second provider's 73%, over 18 utterances |
-| Live nudges | 100% precision and recall over 33 turns, 13 of which should stay silent |
+| Live nudges | 100% precision and recall over 45 turns, 19 of which should stay silent |
 | Recorded calls | 9, across three markets |
-| Automated checks | 539 |
+| Automated checks | 554 |
 
 Reproduce the two evaluations directly:
 
 ```
 python scripts\evaluate_asr.py        speech recognition, both providers
 python scripts\evaluate_nudges.py     nudge accuracy and per-component latency
+python scripts\measure_latency.py     every pipeline leg, over the recorded calls
+python -m knowledge_base.evaluate     retrieval, 23 questions with expected answers
 python -m pytest                      everything else
 ```
 
@@ -173,7 +175,8 @@ python -m pytest                      everything else
 | [Knowledge base schema](docs/knowledge_base_schema.md) | Fields, versioning and traceability |
 | [Philippines localization](docs/localisation_philippines.md) | What was adapted rather than translated |
 | [Indonesia localization](docs/localisation_indonesia.md) | Registers, regional speech, and one requirement only partly met |
-| [Limitations and scale](docs/limitations_and_scale.md) | What is weak, what is asserted rather than measured, and what breaks at ten times the volume |
+| [Limitations and scale](docs/limitations_and_scale.md) | What is weak, what is asserted rather than measured, what noise costs, and what breaks at ten times the volume |
+| [Production plan](docs/production_plan.md) | What would be built next, in risk order, with what each item costs |
 
 The limitations page is the one to read if you only read one. It separates what
 was measured from what was assumed, and neither is hedged.

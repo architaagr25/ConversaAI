@@ -80,9 +80,13 @@ PROBES = [
           {"hesitation", "soft_refusal"}, note="undecided, Indonesian"),
     Probe("Hindi ko po alam, siguro po.", {"hesitation"},
           note="undecided, Taglish"),
-    Probe("What is the limit?", {"agent_guarantee"},
+    # Two problems in one sentence, and both are real: it promises an outcome
+    # and it states a decision with nothing marking it preliminary. Written
+    # expecting only the first, which was the expectation being wrong rather
+    # than the detector.
+    Probe("What is the limit?", {"agent_guarantee", "missing_disclosure"},
           agent="Yes, you are definitely approved, that is guaranteed.",
-          note="agent promised an outcome"),
+          note="agent promised an outcome and stated it as final"),
     Probe("I need more time.", {"agent_threat"},
           agent="If you do not pay we will take the vehicle.",
           note="agent raised repossession"),
@@ -96,6 +100,33 @@ PROBES = [
     Probe("How much is the premium each month?", {"repeated_question"},
           asked_before=["Magkano ang premium ko every month?"],
           note="same question, different words"),
+
+    # Money left on the table. The agent's reply is what makes these misses
+    # rather than mentions, so it is set on every one of them.
+    Probe("We have another car as well, my wife drives that one.",
+          {"missed_opportunity"},
+          agent="Right. And what is your date of birth?",
+          note="second vehicle mentioned, agent moved on"),
+    Probe("Anak ko po dalawa, saka asawa ko po.",
+          {"missed_opportunity"},
+          agent="Salamat po. Ano pong trabaho ninyo?",
+          note="dependants mentioned, agent moved on, Taglish"),
+    Probe("Mobil satunya juga sering dipakai istri saya.",
+          {"missed_opportunity"},
+          agent="Baik pak. Alamatnya di mana ya?",
+          note="second vehicle and spouse, agent moved on, Indonesian"),
+    Probe("I already have a policy through work.",
+          {"missed_opportunity"},
+          agent="Understood. What is your annual income?",
+          note="existing cover, a gap-filling sale nobody offered"),
+
+    # Stated as a decision when only underwriting can make it one.
+    Probe("So am I in?", {"missing_disclosure"},
+          agent="Yes, you are eligible and approved for the Plus plan.",
+          note="decision with no preliminary qualifier"),
+    Probe("Pasado po ba ako?", {"missing_disclosure"},
+          agent="Opo, kwalipikado po kayo.",
+          note="decision with no qualifier, Taglish"),
 
     # --- should not fire ---
     Probe("Yes, now is a good time to talk.", set(), note="ordinary agreement"),
@@ -122,6 +153,33 @@ PROBES = [
     Probe("Yes I know that already, go on.", set(),
           note="near miss: knowing, not hesitating"),
     Probe("Berapa sisa tenor saya?", set(), note="plain question"),
+
+    # The agent did act on it. Same caller sentence as the positives above, and
+    # the whole difference is the reply. Telling somebody they missed an
+    # opportunity they are in the middle of taking is how a panel gets muted.
+    Probe("We have another car as well, my wife drives that one.", set(),
+          agent="I can add the second vehicle to the same policy, shall I?",
+          note="near miss: second vehicle mentioned and immediately offered"),
+    Probe("Anak ko po dalawa, saka asawa ko po.", set(),
+          agent="Gusto po ba ninyong isama sila sa coverage?",
+          note="near miss: dependants mentioned and offered, Taglish"),
+    Probe("Mobil satunya juga sering dipakai istri saya.", set(),
+          agent="Bisa sekalian kami tambahkan kendaraan itu pak.",
+          note="near miss: second vehicle offered, Indonesian"),
+
+    # A decision that was correctly qualified.
+    Probe("So am I in?", set(),
+          agent="You are eligible on a preliminary basis, subject to "
+                "underwriting.",
+          note="near miss: decision given with the qualifier"),
+    Probe("Pasado po ba ako?", set(),
+          agent="Sa ngayon po, kwalipikado po kayo, pero depende pa po sa "
+                "final review.",
+          note="near miss: decision qualified, Taglish"),
+    # The word "approved" said by the caller, not the agent.
+    Probe("Was I approved last time I applied?", set(),
+          agent="Let me check what we have on file for you.",
+          note="near miss: the caller used the decision word, not the agent"),
 ]
 
 

@@ -63,6 +63,15 @@ RULES: dict[str, NudgeRule] = {
         "That is pressure selling. Drop the deadline and let them decide.",
         priority=95, minimum_confidence=0.85, cooldown_turns=2),
 
+    # A decision stated as final when only underwriting can make it final.
+    # Sits with the compliance rules rather than the sales ones because that is
+    # what it is: the caller has been told something that may not hold.
+    "missing_disclosure": NudgeRule(
+        "missing_disclosure",
+        "That was said as a decision. Add that it is preliminary and subject "
+        "to underwriting, on this call.",
+        priority=92, minimum_confidence=0.8, cooldown_turns=2),
+
     "escalation": NudgeRule(
         "escalation",
         "Handing to a person now. Pick up with what has already been "
@@ -107,6 +116,19 @@ RULES: dict[str, NudgeRule] = {
         "The caller changed an earlier answer. Confirm which one is right "
         "before it reaches the lead.",
         priority=60, minimum_confidence=0.9, cooldown_turns=0),
+
+    # Below the compliance rules and above the sentiment ones. Money left on
+    # the table is worth interrupting for; it is not worth interrupting a
+    # compliance warning for.
+    #
+    # The cooldown is long. A caller who mentions their family once tends to
+    # mention them again, and the second nudge says nothing the first did not.
+    "missed_opportunity": NudgeRule(
+        "missed_opportunity",
+        "They mentioned something worth covering and it went past. Offer it "
+        "before moving on.",
+        priority=58, minimum_confidence=0.72, cooldown_turns=5,
+        audience="agent"),
 
     "buying_signal": NudgeRule(
         "buying_signal",
