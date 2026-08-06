@@ -165,9 +165,14 @@ class Transcriber:
                     )
                 heard = (response.text or "").strip()
                 if is_probably_silence(heard):
-                    log.info("recogniser returned a silence artefact, ignoring",
-                             extra={"text": heard[:40],
-                                    "audio_ms": round(audio_ms)})
+                    # The text goes in the message, not only in the fields.
+                    # The console shows the message, and "a silence artefact
+                    # was ignored" is useless without knowing what it was:
+                    # a genuine subtitle artefact and a real one-word answer
+                    # wrongly filtered look identical in the log otherwise.
+                    log.info(f"recogniser returned a silence artefact, "
+                             f"ignoring: {heard[:40]!r} from "
+                             f"{round(audio_ms)} ms")
                     return Transcript(text="", milliseconds=span.milliseconds,
                                       model=self.model, audio_ms=audio_ms,
                                       error="silence")

@@ -82,7 +82,13 @@ MIN_UTTERANCE_MS = 250
 # let more of the agent's own voice through, and that is handled by matching
 # what comes back against what was just said rather than by loudness, which
 # is the better tool for it anyway.
-MIN_UTTERANCE_RMS = 150
+#
+# Then 150 rejected the same caller at 142 and 135. Chasing a live microphone
+# downwards one reading at a time is not a method, so this is now set from what
+# the microphone actually produces: room tone on a laptop sits around 20 to 40,
+# and a person speaking normally a foot away sits above 120 even at their
+# quietest. 100 is below anything spoken and comfortably above the room.
+MIN_UTTERANCE_RMS = 100
 
 # Above this something has gone wrong, or the caller is reading an essay.
 # Either way the turn has to end so the agent can respond.

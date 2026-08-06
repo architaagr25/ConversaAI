@@ -219,7 +219,7 @@ function setMicLive(live) {
 // The server ignores anything quieter than this as not-speech. Shown rather
 // than hidden because "it cannot hear me" and "my microphone is too quiet"
 // look identical from the outside, and only one of them is a bug.
-const RMS_FLOOR = 150;
+const RMS_FLOOR = 100;
 
 function showLevel(pcm) {
   let sum = 0;
@@ -338,7 +338,12 @@ async function start() {
     else if (msg.kind === 'speaking') pendingLabel = msg.text;
     else if (msg.kind === 'transcript')
       addLine(msg.detail.speaker, msg.text, msg.detail);
-    else if (msg.kind === 'barge_in') { stopPlayback(); addNote('interrupted'); }
+    // Only an interruption if something was actually being said. The server
+    // cannot tell; it knows the caller started talking, not whether there was
+    // anything left to talk over.
+    else if (msg.kind === 'barge_in') {
+      if (playing || queue.length) { stopPlayback(); addNote('interrupted'); }
+    }
     else if (msg.kind === 'status') addNote(msg.text);
     else if (msg.kind === 'error') addNote('Error: ' + msg.text);
     else if (msg.kind === 'ended') { stopPlayback(); finish(); }

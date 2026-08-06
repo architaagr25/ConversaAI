@@ -206,9 +206,29 @@ class CallSession:
                 return
             self._discard_bytes = 0
 
+        # Whether a turn was already open before this chunk. If one opens
+        # during it, the caller has started talking, and with interruption
+        # allowed that has to reach the browser.
+        #
+        # This is where interruption actually happens, not in the watcher
+        # below. The server hands the whole reply to the browser in a fraction
+        # of a second and the browser plays it over several seconds, so by the
+        # time the caller hears something worth interrupting, this session
+        # left the speaking state long ago and is sitting here listening. The
+        # watcher only ever sees the narrow window while audio is still being
+        # synthesised, which is not when people interrupt.
+        was_speaking = self.endpointer.speaking
         for utterance in self.endpointer.feed_stream(chunk):
             async for event in self._handle(utterance):
                 yield event
+
+        if (self.allow_barge_in and not was_speaking
+                and self.endpointer.speaking):
+            self.record.barge_ins += 1
+            log.info("caller started talking, stopping playback")
+            # The browser decides whether this was a real interruption: it
+            # knows whether anything was still playing and this does not.
+            yield Event("barge_in")
 
     async def _watch_for_interruption(self, chunk: bytes) -> AsyncIterator[Event]:
         """Decide whether the caller is interrupting or the microphone is echoing."""

@@ -309,6 +309,41 @@ class TestClosing:
         assert "barge_ins" in summary
 
 
+@pytest.mark.asyncio
+class TestInterrupting:
+    """Starting to talk has to reach the browser, or it cannot stop playing.
+
+    The watcher on the speaking state almost never sees an interruption. The
+    server hands a whole reply over in a fraction of a second and the browser
+    takes seconds to play it, so by the time the caller has heard enough to
+    want to interrupt, the session is back in the listening state. The signal
+    has to come from a turn opening there instead.
+    """
+
+    async def test_starting_to_talk_tells_the_browser_to_stop(
+            self, duplex_session):
+        await drain(duplex_session.start())
+        events = await drain(duplex_session.on_audio(tone(400)))
+        assert any(e.kind == "barge_in" for e in events)
+        assert duplex_session.record.barge_ins == 1
+
+    async def test_it_is_announced_once_per_turn_not_once_per_chunk(
+            self, duplex_session):
+        await drain(duplex_session.start())
+        events = []
+        for _ in range(3):
+            events += await drain(duplex_session.on_audio(tone(400)))
+        assert sum(1 for e in events if e.kind == "barge_in") == 1
+
+    async def test_nothing_is_announced_on_speakers(self, session):
+        # Half duplex. The browser has the microphone switched off while the
+        # agent speaks, so there is nothing to interrupt and no event to send.
+        await drain(session.start())
+        listen_now(session)
+        events = await drain(session.on_audio(tone(400)))
+        assert not any(e.kind == "barge_in" for e in events)
+
+
 class TestTheAgentDoesNotAnswerItself:
     """Audio matching what the agent just said is the speakers, not a caller.
 

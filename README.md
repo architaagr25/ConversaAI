@@ -100,7 +100,13 @@ python -m voice_agent.server
 ```
 
 Open `http://127.0.0.1:8000` and allow microphone access. Speak normally and
-pause when you have finished. You can interrupt the agent at any time.
+pause when you have finished.
+
+Tick **Allow interrupting** if you are on headphones, and you can talk over the
+agent to cut it off. It is off by default because on laptop speakers the
+microphone hears the agent, the recogniser turns that into words, and the agent
+starts answering itself. With it off the microphone is muted while the agent
+talks, so wait for it to finish.
 
 ### A public address
 
