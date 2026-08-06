@@ -1,0 +1,28 @@
+{
+  "lead_id": "LD-20260806-dd7086",
+  "created_at": "2026-08-06T09:29:53+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {
+    "age": 21,
+    "residency": "PH"
+  },
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [
+    "currently_admitted"
+  ],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [
+    "documents/health_shield_policy_wording.pdf#1 Definitions"
+  ],
+  "summary": "The caller is a 21-year-old living in the Philippines who wants to find a suitable health plan. During the call, it was established that the caller is in the hospital, but they said \"and...\" and \"In Hospital\" before the call was concluded, meaning it remains unconfirmed whether they are currently admitted as an inpatient. The next adviser needs to contact the caller to clarify their admission status, as there was not enough information collected to make an eligibility decision due to the missing currently_admitted status.",
+  "next_action": "Call back to complete qualification. Still needed: currently_admitted.",
+  "turns": 6,
+  "contact_held": false
+}

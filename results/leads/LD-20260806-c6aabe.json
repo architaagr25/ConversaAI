@@ -1,0 +1,31 @@
+{
+  "lead_id": "LD-20260806-c6aabe",
+  "created_at": "2026-08-06T09:13:09+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {},
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [
+    "age",
+    "currently_admitted",
+    "residency"
+  ],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [
+    "rules/qualification_rules.yaml#ESC-CLAIM-DISPUTE",
+    "rules/qualification_rules.yaml#ESC-REQUEST",
+    "documents/health_shield_policy_wording.pdf#Health Shield Policy Wording",
+    "rules/qualification_rules.yaml#ESC-COMPLAINT",
+    "documents/health_shield_policy_wording.pdf#3 General exclusions"
+  ],
+  "summary": "The caller reached out regarding health cover, stating, \"This is not getting around, this is nothing getting around NOTHING\". It was not possible to establish the caller's age, residency, or whether they are currently admitted, meaning there is not enough information collected to make an eligibility decision. The next adviser needs to contact the caller to gather these missing details and determine their eligibility.",
+  "next_action": "Call back to complete qualification. Still needed: age, currently_admitted, residency.",
+  "turns": 2,
+  "contact_held": false
+}

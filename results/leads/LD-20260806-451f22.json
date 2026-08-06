@@ -1,0 +1,32 @@
+{
+  "lead_id": "LD-20260806-451f22",
+  "created_at": "2026-08-06T09:40:36+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {
+    "age": 21,
+    "plan_interest": "Max"
+  },
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [
+    "require_medical_questionnaire"
+  ],
+  "missing": [
+    "currently_admitted",
+    "residency"
+  ],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [
+    "documents/health_shield_rate_table.pdf#Rider monthly premium",
+    "web/health-shield-plans.html#Compare plans"
+  ],
+  "summary": "The caller is looking into health cover, specifically mentioning \"Plus, Max\" and \"Sons\", but not enough was collected to decide on their eligibility. It was established that the caller is twenty-one years old and answered \"Nooooo\" when asked if they currently live in the Philippines, but they did not answer whether they are currently admitted to a hospital. The next adviser needs to establish the caller's residency status and whether they are currently admitted to determine their eligibility.",
+  "next_action": "Call back to complete qualification. Still needed: currently_admitted, residency.",
+  "turns": 11,
+  "contact_held": false
+}

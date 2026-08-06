@@ -3,34 +3,36 @@
   "pack": "health_shield_en",
   "lines": [
     {
-      "at": 10.03,
+      "at": 5.55,
       "speaker": "agent",
       "text": "Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?"
     },
     {
-      "at": 35.83,
+      "at": 31.46,
       "speaker": "caller",
-      "text": "Fine."
+      "text": "Yes that is fine."
     },
     {
-      "at": 35.83,
+      "at": 31.46,
       "speaker": "agent",
-      "text": "Thanks for that. What made you look into health cover just now?",
+      "text": "Great. What made you look into health cover just now?",
       "grounded": false,
       "sought_knowledge": false,
+      "refused": false,
       "citations": []
     },
     {
-      "at": 55.97,
+      "at": 48.9,
       "speaker": "caller",
       "text": "Does the plan cover dental treatment?"
     },
     {
-      "at": 55.97,
+      "at": 48.9,
       "speaker": "agent",
-      "text": "Dental treatment is not covered on any of our plans. The only exception is if you need reconstructive dental work following an accident. \nAnd how old are you?",
+      "text": "Dental treatment is not covered on any of our plans. The only exception is for reconstructive work needed after an accident.\nAnd how old are you?",
       "grounded": true,
       "sought_knowledge": true,
+      "refused": false,
       "citations": [
         "documents/health_shield_policy_wording.pdf#3 General exclusions",
         "web/health-shield-faq.html#Is dental included?",
@@ -40,16 +42,17 @@
       ]
     },
     {
-      "at": 83.86,
+      "at": 76.17,
       "speaker": "caller",
-      "text": "Capital of France."
+      "text": "What is the capital of France?"
     },
     {
-      "at": 83.86,
+      "at": 76.17,
       "speaker": "agent",
-      "text": "I do not have that detail here. I can have someone check and come back to you. \nAnd how old are you?",
+      "text": "I do not have that detail here. I can have someone check and come back to you. \nAre you currently living in the Philippines?",
       "grounded": false,
       "sought_knowledge": true,
+      "refused": true,
       "citations": []
     }
   ],
@@ -69,7 +72,7 @@
     ],
     "escalated_to": "",
     "unanswered": [
-      "Capital of France."
+      "What is the capital of France?"
     ],
     "citations": [
       "documents/health_shield_policy_wording.pdf#3 General exclusions",
@@ -80,18 +83,57 @@
     ],
     "barge_ins": 0,
     "failed_recognitions": 0,
-    "transcript": "agent: Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?\ncaller: Fine.\nagent: Thanks for that. What made you look into health cover just now?\ncaller: Does the plan cover dental treatment?\nagent: Dental treatment is not covered on any of our plans. The only exception is if you need reconstructive dental work following an accident. \nAnd how old are you?\ncaller: Capital of France.\nagent: I do not have that detail here. I can have someone check and come back to you. \nAnd how old are you?\nagent: No problem at all. I will arrange for someone to call you back. Thanks for your time.",
+    "nudges": [
+      {
+        "kind": "knowledge_gap",
+        "advice": "Nothing in the knowledge base covered this. Worth adding.",
+        "priority": 40,
+        "confidence": 1.0,
+        "evidence": "What is the capital of France?",
+        "turn": 3,
+        "audience": "supervisor",
+        "latency_ms": 0.19079999765381217
+      }
+    ],
+    "live_analysis": {
+      "fired": [
+        {
+          "kind": "knowledge_gap",
+          "advice": "Nothing in the knowledge base covered this. Worth adding.",
+          "priority": 40,
+          "confidence": 1.0,
+          "evidence": "What is the capital of France?",
+          "turn": 3,
+          "audience": "supervisor",
+          "latency_ms": 0.19079999765381217
+        }
+      ],
+      "suppressed": [],
+      "counts": {
+        "fired": 1,
+        "suppressed": 0
+      },
+      "turns_analysed": 3,
+      "turns_skipped": 0,
+      "deliberated": 0,
+      "latency_ms": {
+        "p50": 0.16410002717748284,
+        "p95": 0.19079999765381217,
+        "max": 0.19079999765381217
+      }
+    },
+    "transcript": "agent: Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?\ncaller: Yes that is fine.\nagent: Great. What made you look into health cover just now?\ncaller: Does the plan cover dental treatment?\nagent: Dental treatment is not covered on any of our plans. The only exception is for reconstructive work needed after an accident.\nAnd how old are you?\ncaller: What is the capital of France?\nagent: I do not have that detail here. I can have someone check and come back to you. \nAre you currently living in the Philippines?\nagent: No problem at all. I will arrange for someone to call you back. Thanks for your time.",
     "actions": {
-      "lead_id": "LD-20260806-3bab88",
+      "lead_id": "LD-20260806-489eb1",
       "outcome": "incomplete",
       "next_action": "Call back to complete qualification. Still needed: age, currently_admitted, residency.",
-      "working_copy": "D:\\ConversaAI\\data\\leads\\LD-20260806-3bab88.json",
-      "evidence_copy": "D:\\ConversaAI\\results\\leads\\LD-20260806-3bab88.json"
+      "working_copy": "D:\\ConversaAI\\data\\leads\\LD-20260806-489eb1.json",
+      "evidence_copy": "D:\\ConversaAI\\results\\leads\\LD-20260806-489eb1.json"
     }
   },
   "turn_latency_ms": [
-    3634,
-    4811,
-    4767
+    3061,
+    4460,
+    3681
   ]
 }

@@ -91,9 +91,14 @@
   <!-- Kept separate from the transcript on purpose. Mixed into the
        conversation these read as things the agent said, and they are not:
        they are for whoever is watching the call. -->
-  <div class="panel" id="nudgePanel" style="display:none">
+  <div class="panel" id="nudgePanel">
     <div class="who">Live nudges <span id="mood" class="flag"></span></div>
-    <div id="nudges"></div>
+    <!-- Always on screen, even empty. Hidden until something fired, an
+         ordinary call looked like the panel was broken rather than like
+         there was nothing worth saying. -->
+    <div id="nudges"><div class="note">Advice appears here while the call is
+      running, when something is worth acting on. Most turns produce
+      nothing.</div></div>
   </div>
 
   <div class="panel" id="summaryPanel" style="display:none">
@@ -126,6 +131,8 @@ let currentSource = null;  // so an interruption can stop it mid-sentence
 let pendingLabel = '';
 let firstLine = true;
 let hangingUp = false;     // ignore anything still arriving after the button
+let summaryTimer = null;   // gives up waiting for the summary rather than hanging
+let firstNudge = true;     // clears the placeholder on the first real one
 
 function setState(name) {
   els.dot.className = 'dot ' + name;
@@ -147,10 +154,17 @@ function addLine(who, text, opts = {}) {
     flag = '<span class="flag grounded">from knowledge base</span>';
   else if (who === 'agent' && opts.refused === true)
     flag = '<span class="flag ungrounded">said it did not know</span>';
+  // Two at most. The agent is given several records per turn and listing all
+  // of them buries the one the answer actually came from, which is the only
+  // one worth showing.
   let cites = '';
-  if (opts.citations && opts.citations.length)
-    cites = '<div class="cites">' +
-      opts.citations.map(c => '<code>' + c + '</code>').join(' ') + '</div>';
+  if (opts.citations && opts.citations.length) {
+    const shown = opts.citations.slice(0, 2).map(c => '<code>' + c + '</code>');
+    const extra = opts.citations.length - shown.length;
+    cites = '<div class="cites">' + shown.join(' ') +
+      (extra > 0 ? ' <span class="note">+' + extra + ' more</span>' : '') +
+      '</div>';
+  }
   div.innerHTML = '<div class="who">' + (who === 'agent' ? 'Agent' : 'You') +
     flag + '</div><div>' + text + '</div>' + cites;
   els.log.appendChild(div);
@@ -160,8 +174,8 @@ function addLine(who, text, opts = {}) {
 // Highest priority first, so a compliance warning does not scroll away under
 // a sentiment change. Colour is by seriousness rather than by kind.
 function addNudge(text, d) {
-  const panel = document.getElementById('nudgePanel');
-  panel.style.display = '';
+  const nudges = document.getElementById('nudges');
+  if (firstNudge) { nudges.innerHTML = ''; firstNudge = false; }
   const div = document.createElement('div');
   div.className = 'line';
   const severe = d.priority >= 90 ? 'ungrounded' : 'grounded';
@@ -171,7 +185,6 @@ function addNudge(text, d) {
     'confidence ' + d.confidence + '</span></div>' +
     '<div>' + text + '</div>' +
     (d.evidence ? '<div class="cites"><code>' + d.evidence + '</code></div>' : '');
-  const nudges = document.getElementById('nudges');
   nudges.insertBefore(div, nudges.firstChild);
 }
 
@@ -243,6 +256,12 @@ async function start() {
   els.start.disabled = true;
   els.pack.disabled = true;
   hangingUp = false;
+  // A new call starts with an empty panel rather than the last call's advice.
+  firstNudge = true;
+  document.getElementById('nudges').innerHTML =
+    '<div class="note">Advice appears here while the call is running, when ' +
+    'something is worth acting on. Most turns produce nothing.</div>';
+  document.getElementById('mood').textContent = '';
   setState('idle');
 
   try {
@@ -298,7 +317,11 @@ async function start() {
         document.getElementById('mood').textContent =
           d.sentiment + (d.intent ? ' · ' + d.intent : '');
     }
-    else if (msg.kind === 'summary') showSummary(msg.detail);
+    else if (msg.kind === 'summary') {
+      clearTimeout(summaryTimer);
+      showSummary(msg.detail);
+      try { socket.close(); } catch (e) {}
+    }
   };
 
   socket.onclose = () => { finish(); };
@@ -372,7 +395,17 @@ els.stop.onclick = () => {
   addNote('call ended');
   if (socket && socket.readyState === WebSocket.OPEN) {
     socket.send(JSON.stringify({ command: 'hangup' }));
-    setTimeout(() => { try { socket.close(); } catch (e) {} }, 50);
+    // The connection stays open until the summary arrives. Hanging up has to
+    // feel instant, and it does: the audio stops and the microphone is
+    // released above. Closing the socket as well used to happen 50 ms later,
+    // which was long before the server had finished writing the lead, so the
+    // call summary was thrown away every time.
+    addNote('finishing up, writing the call record...');
+    clearTimeout(summaryTimer);
+    summaryTimer = setTimeout(() => {
+      addNote('no summary came back');
+      try { socket.close(); } catch (e) {}
+    }, 30000);
   }
   finish();
 };
