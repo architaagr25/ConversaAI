@@ -219,7 +219,7 @@ function setMicLive(live) {
 // The server ignores anything quieter than this as not-speech. Shown rather
 // than hidden because "it cannot hear me" and "my microphone is too quiet"
 // look identical from the outside, and only one of them is a bug.
-const RMS_FLOOR = 220;
+const RMS_FLOOR = 150;
 
 function showLevel(pcm) {
   let sum = 0;

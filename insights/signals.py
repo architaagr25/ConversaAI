@@ -82,6 +82,19 @@ PHRASES: dict[str, dict[str, list[str]]] = {
         "id": ["nanti aja", "belum sempat", "lain kali", "nanti dulu",
                "pikir-pikir dulu", "belum bisa sekarang"],
     },
+    # Not a refusal and not confusion. The caller is undecided, which on a
+    # qualification call is the moment to slow down rather than move on. It
+    # was missing entirely: "I don't know, maybe" produced nothing at all,
+    # because it neither refuses nor asks anything.
+    "hesitation": {
+        "en": ["i don't know", "i dont know", "i am not sure", "i'm not sure",
+               "not really sure", "maybe", "i guess", "possibly", "depends",
+               "hard to say", "no idea"],
+        "fil": ["hindi ko po alam", "ewan ko po", "siguro po", "baka po",
+                "hindi po ako sigurado", "depende po"],
+        "id": ["saya tidak tahu", "nggak tahu", "kurang tahu", "mungkin",
+               "belum yakin", "tergantung", "kayaknya"],
+    },
     "confusion": {
         "en": ["i don't understand", "what do you mean", "come again",
                "sorry what", "you lost me", "say that again"],

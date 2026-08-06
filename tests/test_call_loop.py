@@ -307,3 +307,57 @@ class TestClosing:
         summary = session.summary()
         assert summary["turns"] == 1
         assert "barge_ins" in summary
+
+
+class TestTheAgentDoesNotAnswerItself:
+    """Audio matching what the agent just said is the speakers, not a caller.
+
+    The deaf window covers the reply while it plays. This covers what gets
+    through anyway: room reverb, a slow speaker, a phrase caught on the tail.
+    Observed live as the agent hearing "and the plus, max" from its own
+    description of the plans, over and over.
+    """
+
+    def _session(self, spoken, barge_in=False):
+        session = CallSession(agent=StubAgent(), transcriber=StubTranscriber(),
+                              speaker=StubSpeaker(), allow_barge_in=barge_in)
+        session._last_spoken = spoken
+        return session
+
+    def test_a_phrase_from_the_last_reply_is_treated_as_echo(self):
+        session = self._session(
+            "We offer the Essential, Plus and Max plans.")
+        assert session._is_own_voice("and the Plus, Max")
+
+    def test_a_one_word_answer_is_never_echo(self):
+        # "Yes" and "no" appear inside the agent's own sentences constantly.
+        # Discarding them would throw away the commonest reply on the call.
+        session = self._session("Yes, that plan covers it. Are you in Manila?")
+        assert not session._is_own_voice("Yes")
+        assert not session._is_own_voice("No")
+
+    def test_a_two_word_answer_is_never_echo(self):
+        session = self._session("Are you in Manila or somewhere else?")
+        assert not session._is_own_voice("In Manila")
+
+    def test_a_whole_sentence_from_the_caller_is_not_echo(self):
+        session = self._session(
+            "The Plus plan covers hospital treatment and a rider.")
+        assert not session._is_own_voice(
+            "Does the Plus plan cover hospital treatment and a rider for my wife")
+
+    def test_a_real_question_using_the_agents_words_is_not_echo(self):
+        # A caller repeating a term on purpose has to be heard.
+        session = self._session("We offer Essential, Plus and Max.")
+        assert not session._is_own_voice("What about Max please")
+
+    def test_nothing_is_echo_before_the_agent_has_spoken(self):
+        session = self._session("")
+        assert not session._is_own_voice("and the plus max")
+
+    def test_interruption_turns_the_check_off(self):
+        # On headphones the microphone is not hearing the agent, and the
+        # caller is allowed to talk over it.
+        session = self._session("We offer Essential, Plus and Max plans.",
+                                barge_in=True)
+        assert not session._is_own_voice("and the Plus, Max")

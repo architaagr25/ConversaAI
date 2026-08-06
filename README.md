@@ -11,7 +11,8 @@ The system covers four capabilities that share one retrieval layer:
   qualification, grounded in that knowledge base.
 - **Localized agents** — the same capability for the Philippines (life insurance and
   bancassurance, English–Tagalog code-switching) and Indonesia (multifinance, formal
-  and colloquial Bahasa with regional accent handling).
+  and colloquial Bahasa, with Javanese and Sundanese speech recognised and mirrored
+  in the reply).
 - **Live insights** — streaming analysis of a call while it is still in progress,
   producing short, actionable nudges with measured end-to-end latency.
 
@@ -39,17 +40,22 @@ and puts it behind the voice channel.
 ```
 core/                shared configuration, logging, timing and provider fallback
 knowledge_base/      extraction, cleaning, chunking, indexing and retrieval
-voice_agent/         browser calling interface and the English qualification flow
-localized_agents/    Philippines and Indonesia conversation packs
-live_insights/       streaming transcription, signal detection and nudge delivery
+voice_agent/         calling interface, call loop, per-market speech and voices
+insights/            live signal detection and nudge delivery, during the call
+data/agents/         the three conversation packs, one per market
 data/raw/            original unprocessed source material
 data/processed/      cleaned intermediate output
 data/kb/             the built knowledge base and its index
-docs/                architecture notes and design decisions
-results/             test transcripts, recordings and measured results
+docs/                architecture, localization notes, limitations
+results/             recordings, transcripts and measured results
 tests/               automated checks
-scripts/             operational scripts
+scripts/             operational and evaluation scripts
 ```
+
+All three markets run on one code path. Nothing about a market lives in code:
+each pack in `data/agents/` carries its own flow, objection handling,
+escalation triggers, closing lines, and the lines said when the system itself
+fails.
 
 ---
 
@@ -125,7 +131,43 @@ real time, and saves a WAV, a transcript with sources, and a summary to
 
 ---
 
+## What was built, and how it was checked
+
+Start at **[`results/README.md`](results/README.md)**. It is the reading order
+for every measured claim, and each figure comes from a script that can be run
+again.
+
+The headline numbers:
+
+| | |
+| --- | --- |
+| Retrieval | 21 correct, 2 partial, 0 incorrect, out of 23 |
+| Speech recognition | 97% against a second provider's 69%, over 18 utterances |
+| Live nudges | 100% precision and recall over 33 turns, 13 of which should stay silent |
+| Recorded calls | 9, across three markets |
+| Automated checks | 516 |
+
+Reproduce the two evaluations directly:
+
+```
+python scripts\evaluate_asr.py        speech recognition, both providers
+python scripts\evaluate_nudges.py     nudge accuracy and per-component latency
+python -m pytest                      everything else
+```
+
+---
+
 ## Documentation
 
-Architecture, design decisions, retrieval evaluation, localization notes, latency
-measurements and known limitations are in [`docs/`](docs/).
+| | |
+| --- | --- |
+| [Architecture](docs/architecture.md) | How a call flows, how the knowledge base is built, and why |
+| [Live insights](docs/live_insights.md) | In-call analysis, controls, and what it costs |
+| [Knowledge taxonomy](docs/knowledge_taxonomy.md) | How records are categorised and ranked |
+| [Knowledge base schema](docs/knowledge_base_schema.md) | Fields, versioning and traceability |
+| [Philippines localization](docs/localisation_philippines.md) | What was adapted rather than translated |
+| [Indonesia localization](docs/localisation_indonesia.md) | Registers, regional speech, and one requirement only partly met |
+| [Limitations and scale](docs/limitations_and_scale.md) | What is weak, what is asserted rather than measured, and what breaks at ten times the volume |
+
+The limitations page is the one to read if you only read one. It separates what
+was measured from what was assumed, and neither is hedged.

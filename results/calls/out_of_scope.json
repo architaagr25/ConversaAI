@@ -3,31 +3,31 @@
   "pack": "health_shield_en",
   "lines": [
     {
-      "at": 5.55,
+      "at": 4.8,
       "speaker": "agent",
       "text": "Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?"
     },
     {
-      "at": 31.46,
+      "at": 30.45,
       "speaker": "caller",
       "text": "Yes that is fine."
     },
     {
-      "at": 31.46,
+      "at": 30.45,
       "speaker": "agent",
-      "text": "Great. What made you look into health cover just now?",
+      "text": "That is good to hear. What made you look into health cover just now?",
       "grounded": false,
       "sought_knowledge": false,
       "refused": false,
       "citations": []
     },
     {
-      "at": 48.9,
+      "at": 47.82,
       "speaker": "caller",
       "text": "Does the plan cover dental treatment?"
     },
     {
-      "at": 48.9,
+      "at": 47.82,
       "speaker": "agent",
       "text": "Dental treatment is not covered on any of our plans. The only exception is for reconstructive work needed after an accident.\nAnd how old are you?",
       "grounded": true,
@@ -36,20 +36,18 @@
       "citations": [
         "documents/health_shield_policy_wording.pdf#3 General exclusions",
         "web/health-shield-faq.html#Is dental included?",
-        "web/health-shield-plans.html#What is not covered",
-        "documents/health_shield_policy_wording.pdf#6 Claims",
-        "documents/health_shield_policy_wording.pdf#5 Eligibility"
+        "web/health-shield-plans.html#What is not covered"
       ]
     },
     {
-      "at": 76.17,
+      "at": 73.23,
       "speaker": "caller",
-      "text": "What is the capital of France?"
+      "text": "is the capital of France."
     },
     {
-      "at": 76.17,
+      "at": 73.23,
       "speaker": "agent",
-      "text": "I do not have that detail here. I can have someone check and come back to you. \nAre you currently living in the Philippines?",
+      "text": "I do not have that detail here. I can have someone check and come back to you. Are you currently living in the Philippines?",
       "grounded": false,
       "sought_knowledge": true,
       "refused": true,
@@ -72,14 +70,12 @@
     ],
     "escalated_to": "",
     "unanswered": [
-      "What is the capital of France?"
+      "is the capital of France."
     ],
     "citations": [
       "documents/health_shield_policy_wording.pdf#3 General exclusions",
       "web/health-shield-faq.html#Is dental included?",
-      "web/health-shield-plans.html#What is not covered",
-      "documents/health_shield_policy_wording.pdf#6 Claims",
-      "documents/health_shield_policy_wording.pdf#5 Eligibility"
+      "web/health-shield-plans.html#What is not covered"
     ],
     "barge_ins": 0,
     "failed_recognitions": 0,
@@ -89,10 +85,10 @@
         "advice": "Nothing in the knowledge base covered this. Worth adding.",
         "priority": 40,
         "confidence": 1.0,
-        "evidence": "What is the capital of France?",
+        "evidence": "is the capital of France.",
         "turn": 3,
         "audience": "supervisor",
-        "latency_ms": 0.19079999765381217
+        "latency_ms": 0.13379997108131647
       }
     ],
     "live_analysis": {
@@ -102,10 +98,10 @@
           "advice": "Nothing in the knowledge base covered this. Worth adding.",
           "priority": 40,
           "confidence": 1.0,
-          "evidence": "What is the capital of France?",
+          "evidence": "is the capital of France.",
           "turn": 3,
           "audience": "supervisor",
-          "latency_ms": 0.19079999765381217
+          "latency_ms": 0.13379997108131647
         }
       ],
       "suppressed": [],
@@ -117,23 +113,23 @@
       "turns_skipped": 0,
       "deliberated": 0,
       "latency_ms": {
-        "p50": 0.16410002717748284,
-        "p95": 0.19079999765381217,
-        "max": 0.19079999765381217
+        "p50": 0.13379997108131647,
+        "p95": 0.14379998901858926,
+        "max": 0.14379998901858926
       }
     },
-    "transcript": "agent: Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?\ncaller: Yes that is fine.\nagent: Great. What made you look into health cover just now?\ncaller: Does the plan cover dental treatment?\nagent: Dental treatment is not covered on any of our plans. The only exception is for reconstructive work needed after an accident.\nAnd how old are you?\ncaller: What is the capital of France?\nagent: I do not have that detail here. I can have someone check and come back to you. \nAre you currently living in the Philippines?\nagent: No problem at all. I will arrange for someone to call you back. Thanks for your time.",
+    "transcript": "agent: Hi, this is Maya from Solara Health Shield. I help people find out which health plan fits them. Is now an alright time for a few quick questions?\ncaller: Yes that is fine.\nagent: That is good to hear. What made you look into health cover just now?\ncaller: Does the plan cover dental treatment?\nagent: Dental treatment is not covered on any of our plans. The only exception is for reconstructive work needed after an accident.\nAnd how old are you?\ncaller: is the capital of France.\nagent: I do not have that detail here. I can have someone check and come back to you. Are you currently living in the Philippines?\nagent: No problem at all. I will arrange for someone to call you back. Thanks for your time.",
     "actions": {
-      "lead_id": "LD-20260806-489eb1",
+      "lead_id": "LD-20260806-635137",
       "outcome": "incomplete",
       "next_action": "Call back to complete qualification. Still needed: age, currently_admitted, residency.",
-      "working_copy": "D:\\ConversaAI\\data\\leads\\LD-20260806-489eb1.json",
-      "evidence_copy": "D:\\ConversaAI\\results\\leads\\LD-20260806-489eb1.json"
+      "working_copy": "D:\\ConversaAI\\data\\leads\\LD-20260806-635137.json",
+      "evidence_copy": "D:\\ConversaAI\\results\\leads\\LD-20260806-635137.json"
     }
   },
   "turn_latency_ms": [
-    3061,
-    4460,
-    3681
+    3319,
+    3658,
+    4318
   ]
 }

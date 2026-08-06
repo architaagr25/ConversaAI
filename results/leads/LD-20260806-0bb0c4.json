@@ -1,0 +1,34 @@
+{
+  "lead_id": "LD-20260806-0bb0c4",
+  "created_at": "2026-08-06T10:05:21+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {
+    "age": 21,
+    "residency": "PH",
+    "currently_admitted": false,
+    "plan_interest": "Max"
+  },
+  "corrections": [],
+  "eligible": true,
+  "decided": true,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [
+    "require_medical_questionnaire"
+  ],
+  "missing": [],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [
+    "web/health-shield-faq.html#\"This is more expensive than I expected.\"",
+    "rules/qualification_rules.yaml#health_ph_en.soft_rules",
+    "web/health-shield-faq.html#\"I would rather think about it.\"",
+    "documents/health_shield_policy_wording.pdf#6 Claims",
+    "web/health-shield-faq.html#Can I use any hospital?"
+  ],
+  "summary": "The caller, Archita, is a 21-year-old living in the Philippines who wants to explore health cover options but is concerned about costs, stating \"My job and can't afford it right now\". It was established that she meets the eligibility criteria, is looking for individual cover, is not currently in hospital, and wants to know more about the Plus and Max plans, asking \"and I will be able to get the hospital, Plus, Max\". The next step is for the adviser to call her back within one working day to provide an exact quote, explain the differences between the plans, and guide her through the short health questionnaire.",
+  "next_action": "Quote from the rate table, then arrange: require medical questionnaire.",
+  "turns": 12,
+  "contact_held": false
+}

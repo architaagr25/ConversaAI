@@ -75,7 +75,14 @@ MIN_UTTERANCE_MS = 250
 # tail of the agent's own voice reaching the microphone both sit well under
 # it, and a recogniser handed near-silence does not return nothing: it returns
 # "Thank you" or "..." with confidence, which the agent then answers.
-MIN_UTTERANCE_RMS = 220
+#
+# Was 220, which rejected a real caller at 188 on a laptop microphone. The
+# figure was picked against synthesised audio, which is louder and more even
+# than a person sitting a foot from a built-in microphone. Lowering it does
+# let more of the agent's own voice through, and that is handled by matching
+# what comes back against what was just said rather than by loudness, which
+# is the better tool for it anyway.
+MIN_UTTERANCE_RMS = 150
 
 # Above this something has gone wrong, or the caller is reading an essay.
 # Either way the turn has to end so the agent can respond.

@@ -75,6 +75,11 @@ PROBES = [
           {"buying_signal"}, note="ready to proceed"),
     Probe("Sorry what, i don't understand.",
           {"confusion"}, note="confusion"),
+    Probe("I don't know, maybe.", {"hesitation"}, note="undecided"),
+    Probe("Saya kurang tahu, mungkin nanti.",
+          {"hesitation", "soft_refusal"}, note="undecided, Indonesian"),
+    Probe("Hindi ko po alam, siguro po.", {"hesitation"},
+          note="undecided, Taglish"),
     Probe("What is the limit?", {"agent_guarantee"},
           agent="Yes, you are definitely approved, that is guaranteed.",
           note="agent promised an outcome"),
@@ -114,6 +119,8 @@ PROBES = [
     Probe("I will think about the colour of the car.", set(),
           note="near miss: thinking, but not about the offer"),
     Probe("Thank you, that answers it.", set(), note="satisfied close"),
+    Probe("Yes I know that already, go on.", set(),
+          note="near miss: knowing, not hesitating"),
     Probe("Berapa sisa tenor saya?", set(), note="plain question"),
 ]
 

@@ -1,0 +1,31 @@
+{
+  "lead_id": "LD-20260806-635137",
+  "created_at": "2026-08-06T09:51:49+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {},
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [
+    "age",
+    "currently_admitted",
+    "residency"
+  ],
+  "escalated_to": "",
+  "unanswered": [
+    "is the capital of France."
+  ],
+  "citations": [
+    "documents/health_shield_policy_wording.pdf#3 General exclusions",
+    "web/health-shield-faq.html#Is dental included?",
+    "web/health-shield-plans.html#What is not covered"
+  ],
+  "summary": "The caller wants to know if the health plan covers dental treatment, and they asked \"Does the plan cover dental treatment?\". It was established that dental treatment is not covered except for reconstructive work after an accident, but the caller's age, current admission status, and residency could not be established, meaning there is not enough information collected to decide eligibility. During the call, the agent could not answer what the capital of France is after the caller said \"is the capital of France.\". The next adviser needs to call the client back to answer their question about the capital of France and collect the missing details regarding their age, current admission status, and residency to determine eligibility.",
+  "next_action": "Call back to complete qualification. Still needed: age, currently_admitted, residency.",
+  "turns": 3,
+  "contact_held": false
+}

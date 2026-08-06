@@ -19,6 +19,7 @@ microphone, a recogniser or a network.
 from __future__ import annotations
 
 import logging
+import re
 import time
 from dataclasses import dataclass, field
 from enum import Enum
@@ -123,6 +124,9 @@ class CallSession:
         self._cancel_speaking = False
         self._turn_number = 0
         self.insights: list = []
+        # What the agent last said, so audio matching it can be recognised as
+        # the speakers rather than the caller.
+        self._last_spoken = ""
 
         # Half duplex unless the caller says they are on headphones. On
         # speakers the microphone hears the agent, the recogniser turns that
@@ -237,6 +241,34 @@ class CallSession:
 
     # -- one turn -------------------------------------------------------------
 
+    def _is_own_voice(self, heard: str) -> bool:
+        """Whether the recogniser just heard the agent through the speakers.
+
+        The deaf window covers the reply while it plays, and this covers what
+        gets through anyway: room reverb, a slow speaker, a phrase caught on
+        the tail. Matching on content rather than on timing, because timing
+        already had its chance.
+
+        Only for short fragments, and only when interruption is off. A caller
+        who says "the Plus plan?" is repeating the agent on purpose and must
+        still be heard, so a full sentence is never treated as echo.
+        """
+        if self.allow_barge_in or not self._last_spoken:
+            return False
+
+        words = re.findall(r"[a-z']+", heard.lower())
+        # Three words at least. One or two are almost always a real answer,
+        # and "yes", "no" and "opo" turn up inside the agent's own sentences
+        # constantly, so a shorter rule threw away exactly the replies that
+        # matter most. Six at most, because a whole sentence from the caller
+        # is a caller.
+        if len(words) < 3 or len(words) > 6:
+            return False
+
+        spoken = set(re.findall(r"[a-z']+", self._last_spoken.lower()))
+        shared = sum(1 for w in words if w in spoken)
+        return shared / len(words) >= 0.8
+
     async def _handle(self, utterance: Utterance) -> AsyncIterator[Event]:
         self.state = CallState.THINKING
         self._cancel_speaking = False
@@ -254,6 +286,16 @@ class CallSession:
             audio_ms=utterance.duration_ms,
             trace=turn_trace,
         )
+
+        if transcript and self._is_own_voice(transcript.text):
+            # The speakers, not the caller. Treated exactly like silence: no
+            # reply, no note in the transcript, keep listening. Answering it
+            # is how a call turns into the agent talking to itself.
+            log.info(f"ignoring the agent's own voice coming back: "
+                     f"{transcript.text[:60]!r}")
+            self.state = CallState.LISTENING
+            yield Event("state", state=self.state.value)
+            return
 
         if transcript.error == "silence":
             # There was no speech, only room tone or the tail of the agent's
@@ -398,6 +440,7 @@ class CallSession:
         still being written, which is exactly when an impatient caller
         interrupts.
         """
+        self._last_spoken = text
         spoken_ms = 0.0
         async for speech in self.speaker.stream(text):
             if self._cancel_speaking:

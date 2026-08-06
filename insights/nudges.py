@@ -118,6 +118,13 @@ RULES: dict[str, NudgeRule] = {
         "A date was given. Confirm it back and record it.",
         priority=50, minimum_confidence=0.72, cooldown_turns=3),
 
+    "hesitation": NudgeRule(
+        "hesitation",
+        "The caller is undecided rather than refusing. Ask what would help "
+        "them decide instead of moving to the next question.",
+        priority=52, minimum_confidence=0.72, cooldown_turns=3,
+        audience="agent"),
+
     "confusion": NudgeRule(
         "confusion",
         "The last answer did not land. Say it again in shorter sentences.",
