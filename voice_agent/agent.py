@@ -272,15 +272,43 @@ def records_behind(reply: str, records: list) -> list:
     The failure it prevents is not cosmetic. A citation that appears under
     every reply teaches whoever is reading it that citations mean nothing,
     and then the one under an actual quoted premium gets ignored too.
+
+    Shared words only count when they are rare across the records retrieved
+    for this turn. Plain overlap was not enough. "Would you like me to go over
+    the monthly premiums for your dependants under the Essential plan?" shares
+    premium, monthly, dependant and essential with the rate table, and states
+    nothing from it — it offers to. Those words are in nearly every record
+    retrieved, which is why they matched, and a word that describes the whole
+    result set cannot tell one record apart from another. A word that appears
+    in one record and not the rest can, and that is the case where the reply
+    genuinely came from somewhere.
     """
     spoken = _distinctive(reply)
-    if not spoken:
+    if not spoken or not records:
         return []
 
+    vocabularies = [
+        _distinctive(f"{getattr(r, 'content', '') or ''} "
+                     f"{getattr(r, 'title', '') or ''}")
+        for r in records
+    ]
+
+    # How many of this turn's records each word appears in. Anything in more
+    # than half of them is describing the topic, not a source.
+    #
+    # Needs a few records to mean anything. With one or two, every word is in
+    # more than half of them by definition, and discounting on that basis would
+    # discard the citation on every turn where retrieval was narrow — which is
+    # the turn most likely to have quoted something exactly.
+    common_to_the_topic = set()
+    if len(records) >= 3:
+        for word in spoken:
+            if sum(1 for v in vocabularies if word in v) > len(records) / 2:
+                common_to_the_topic.add(word)
+
     kept = []
-    for record in records:
-        content = getattr(record, "content", "") or ""
-        shared = spoken & _distinctive(f"{content} {getattr(record, 'title', '')}")
+    for record, vocabulary in zip(records, vocabularies):
+        shared = (spoken & vocabulary) - common_to_the_topic
         if len(shared) >= CITATION_OVERLAP:
             kept.append(record)
     return kept

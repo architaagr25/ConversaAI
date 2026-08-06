@@ -52,10 +52,20 @@ BARGE_IN_FRAMES = 12
 # the sound still in the room.
 SETTLE_SECONDS = 0.4
 
-# Roughly how long a piece of synthesised audio lasts. The bytes arrive far
-# faster than they play, so the length of the file is what matters, not how
-# long it took to make.
-MP3_BYTES_PER_SECOND = 4000
+# How long a piece of synthesised audio lasts. The bytes arrive far faster
+# than they play, so the length of the file is what matters, not how long it
+# took to make.
+#
+# This was 4000, guessed rather than measured, and the guess was 50% low. The
+# voice returns 48 kbit MP3, which is 6000 bytes a second. Underestimating the
+# rate overestimates the duration, so a six second reply was treated as nine,
+# and the session stayed deaf for three seconds after the caller could already
+# hear silence. Every turn. It reads as the agent being slow to notice you have
+# started, and worse, the first part of the answer is thrown away, so the
+# recogniser gets a clipped fragment and returns something that is not what was
+# said. Measured with:
+#     len(audio) / (duration_of(audio) / 1000)
+MP3_BYTES_PER_SECOND = 6000
 
 
 def _audio_length_ms(audio: bytes) -> float:
