@@ -46,6 +46,13 @@ SPEECH_FRAMES_TO_START = 3
 
 # How much silence closes it. 700 ms is a pause; 300 ms is drawing breath
 # between clauses and cutting there produces half sentences.
+# 700 ms of quiet before the turn is treated as over. Briefly 500, to make the
+# agent quicker to answer, and that was the wrong lever: cutting 200 ms earlier
+# ends the recording while people are still mid-sentence, and the recogniser
+# answers a short clipped utterance with an invented one. "No" came back as
+# "None of the above". Recognition quality is worth more than a fifth of a
+# second, and the delay people actually notice is the half-duplex window while
+# the agent is speaking, not this.
 SILENCE_FRAMES_TO_END = 35
 
 # Below this an utterance is a click or a cough, not a turn.

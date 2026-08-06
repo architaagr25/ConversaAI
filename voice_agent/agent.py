@@ -240,6 +240,52 @@ SLOT_ANSWER = re.compile(
     r"(years?\s*old|k|thousand|ribu|juta|pesos?|php|rp)?[\s.,!]*$", re.I)
 
 
+# Words too common to prove anything. A reply and a record sharing "the" and
+# "you" have nothing in common worth citing.
+COMMON = {
+    "the", "and", "for", "you", "your", "that", "this", "with", "have", "has",
+    "are", "was", "will", "would", "can", "could", "any", "all", "not", "but",
+    "from", "there", "here", "what", "when", "how", "who", "which", "our",
+    "may", "one", "two", "yes", "sure", "okay", "please", "thank", "thanks",
+    "ang", "mga", "ako", "ninyo", "iyan", "ito", "kayo", "kung", "para",
+    "yang", "dan", "untuk", "dengan", "pada", "adalah", "saya", "anda",
+    "ini", "itu", "sudah", "akan", "bisa", "tidak", "kami", "juga", "atau",
+}
+
+CITATION_OVERLAP = 2
+
+
+def _distinctive(text: str) -> set[str]:
+    import re
+
+    return {w for w in re.findall(r"[a-z][a-z'-]{3,}", text.lower())
+            if w not in COMMON}
+
+
+def records_behind(reply: str, records: list) -> list:
+    """The records the reply actually used, out of everything retrieved.
+
+    Judged on distinctive words appearing in both. Crude, and it has to be:
+    this runs on the call path, and anything cleverer costs a round trip that
+    the caller would wait through.
+
+    The failure it prevents is not cosmetic. A citation that appears under
+    every reply teaches whoever is reading it that citations mean nothing,
+    and then the one under an actual quoted premium gets ignored too.
+    """
+    spoken = _distinctive(reply)
+    if not spoken:
+        return []
+
+    kept = []
+    for record in records:
+        content = getattr(record, "content", "") or ""
+        shared = spoken & _distinctive(f"{content} {getattr(record, 'title', '')}")
+        if len(shared) >= CITATION_OVERLAP:
+            kept.append(record)
+    return kept
+
+
 def needs_knowledge(text: str) -> bool:
     """Whether this turn should be answered from the knowledge base.
 
@@ -470,11 +516,19 @@ class Agent:
                                     temperature=0.5, max_tokens=220, trace=trace)
         watch.mark("model")
 
+        # Only the records the reply actually drew on. Retrieval runs on
+        # nearly every turn, so citing everything it returned put five sources
+        # and a "from knowledge base" badge under "Would this be just for you,
+        # or for family as well?", which answers nothing and came from the
+        # questionnaire. A citation has to mean the answer came from there.
+        spoken = clean_for_speech(reply.text)
+        used = records_behind(spoken, records) if confident else []
+
         turn = Turn(
             caller=caller_text,
-            agent=clean_for_speech(reply.text),
-            citations=[r.source_ref for r in records] if confident else [],
-            grounded=confident,
+            agent=spoken,
+            citations=[r.source_ref for r in used],
+            grounded=bool(used),
             retrieved=len(records),
             sought_knowledge=pending is not None,
             slots_filled=filled,

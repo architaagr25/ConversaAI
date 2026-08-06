@@ -49,12 +49,29 @@ HALLUCINATIONS = {
 }
 
 
+# A single one of these is never an answer to anything. They come from the
+# recogniser catching the leading edge of a word, or a caller drawing breath,
+# and the agent then apologises for missing the end of a sentence that was
+# never started. Kept to words that cannot stand alone: "no", "oo", "opo",
+# "iya" and "yes" are complete answers in these markets and are not here.
+FRAGMENTS = {
+    "and", "so", "the", "a", "i", "um", "uh", "er", "ah", "eh", "mm", "hmm",
+    "but", "or", "of", "to", "is", "it", "well", "like", "at", "in", "on",
+    "ng", "na", "ba", "yung", "eh...", "ang", "sa", "yang", "di", "ke",
+}
+
+
 def is_probably_silence(text: str) -> bool:
     """Whether a transcript is what a recogniser says when it heard nothing."""
     cleaned = text.strip().lower().strip("¡!¿?\"'")
     if not cleaned:
         return True
     if cleaned in HALLUCINATIONS:
+        return True
+    # A single fragment, with or without trailing dots. "and..." reached the
+    # agent as a turn and got a reply asking the caller to repeat themselves,
+    # which is a worse outcome than having heard nothing at all.
+    if cleaned.rstrip(".,").strip() in FRAGMENTS:
         return True
     # A handful of characters that are all punctuation is not speech.
     return not any(c.isalnum() for c in cleaned)
