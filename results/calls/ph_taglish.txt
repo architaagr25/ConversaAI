@@ -1,0 +1,54 @@
+Call: ph_taglish
+Pack: life_ph
+
+[  9.40s] Agent: Magandang araw po, si Ella po ito from Solara Life Philippines. Tumatawag po ako tungkol sa premium payment ninyo. May oras po ba kayo sandali?
+[ 37.44s] Caller: Oppo, bayadepo
+[ 37.44s] Agent: Salamat po sa inyong tugon. Kayo po ba si Ma'am o Sir, ang policyholder na tumatawag?
+           source: forms/lead_form_export.csv#Product Interest
+           source: forms/lead_form_export.csv#business_unit
+           source: forms/lead_form_export.csv#fields
+           source: web/life-philippines.html#Beneficiaries
+           source: web/partners.html#Training and support
+[ 60.89s] Caller: 40-5 po ako.
+[ 60.89s] Agent: Salamat po sa paglilinaw. Kayo po ba ang policyholder na siyang may-ari ng policy na ating pinag-uusapan?
+           source: web/life-philippines.html#Magkano po ang premium ko?
+           source: web/life-philippines.html#Paying your premium
+           source: web/partners.html#Commission structure
+           source: web/life-philippines.html#Ano po ang mangyayari kung ma-lapse ang policy ko?
+           source: forms/lead_form_export.csv#fields
+[ 85.23s] Caller: sa Maynila po ako nakatira.
+[ 85.23s] Agent: Salamat po sa impormasyon. Kumpirmado po ba na kayo ang policyholder ng account na ito?
+           (no supporting record, agent said so)
+[109.90s] Caller: Medyo mahal po yata para sa akin ngayon
+[109.90s] Agent: Naiintindihan ko po ang inyong sitwasyon. Maaari ko po bang malaman kung kaya niyo po itong mabayaran bago matapos ang grace period na tatlumpu't isang araw?
+           source: web/life-philippines.html#Magkano po ang premium ko?
+           source: web/life-philippines.html#Paying your premium
+           source: web/life-philippines.html#Ano po ang mangyayari kung ma-lapse ang policy ko?
+           source: rules/qualification_rules.yaml#life_ph.soft_rules
+           source: rules/qualification_rules.yaml#prohibited
+[137.11s] Caller: Ano po ang mangyayari kung malapse ang policy ko?
+[137.11s] Agent: Naiintindihan ko po ang inyong pag-aalala. Kung ma-lapse po ang inyong policy, hihinto ang inyong coverage, ngunit kung may cash value na po ito, maaari itong ituloy gamit ang automatic premium loan o kaya ay i-reinstate sa loob ng tatlong taon.
+Nais ko lang pong itanong, saan po kayo mas madaling magbayad, sa bank, sa branch, o online?
+           source: web/life-philippines.html#Ano po ang mangyayari kung ma-lapse ang policy ko?
+           source: web/life-philippines.html#Lapse and reinstatement
+           source: rules/qualification_rules.yaml#prohibited
+           source: web/partners.html#Commission structure
+           source: web/life-philippines.html#Paying your premium
+
+Summary
+----------------------------------------
+pack: life_ph
+turns: 5
+collected: {}
+corrections: []
+eligible: True
+decided: False
+decline_reason: 
+requirements: []
+missing: ['residency']
+escalated_to: 
+unanswered: []
+citations: ['forms/lead_form_export.csv#Product Interest', 'forms/lead_form_export.csv#business_unit', 'forms/lead_form_export.csv#fields', 'web/life-philippines.html#Beneficiaries', 'web/partners.html#Training and support', 'web/life-philippines.html#Magkano po ang premium ko?', 'web/life-philippines.html#Paying your premium', 'web/partners.html#Commission structure', 'web/life-philippines.html#Ano po ang mangyayari kung ma-lapse ang policy ko?', 'rules/qualification_rules.yaml#life_ph.soft_rules', 'rules/qualification_rules.yaml#prohibited', 'web/life-philippines.html#Lapse and reinstatement']
+barge_ins: 0
+failed_recognitions: 0
+actions: {'lead_id': 'LD-20260806-af3871', 'outcome': 'incomplete', 'next_action': 'Call back to complete qualification. Still needed: residency.', 'working_copy': 'D:\\ConversaAI\\data\\leads\\LD-20260806-af3871.json', 'evidence_copy': 'D:\\ConversaAI\\results\\leads\\LD-20260806-af3871.json'}

@@ -1,0 +1,11 @@
+{
+  "event": "escalation",
+  "lead_id": "LD-20260806-44bd4b",
+  "at": "2026-08-06T06:05:32+00:00",
+  "trigger": "ESC-REQUEST",
+  "business_unit": "life_ph",
+  "collected": {},
+  "unanswered": [],
+  "summary": "Ang caller ay tumawag tungkol sa premium payment nila at nagsabi na \"30-65 po ako\". Nakipag-usap siya sa akin at hiniling na makausap ang isang tao, kaya tinawagan ko siya at sinabi ko na ikokonekta ko na siya sa isa sa mga kasamahan namin. Nakwento na niya ang kanyang concern tungkol sa premium payment at ito ay hahawakan na ng susunod na makakausap sa kanya. Kailangan mong makipag-usap sa caller at tulungan siya sa kanyang concern tungkol sa premium payment.",
+  "next_action": "Handed to a person during the call. No callback needed."
+}

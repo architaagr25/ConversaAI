@@ -43,6 +43,19 @@ COVERS = {
     "conflicting": "Conflicting details, the caller corrects an earlier answer",
     "out_of_scope": "A question the knowledge base cannot answer",
     "escalation": "The caller asks for a person",
+    "ph_taglish": "Taglish caller, objection and a question about a lapse",
+    "ph_escalation": "Taglish caller asks for a person, in Tagalog",
+    "id_collections": "Indonesian caller refuses indirectly, formal register",
+    "id_javanese": "Javanese caller outside Jakarta, regional greeting",
+}
+
+# Which pack and voice each script belongs to, so a native-language call is
+# not placed against the English agent by accident.
+MARKET = {
+    "ph_taglish": ("life_ph", settings.tts_voice_fil),
+    "ph_escalation": ("life_ph", settings.tts_voice_fil),
+    "id_collections": ("multifinance_id", settings.tts_voice_id),
+    "id_javanese": ("multifinance_id", settings.tts_voice_id),
 }
 
 SCRIPTS = {
@@ -79,6 +92,34 @@ SCRIPTS = {
         "Yes okay.",
         "I am thirty years old.",
         "Actually, can I speak to a real person please?",
+    ],
+
+    # Taglish. The refusals are indirect on purpose: "titingnan ko po" is a
+    # no, and a script written in English waits for one it never hears.
+    "ph_taglish": [
+        "Opo, pwede po.",
+        "Kwarenta y singko po ako.",
+        "Sa Maynila po ako nakatira.",
+        "Medyo mahal po yata para sa akin ngayon.",
+        "Ano po ang mangyayari kung ma-lapse ang policy ko?",
+    ],
+    "ph_escalation": [
+        "Sige po.",
+        "Trenta y singko po ako.",
+        "Pwede po bang makausap ang tao?",
+    ],
+
+    # Bahasa Indonesia. "Belum sempat" and "nanti aja" are refusals.
+    "id_collections": [
+        "Iya, silakan.",
+        "Belum sempat pak, nanti aja ya, lagi susah bulan ini.",
+        "Mungkin minggu depan setelah gajian.",
+        "Berapa denda kalau telat bayar cicilan seminggu?",
+    ],
+    "id_javanese": [
+        "Nggih, monggo.",
+        "Nuwun sewu, kulo dereng saget mbayar cicilan niki.",
+        "Nggih, monggo dijelaske malih.",
     ],
 }
 
@@ -331,8 +372,10 @@ def main() -> int:
     names = sorted(SCRIPTS) if args.script == "all" else [args.script]
     calls = []
     for name in names:
-        call = asyncio.run(place(name, SCRIPTS[name], args.pack, args.voice,
-                                 args.host))
+        # A native-language script carries its own market, so it cannot be
+        # placed against the English agent by forgetting a flag.
+        pack, voice = MARKET.get(name, (args.pack, args.voice))
+        call = asyncio.run(place(name, SCRIPTS[name], pack, voice, args.host))
         save(call)
         calls.append(call)
 

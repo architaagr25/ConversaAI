@@ -1,0 +1,45 @@
+Call: id_collections
+Pack: multifinance_id
+
+[  3.23s] Agent: Selamat siang, dengan Bapak atau Ibu yang bersangkutan? Saya Dimas dari Solara Multifinance. Saya menghubungi terkait cicilan bulan ini. Apakah ada waktu sebentar?
+[ 39.60s] Caller: Sosan
+[ 39.60s] Agent: Selamat siang. Mohon maaf, untuk yang itu saya belum ada datanya, saya cek dulu ya. Sebelumnya, boleh saya konfirmasi, betul ini dengan nasabah yang bersangkutan?
+[ 77.11s] Caller: Nanti aja ya, lagi susah bulan ini
+[ 77.11s] Agent: Saya mengerti kondisi Bapak. Kalau boleh tahu, apakah Bapak sudah tahu kalau cicilannya sudah jatuh tempo?
+           source: documents/multifinance_agreement_terms.pdf#Pasal 1 Kewajiban Pembayaran
+           source: documents/multifinance_agreement_terms.pdf#Multifinance Agreement Terms
+           source: rules/qualification_rules.yaml#multifinance_id.hard_rules
+           source: web/multifinance-indonesia.html#Pembayaran angsuran
+           source: web/multifinance-indonesia.html#Pembiayaan Motor
+[106.06s] Caller: Mungkin minggu depan setelah gajian
+[106.06s] Agent: Terima kasih atas informasinya, Bapak. Boleh saya konfirmasi sekali lagi, apakah betul saya sedang berbicara dengan Bapak Sosan selaku nasabah yang bersangkutan?
+           source: documents/multifinance_agreement_terms.pdf#Pasal 2 Denda Keterlambatan
+           source: documents/multifinance_agreement_terms.pdf#Pasal 4 Pelunasan Dipercepat
+           source: web/multifinance-indonesia.html#Pembiayaan Mobil Baru
+           source: web/multifinance-indonesia.html#Keterlambatan pembayaran
+           source: web/multifinance-indonesia.html#BPKB saya ditahan sampai kapan?
+[140.85s] Caller: Kalau telat bayar cicilan seminggu
+[140.85s] Agent: Untuk keterlambatan pembayaran, akan dikenakan denda sebesar nol koma lima persen per hari dari jumlah cicilan yang tertunggak, dihitung sejak hari pertama setelah tanggal jatuh tempo. Namun, total denda tersebut tidak akan melebihi tiga puluh persen dari nilai satu angsuran Bapak. Apakah ada hal lain yang ingin Bapak tanyakan terkait hal ini?
+           source: documents/multifinance_agreement_terms.pdf#Pasal 2 Denda Keterlambatan
+           source: documents/multifinance_agreement_terms.pdf#Pasal 1 Kewajiban Pembayaran
+           source: web/multifinance-indonesia.html#Keterlambatan pembayaran
+           source: web/multifinance-indonesia.html#Pembayaran angsuran
+           source: web/multifinance-indonesia.html#Kesulitan membayar
+
+Summary
+----------------------------------------
+pack: multifinance_id
+turns: 4
+collected: {}
+corrections: []
+eligible: True
+decided: False
+decline_reason: 
+requirements: []
+missing: ['age', 'age_at_tenor_end', 'has_existing_arrears', 'has_valid_ktp', 'installment_to_income', 'monthly_income']
+escalated_to: 
+unanswered: []
+citations: ['documents/multifinance_agreement_terms.pdf#Pasal 1 Kewajiban Pembayaran', 'documents/multifinance_agreement_terms.pdf#Multifinance Agreement Terms', 'rules/qualification_rules.yaml#multifinance_id.hard_rules', 'web/multifinance-indonesia.html#Pembayaran angsuran', 'web/multifinance-indonesia.html#Pembiayaan Motor', 'documents/multifinance_agreement_terms.pdf#Pasal 2 Denda Keterlambatan', 'documents/multifinance_agreement_terms.pdf#Pasal 4 Pelunasan Dipercepat', 'web/multifinance-indonesia.html#Pembiayaan Mobil Baru', 'web/multifinance-indonesia.html#Keterlambatan pembayaran', 'web/multifinance-indonesia.html#BPKB saya ditahan sampai kapan?', 'web/multifinance-indonesia.html#Kesulitan membayar']
+barge_ins: 0
+failed_recognitions: 0
+actions: {'lead_id': 'LD-20260806-179b9e', 'outcome': 'incomplete', 'next_action': 'Call back to complete qualification. Still needed: age, age_at_tenor_end, has_existing_arrears, has_valid_ktp, installment_to_income, monthly_income.', 'working_copy': 'D:\\ConversaAI\\data\\leads\\LD-20260806-179b9e.json', 'evidence_copy': 'D:\\ConversaAI\\results\\leads\\LD-20260806-179b9e.json'}

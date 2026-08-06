@@ -1,0 +1,39 @@
+{
+  "lead_id": "LD-20260806-dc6990",
+  "created_at": "2026-08-06T06:09:39+00:00",
+  "business_unit": "multifinance_id",
+  "pack_id": "multifinance_id",
+  "collected": {},
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [
+    "age",
+    "age_at_tenor_end",
+    "has_existing_arrears",
+    "has_valid_ktp",
+    "installment_to_income",
+    "monthly_income"
+  ],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [
+    "documents/multifinance_agreement_terms.pdf#Pasal 1 Kewajiban Pembayaran",
+    "documents/multifinance_agreement_terms.pdf#Pasal 2 Denda Keterlambatan",
+    "documents/multifinance_agreement_terms.pdf#Pasal 3 Tahapan Penagihan",
+    "rules/qualification_rules.yaml#multifinance_id.hard_rules",
+    "web/multifinance-indonesia.html#Solara Multifinance Indonesia",
+    "documents/multifinance_agreement_terms.pdf#Pasal 5 Restrukturisasi",
+    "documents/multifinance_agreement_terms.pdf#Multifinance Agreement Terms",
+    "web/multifinance-indonesia.html#Berapa cicilan per bulan kalau tenor 24 bulan?",
+    "forms/lead_form_export.csv#Product Interest",
+    "rules/qualification_rules.yaml#multifinance_id.soft_rules"
+  ],
+  "summary": "Penghubung ini menghubungi terkait cicilan bulan ini dan menyatakan \"Cicilaniki\" ketika ditanya tentang identitasnya. Telah diputuskan bahwa tidak cukup informasi yang dikumpulkan untuk memutuskan eligibility, dengan data yang masih kurang seperti usia, usia pada akhir tenor, adanya arrears yang ada, kepemilikan KTP yang valid, rasio cicilan ke pendapatan, dan pendapatan bulanan. Langkah selanjutnya adalah menghubungi penghubung ini kembali di waktu yang lebih tepat untuk melanjutkan proses. Penghubung ini telah dikonfirmasi sebagai nasabah yang bersangkutan dan telah menyatakan \"monggo dijelas ke malih\" ketika diminta konfirmasi.",
+  "next_action": "Call back to complete qualification. Still needed: age, age_at_tenor_end, has_existing_arrears, has_valid_ktp, installment_to_income, monthly_income.",
+  "turns": 2,
+  "contact_held": false
+}

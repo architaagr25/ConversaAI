@@ -1,0 +1,151 @@
+{
+  "name": "ph_taglish",
+  "pack": "life_ph",
+  "lines": [
+    {
+      "at": 9.4,
+      "speaker": "agent",
+      "text": "Magandang araw po, si Ella po ito from Solara Life Philippines. Tumatawag po ako tungkol sa premium payment ninyo. May oras po ba kayo sandali?"
+    },
+    {
+      "at": 37.44,
+      "speaker": "caller",
+      "text": "Oppo, bayadepo"
+    },
+    {
+      "at": 37.44,
+      "speaker": "agent",
+      "text": "Salamat po sa inyong tugon. Kayo po ba si Ma'am o Sir, ang policyholder na tumatawag?",
+      "grounded": true,
+      "sought_knowledge": true,
+      "refused": false,
+      "citations": [
+        "forms/lead_form_export.csv#Product Interest",
+        "forms/lead_form_export.csv#business_unit",
+        "forms/lead_form_export.csv#fields",
+        "web/life-philippines.html#Beneficiaries",
+        "web/partners.html#Training and support"
+      ]
+    },
+    {
+      "at": 60.89,
+      "speaker": "caller",
+      "text": "40-5 po ako."
+    },
+    {
+      "at": 60.89,
+      "speaker": "agent",
+      "text": "Salamat po sa paglilinaw. Kayo po ba ang policyholder na siyang may-ari ng policy na ating pinag-uusapan?",
+      "grounded": true,
+      "sought_knowledge": true,
+      "refused": false,
+      "citations": [
+        "web/life-philippines.html#Magkano po ang premium ko?",
+        "web/life-philippines.html#Paying your premium",
+        "web/partners.html#Commission structure",
+        "web/life-philippines.html#Ano po ang mangyayari kung ma-lapse ang policy ko?",
+        "forms/lead_form_export.csv#fields"
+      ]
+    },
+    {
+      "at": 85.23,
+      "speaker": "caller",
+      "text": "sa Maynila po ako nakatira."
+    },
+    {
+      "at": 85.23,
+      "speaker": "agent",
+      "text": "Salamat po sa impormasyon. Kumpirmado po ba na kayo ang policyholder ng account na ito?",
+      "grounded": false,
+      "sought_knowledge": true,
+      "refused": false,
+      "citations": []
+    },
+    {
+      "at": 109.9,
+      "speaker": "caller",
+      "text": "Medyo mahal po yata para sa akin ngayon"
+    },
+    {
+      "at": 109.9,
+      "speaker": "agent",
+      "text": "Naiintindihan ko po ang inyong sitwasyon. Maaari ko po bang malaman kung kaya niyo po itong mabayaran bago matapos ang grace period na tatlumpu't isang araw?",
+      "grounded": true,
+      "sought_knowledge": true,
+      "refused": false,
+      "citations": [
+        "web/life-philippines.html#Magkano po ang premium ko?",
+        "web/life-philippines.html#Paying your premium",
+        "web/life-philippines.html#Ano po ang mangyayari kung ma-lapse ang policy ko?",
+        "rules/qualification_rules.yaml#life_ph.soft_rules",
+        "rules/qualification_rules.yaml#prohibited"
+      ]
+    },
+    {
+      "at": 137.11,
+      "speaker": "caller",
+      "text": "Ano po ang mangyayari kung malapse ang policy ko?"
+    },
+    {
+      "at": 137.11,
+      "speaker": "agent",
+      "text": "Naiintindihan ko po ang inyong pag-aalala. Kung ma-lapse po ang inyong policy, hihinto ang inyong coverage, ngunit kung may cash value na po ito, maaari itong ituloy gamit ang automatic premium loan o kaya ay i-reinstate sa loob ng tatlong taon.\nNais ko lang pong itanong, saan po kayo mas madaling magbayad, sa bank, sa branch, o online?",
+      "grounded": true,
+      "sought_knowledge": true,
+      "refused": false,
+      "citations": [
+        "web/life-philippines.html#Ano po ang mangyayari kung ma-lapse ang policy ko?",
+        "web/life-philippines.html#Lapse and reinstatement",
+        "rules/qualification_rules.yaml#prohibited",
+        "web/partners.html#Commission structure",
+        "web/life-philippines.html#Paying your premium"
+      ]
+    }
+  ],
+  "summary": {
+    "pack": "life_ph",
+    "turns": 5,
+    "collected": {},
+    "corrections": [],
+    "eligible": true,
+    "decided": false,
+    "decline_reason": "",
+    "requirements": [],
+    "missing": [
+      "residency"
+    ],
+    "escalated_to": "",
+    "unanswered": [],
+    "citations": [
+      "forms/lead_form_export.csv#Product Interest",
+      "forms/lead_form_export.csv#business_unit",
+      "forms/lead_form_export.csv#fields",
+      "web/life-philippines.html#Beneficiaries",
+      "web/partners.html#Training and support",
+      "web/life-philippines.html#Magkano po ang premium ko?",
+      "web/life-philippines.html#Paying your premium",
+      "web/partners.html#Commission structure",
+      "web/life-philippines.html#Ano po ang mangyayari kung ma-lapse ang policy ko?",
+      "rules/qualification_rules.yaml#life_ph.soft_rules",
+      "rules/qualification_rules.yaml#prohibited",
+      "web/life-philippines.html#Lapse and reinstatement"
+    ],
+    "barge_ins": 0,
+    "failed_recognitions": 0,
+    "transcript": "agent: Magandang araw po, si Ella po ito from Solara Life Philippines. Tumatawag po ako tungkol sa premium payment ninyo. May oras po ba kayo sandali?\ncaller: Oppo, bayadepo\nagent: Salamat po sa inyong tugon. Kayo po ba si Ma'am o Sir, ang policyholder na tumatawag?\ncaller: 40-5 po ako.\nagent: Salamat po sa paglilinaw. Kayo po ba ang policyholder na siyang may-ari ng policy na ating pinag-uusapan?\ncaller: sa Maynila po ako nakatira.\nagent: Salamat po sa impormasyon. Kumpirmado po ba na kayo ang policyholder ng account na ito?\ncaller: Medyo mahal po yata para sa akin ngayon\nagent: Naiintindihan ko po ang inyong sitwasyon. Maaari ko po bang malaman kung kaya niyo po itong mabayaran bago matapos ang grace period na tatlumpu't isang araw?\ncaller: Ano po ang mangyayari kung malapse ang policy ko?\nagent: Naiintindihan ko po ang inyong pag-aalala. Kung ma-lapse po ang inyong policy, hihinto ang inyong coverage, ngunit kung may cash value na po ito, maaari itong ituloy gamit ang automatic premium loan o kaya ay i-reinstate sa loob ng tatlong taon.\nNais ko lang pong itanong, saan po kayo mas madaling magbayad, sa bank, sa branch, o online?\nagent: Sige po, tatawag na lang po ulit kami sa oras na sinabi ninyo. Salamat po, ingat.",
+    "actions": {
+      "lead_id": "LD-20260806-af3871",
+      "outcome": "incomplete",
+      "next_action": "Call back to complete qualification. Still needed: residency.",
+      "working_copy": "D:\\ConversaAI\\data\\leads\\LD-20260806-af3871.json",
+      "evidence_copy": "D:\\ConversaAI\\results\\leads\\LD-20260806-af3871.json"
+    }
+  },
+  "turn_latency_ms": [
+    4065,
+    4949,
+    5462,
+    5892,
+    4722
+  ]
+}

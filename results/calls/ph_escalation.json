@@ -1,0 +1,96 @@
+{
+  "name": "ph_escalation",
+  "pack": "life_ph",
+  "lines": [
+    {
+      "at": 2.8,
+      "speaker": "agent",
+      "text": "Magandang araw po, si Ella po ito from Solara Life Philippines. Tumatawag po ako tungkol sa premium payment ninyo. May oras po ba kayo sandali?"
+    },
+    {
+      "at": 38.01,
+      "speaker": "caller",
+      "text": "30-65 po ako."
+    },
+    {
+      "at": 38.01,
+      "speaker": "agent",
+      "text": "Naiintindihan ko po. Kayo po ba si Ma'am o Sir, ang policyholder?",
+      "grounded": true,
+      "sought_knowledge": true,
+      "refused": false,
+      "citations": [
+        "rules/qualification_rules.yaml#life_ph.hard_rules",
+        "web/life-philippines.html#Who can apply",
+        "web/life-philippines.html#Magkano po ang premium ko?",
+        "web/life-philippines.html#Paying your premium",
+        "web/life-philippines.html#Ano po ang mangyayari kung ma-lapse ang policy ko?"
+      ]
+    },
+    {
+      "at": 56.53,
+      "speaker": "caller",
+      "text": "Pwede po bang makausap ang tao?"
+    },
+    {
+      "at": 56.53,
+      "speaker": "agent",
+      "text": "Ikokonekta ko na po kayo sa isa sa mga kasamahan namin. Nasa kanila na po lahat ng nasabi ninyo.",
+      "grounded": false,
+      "sought_knowledge": false,
+      "refused": false,
+      "citations": []
+    }
+  ],
+  "summary": {
+    "pack": "life_ph",
+    "turns": 2,
+    "collected": {},
+    "corrections": [],
+    "eligible": true,
+    "decided": false,
+    "decline_reason": "",
+    "requirements": [],
+    "missing": [
+      "residency"
+    ],
+    "escalated_to": "ESC-REQUEST",
+    "unanswered": [],
+    "citations": [
+      "rules/qualification_rules.yaml#life_ph.hard_rules",
+      "web/life-philippines.html#Who can apply",
+      "web/life-philippines.html#Magkano po ang premium ko?",
+      "web/life-philippines.html#Paying your premium",
+      "web/life-philippines.html#Ano po ang mangyayari kung ma-lapse ang policy ko?"
+    ],
+    "barge_ins": 0,
+    "failed_recognitions": 0,
+    "transcript": "agent: Magandang araw po, si Ella po ito from Solara Life Philippines. Tumatawag po ako tungkol sa premium payment ninyo. May oras po ba kayo sandali?\ncaller: 30-65 po ako.\nagent: Naiintindihan ko po. Kayo po ba si Ma'am o Sir, ang policyholder?\ncaller: Pwede po bang makausap ang tao?\nagent: Ikokonekta ko na po kayo sa isa sa mga kasamahan namin. Nasa kanila na po lahat ng nasabi ninyo.",
+    "actions": {
+      "lead_id": "LD-20260806-44bd4b",
+      "outcome": "escalated",
+      "next_action": "Handed to a person during the call. No callback needed.",
+      "working_copy": "D:\\ConversaAI\\data\\leads\\LD-20260806-44bd4b.json",
+      "evidence_copy": "D:\\ConversaAI\\results\\leads\\LD-20260806-44bd4b.json",
+      "escalation": {
+        "delivered": false,
+        "written_to": "D:\\ConversaAI\\results\\webhooks\\LD-20260806-44bd4b.json",
+        "payload": {
+          "event": "escalation",
+          "lead_id": "LD-20260806-44bd4b",
+          "at": "2026-08-06T06:05:32+00:00",
+          "trigger": "ESC-REQUEST",
+          "business_unit": "life_ph",
+          "collected": {},
+          "unanswered": [],
+          "summary": "Ang caller ay tumawag tungkol sa premium payment nila at nagsabi na \"30-65 po ako\". Nakipag-usap siya sa akin at hiniling na makausap ang isang tao, kaya tinawagan ko siya at sinabi ko na ikokonekta ko na siya sa isa sa mga kasamahan namin. Nakwento na niya ang kanyang concern tungkol sa premium payment at ito ay hahawakan na ng susunod na makakausap sa kanya. Kailangan mong makipag-usap sa caller at tulungan siya sa kanyang concern tungkol sa premium payment.",
+          "next_action": "Handed to a person during the call. No callback needed."
+        }
+      }
+    }
+  },
+  "turn_latency_ms": [
+    5393,
+    2241
+  ]
+}

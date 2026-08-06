@@ -1,0 +1,29 @@
+{
+  "lead_id": "LD-20260806-44bd4b",
+  "created_at": "2026-08-06T06:05:26+00:00",
+  "business_unit": "life_ph",
+  "pack_id": "life_ph",
+  "collected": {},
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [
+    "residency"
+  ],
+  "escalated_to": "ESC-REQUEST",
+  "unanswered": [],
+  "citations": [
+    "rules/qualification_rules.yaml#life_ph.hard_rules",
+    "web/life-philippines.html#Who can apply",
+    "web/life-philippines.html#Magkano po ang premium ko?",
+    "web/life-philippines.html#Paying your premium",
+    "web/life-philippines.html#Ano po ang mangyayari kung ma-lapse ang policy ko?"
+  ],
+  "summary": "Ang caller ay tumawag tungkol sa premium payment nila at nagsabi na \"30-65 po ako\". Nakipag-usap siya sa akin at hiniling na makausap ang isang tao, kaya tinawagan ko siya at sinabi ko na ikokonekta ko na siya sa isa sa mga kasamahan namin. Nakwento na niya ang kanyang concern tungkol sa premium payment at ito ay hahawakan na ng susunod na makakausap sa kanya. Kailangan mong makipag-usap sa caller at tulungan siya sa kanyang concern tungkol sa premium payment.",
+  "next_action": "Handed to a person during the call. No callback needed.",
+  "turns": 2,
+  "contact_held": false
+}

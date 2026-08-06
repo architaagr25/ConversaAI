@@ -1,0 +1,36 @@
+{
+  "lead_id": "LD-20260806-af3871",
+  "created_at": "2026-08-06T06:04:20+00:00",
+  "business_unit": "life_ph",
+  "pack_id": "life_ph",
+  "collected": {},
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [
+    "residency"
+  ],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [
+    "forms/lead_form_export.csv#Product Interest",
+    "forms/lead_form_export.csv#business_unit",
+    "forms/lead_form_export.csv#fields",
+    "web/life-philippines.html#Beneficiaries",
+    "web/partners.html#Training and support",
+    "web/life-philippines.html#Magkano po ang premium ko?",
+    "web/life-philippines.html#Paying your premium",
+    "web/partners.html#Commission structure",
+    "web/life-philippines.html#Ano po ang mangyayari kung ma-lapse ang policy ko?",
+    "rules/qualification_rules.yaml#life_ph.soft_rules",
+    "rules/qualification_rules.yaml#prohibited",
+    "web/life-philippines.html#Lapse and reinstatement"
+  ],
+  "summary": "Ang caller ay tumawag tungkol sa premium payment nila at nais malaman kung ano ang mangyayari kung ma-lapse ang policy nila, na sinabi nila na \"Ano po ang mangyayari kung malapse ang policy ko?\" Natukoy na hindi sapat ang na-collect upang makapag-desisyon sa eligibility at kulang ang residency. Kailangang tawagan ang caller muli sa oras na sinabi nila, at ipaalam sa kanila ang mga kinakailangan na gawin sa susunod, gaya ng pagbabayad ng premium sa bank, branch, o online, na kanilang sinabi na \"Oppo, bayadepo\" at \"Medyo mahal po yata para sa akin ngayon\".",
+  "next_action": "Call back to complete qualification. Still needed: residency.",
+  "turns": 5,
+  "contact_held": false
+}

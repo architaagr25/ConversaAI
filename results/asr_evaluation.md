@@ -17,101 +17,158 @@ Speech is synthesised, which makes it cleaner than a caller on a laptop micropho
 | Market | Case | deepgram | groq |
 | --- | --- | --- | --- |
 | English, Philippines | plain | 100% | 100% |
-| English, Philippines | numbers | 92% | 92% |
+| English, Philippines | numbers | 100% | 100% |
 | English, Philippines | domain terms | 100% | 100% |
 | Taglish, Philippines | plain tagalog | 0% | 100% |
 | Taglish, Philippines | code switch | 22% | 100% |
 | Taglish, Philippines | heavy code switch | 36% | 93% |
-| Taglish, Philippines | domain terms | 73% | 100% |
+| Taglish, Philippines | domain terms | 27% | 100% |
+| Taglish, Philippines | english heavy | 67% | 100% |
+| Taglish, Philippines | amounts | 0% | 100% |
 | Bahasa Indonesia | plain | 100% | 100% |
 | Bahasa Indonesia | loanwords | 100% | 100% |
 | Bahasa Indonesia | colloquial | 100% | 100% |
-| Bahasa Indonesia | javanese | 75% | 88% |
-| Bahasa Indonesia | sundanese | 57% | 71% |
+| Bahasa Indonesia | formal | 100% | 100% |
+| Bahasa Indonesia | amounts | 100% | 100% |
+| Bahasa Indonesia | javanese greeting | 75% | 88% |
+| Bahasa Indonesia | javanese reply | 88% | 100% |
+| Bahasa Indonesia | sundanese greeting | 57% | 71% |
+| Bahasa Indonesia | sundanese reply | 75% | 100% |
 
 ## Summary
 
 | Provider | Model | Mean accuracy | Median latency |
 | --- | --- | --- | --- |
-| deepgram | `nova-2` | 71% | 3247 ms |
-| groq | `whisper-large-v3-turbo` | 95% | 392 ms |
+| deepgram | `nova-2` | 69% | 4481 ms |
+| groq | `whisper-large-v3-turbo` | 97% | 559 ms |
+
+## Standard against regional speech
+
+Averaging these together hides the case that matters. Javanese and Sundanese are first languages for well over half of Indonesia, and neither provider handles them as well as it handles Jakarta Indonesian.
+
+| Provider | Standard | Regional |
+| --- | --- | --- |
+| deepgram | 68% (14 cases) | 74% (4 cases) |
+| groq | 99% (14 cases) | 90% (4 cases) |
+
+## Observed errors
+
+Every word that did not survive, and why. Grouped by kind rather than listed, because the kind is what can be acted on.
+
+**deepgram**
+
+| Kind | Count | Examples |
+| --- | --- | --- |
+| one language dropped | 20 | magkano (code switch), po (code switch), ang (code switch), ko (code switch) |
+| whole utterance lost | 15 | magkano (plain tagalog), po (plain tagalog), ang (plain tagalog), hulog (plain tagalog) |
+| dropped | 6 | sino (domain terms), po (domain terms), at (domain terms), pwede (domain terms) |
+| regional word, dropped | 3 | kulo (javanese greeting), can (sundanese greeting), tiasa (sundanese greeting) |
+| heard as beneficiary | 1 | benepisyaryo (domain terms) |
+| heard as ang | 1 | bang (domain terms) |
+| regional word, heard as nun | 1 | nuwun (javanese greeting) |
+| regional word, heard as gih | 1 | nggih (javanese reply) |
+| regional word, heard as ayuna | 1 | ayeuna (sundanese greeting) |
+| regional word, heard as abdi | 1 | bade (sundanese reply) |
+| regional word, heard as meyar | 1 | mayar (sundanese reply) |
+
+**groq**
+
+| Kind | Count | Examples |
+| --- | --- | --- |
+| regional word, dropped | 2 | dereng (javanese greeting), can (sundanese greeting) |
+| heard as malaps | 1 | lapse (heavy code switch) |
+| regional word, heard as ayuna | 1 | ayeuna (sundanese greeting) |
+
 
 ## Where words were lost
-
-**English, Philippines / numbers / groq**
-
-- said: I am thirty five years old and I earn sixty thousand a month.
-- heard: I am 35 years old and I earn 60,000 a month.
-- lost: 1000
-
-**English, Philippines / numbers / deepgram**
-
-- said: I am thirty five years old and I earn sixty thousand a month.
-- heard: I am 35 years old and I earn 60,000 a month.
-- lost: 1000
 
 **Taglish, Philippines / plain tagalog / deepgram**
 
 - said: Magkano po ang hulog ko kada buwan?
 - heard: (nothing)
-- lost: magkano, po, ang, hulog, ko, kada, buwan
+- lost: magkano (whole utterance lost), po (whole utterance lost), ang (whole utterance lost), hulog (whole utterance lost), ko (whole utterance lost), kada (whole utterance lost), buwan (whole utterance lost)
 - error: silence
 
 **Taglish, Philippines / code switch / deepgram**
 
 - said: Magkano po ang premium ko kung monthly ang bayad?
 - heard: Premium monthly
-- lost: magkano, po, ang, ko, kung, ang, bayad
+- lost: magkano (one language dropped), po (one language dropped), ang (one language dropped), ko (one language dropped), kung (one language dropped), ang (one language dropped), bayad (one language dropped)
 
 **Taglish, Philippines / heavy code switch / groq**
 
 - said: Ano po ang mangyayari kung ma-lapse ang policy, may grace period po ba?
 - heard: Ano po ang mangyayari kung malaps ang policy? May grace period po ba?
-- lost: lapse
+- lost: lapse (heard as malaps)
 
 **Taglish, Philippines / heavy code switch / deepgram**
 
 - said: Ano po ang mangyayari kung ma-lapse ang policy, may grace period po ba?
 - heard: Policy by grace period.
-- lost: ano, ang, mangyayari, kung, ma, lapse, ang, may, ba
+- lost: ano (one language dropped), ang (one language dropped), mangyayari (one language dropped), kung (one language dropped), ma (one language dropped), lapse (one language dropped), ang (one language dropped), may (one language dropped), ba (one language dropped)
 
 **Taglish, Philippines / domain terms / deepgram**
 
 - said: Sino po ang benepisyaryo at pwede po bang palitan ang beneficiary?
-- heard: Sinupu ang beneficiary at kwedipo bang palitan ang beneficiary.
-- lost: sino, benepisyaryo, pwede
+- heard: Sinupu ang beneficiary.
+- lost: sino (dropped), po (dropped), benepisyaryo (heard as beneficiary), at (dropped), pwede (dropped), po (dropped), bang (heard as ang), palitan (dropped)
 
-**Bahasa Indonesia / javanese / groq**
+**Taglish, Philippines / english heavy / deepgram**
+
+- said: Ang beneficiary po ba pwede more than one, o isa lang po?
+- heard: An beneficiary POBAP already more than one
+- lost: ang (one language dropped), pwede (one language dropped), isa (one language dropped), lang (one language dropped)
+
+**Taglish, Philippines / amounts / deepgram**
+
+- said: Isang libo dalawang daan po ang kaya kong bayaran kada buwan.
+- heard: (nothing)
+- lost: 1200 (whole utterance lost), po (whole utterance lost), ang (whole utterance lost), kaya (whole utterance lost), kong (whole utterance lost), bayaran (whole utterance lost), kada (whole utterance lost), buwan (whole utterance lost)
+- error: silence
+
+**Bahasa Indonesia / javanese greeting / groq**
 
 - said: Nuwun sewu, kulo dereng saget mbayar cicilan niki.
 - heard: nuwun sewu, kulodreng saget embayar cicilaniki
-- lost: dereng
+- lost: dereng (regional word, dropped)
 
-**Bahasa Indonesia / javanese / deepgram**
+**Bahasa Indonesia / javanese greeting / deepgram**
 
 - said: Nuwun sewu, kulo dereng saget mbayar cicilan niki.
-- heard: Nun Sewu, Pulau Dereng Saget membayar cicilan Niki
-- lost: nuwun, kulo
+- heard: Nun Sewu, Pulau Dereng Saget membayar Cicilaniki.
+- lost: nuwun (regional word, heard as nun), kulo (regional word, dropped)
 
-**Bahasa Indonesia / sundanese / groq**
+**Bahasa Indonesia / javanese reply / deepgram**
+
+- said: Nggih monggo pak, kulo sampun mbayar wingi sonten.
+- heard: Gih monggopak, kulo sampun membayar wingi sonten.
+- lost: nggih (regional word, heard as gih)
+
+**Bahasa Indonesia / sundanese greeting / groq**
 
 - said: Punten, abdi teh can tiasa mayar ayeuna.
 - heard: Punten, Abditeh Kentiasa Mayar Ayuna
-- lost: can, ayeuna
+- lost: can (regional word, dropped), ayeuna (regional word, heard as ayuna)
 
-**Bahasa Indonesia / sundanese / deepgram**
+**Bahasa Indonesia / sundanese greeting / deepgram**
 
 - said: Punten, abdi teh can tiasa mayar ayeuna.
-- heard: Punten Abdi Teh Kent kiyasa Mayar Ayuna.
-- lost: can, tiasa, ayeuna
+- heard: Punten Abdi Teh Kentyasa Mayar Ayuna.
+- lost: can (regional word, dropped), tiasa (regional word, dropped), ayeuna (regional word, heard as ayuna)
+
+**Bahasa Indonesia / sundanese reply / deepgram**
+
+- said: Muhun, abdi bade mayar minggu payun, hatur nuhun.
+- heard: Muhun, Abdi Badai Meyar Minggu Payun, Hatur nuhun.
+- lost: bade (regional word, heard as abdi), mayar (regional word, heard as meyar)
 
 
 ## Code switching
 
 What each provider returned for the sentences that move between languages mid-sentence.
 
-- **deepgram** kept both languages in 1 of 3 switching sentences.
-- **groq** kept both languages in 3 of 3 switching sentences.
+- **deepgram** kept both languages in 1 of 4 switching sentences.
+- **groq** kept both languages in 4 of 4 switching sentences.
 
 **plain tagalog / groq**
 - said: Magkano po ang hulog ko kada buwan?
@@ -150,5 +207,25 @@ What each provider returned for the sentences that move between languages mid-se
 
 **domain terms / deepgram**
 - said: Sino po ang benepisyaryo at pwede po bang palitan ang beneficiary?
-- heard: Sinupu ang beneficiary at kwedipo bang palitan ang beneficiary.
-- languages: switched between english 50%, tagalog 50%
+- heard: Sinupu ang beneficiary.
+- languages: switched between tagalog 50%, english 50%
+
+**english heavy / groq**
+- said: Ang beneficiary po ba pwede more than one, o isa lang po?
+- heard: Ang beneficiary po ba pwede more than one o isa lang po?
+- languages: switched between tagalog 83%, english 17%
+
+**english heavy / deepgram**
+- said: Ang beneficiary po ba pwede more than one, o isa lang po?
+- heard: An beneficiary POBAP already more than one
+- languages: english throughout  <- one language lost
+
+**amounts / groq**
+- said: Isang libo dalawang daan po ang kaya kong bayaran kada buwan.
+- heard: Isang libo dalawang daan po ang kaya kong bayaran kada buwan
+- languages: tagalog throughout
+
+**amounts / deepgram**
+- said: Isang libo dalawang daan po ang kaya kong bayaran kada buwan.
+- heard: (nothing)
+- languages: nothing recognisable

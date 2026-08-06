@@ -44,6 +44,10 @@ class Case:
     voice: str
     kind: str
     said: str
+    # Standard for the market unless stated. Named so the regional cases can
+    # be reported on their own, which is where both providers are weakest and
+    # where an average across all cases hides it.
+    accent: str = "standard"
 
 
 CASES = [
@@ -64,6 +68,10 @@ CASES = [
          "Ano po ang mangyayari kung ma-lapse ang policy, may grace period po ba?"),
     Case("life_ph", settings.tts_voice_fil, "domain terms",
          "Sino po ang benepisyaryo at pwede po bang palitan ang beneficiary?"),
+    Case("life_ph", settings.tts_voice_fil, "english heavy",
+         "Ang beneficiary po ba pwede more than one, o isa lang po?"),
+    Case("life_ph", settings.tts_voice_fil, "amounts",
+         "Isang libo dalawang daan po ang kaya kong bayaran kada buwan."),
 
     # Bahasa Indonesia
     Case("multifinance_id", settings.tts_voice_id, "plain",
@@ -72,10 +80,20 @@ CASES = [
          "Sisa tenor saya berapa dan DP kemarin sudah masuk belum?"),
     Case("multifinance_id", settings.tts_voice_id, "colloquial",
          "Belum sempat pak, nanti aja ya, lagi susah bulan ini."),
-    Case("multifinance_id", settings.tts_voice_id, "javanese",
-         "Nuwun sewu, kulo dereng saget mbayar cicilan niki."),
-    Case("multifinance_id", settings.tts_voice_id, "sundanese",
-         "Punten, abdi teh can tiasa mayar ayeuna."),
+    Case("multifinance_id", settings.tts_voice_id, "formal",
+         "Mohon informasi mengenai sisa angsuran dan tanggal jatuh tempo saya."),
+    Case("multifinance_id", settings.tts_voice_id, "amounts",
+         "Cicilan saya dua juta tiga ratus ribu per bulan."),
+
+    # Regional, outside Jakarta. Reported separately.
+    Case("multifinance_id", settings.tts_voice_id, "javanese greeting",
+         "Nuwun sewu, kulo dereng saget mbayar cicilan niki.", "javanese"),
+    Case("multifinance_id", settings.tts_voice_id, "javanese reply",
+         "Nggih monggo pak, kulo sampun mbayar wingi sonten.", "javanese"),
+    Case("multifinance_id", settings.tts_voice_id, "sundanese greeting",
+         "Punten, abdi teh can tiasa mayar ayeuna.", "sundanese"),
+    Case("multifinance_id", settings.tts_voice_id, "sundanese reply",
+         "Muhun, abdi bade mayar minggu payun, hatur nuhun.", "sundanese"),
 ]
 
 
@@ -114,14 +132,81 @@ NUMBER_WORDS = {
     "five": "5", "six": "6", "seven": "7", "eight": "8", "nine": "9",
     "ten": "10", "twenty": "20", "thirty": "30", "forty": "40", "fifty": "50",
     "sixty": "60", "seventy": "70", "eighty": "80", "ninety": "90",
-    "hundred": "100", "thousand": "1000",
 }
 TENS = {"20", "30", "40", "50", "60", "70", "80", "90"}
 
+# Indonesian and Filipino numerals. Here because without them this script
+# reported a 44% recognition failure that had not happened: both providers
+# heard "dua juta tiga ratus ribu" perfectly and wrote it "Rp2.300.000",
+# which is the correct way to write it and shares no words with the spoken
+# form. The recogniser was right and the scoring was wrong.
+LOCAL_UNITS = {
+    # Indonesian
+    "satu": 1, "dua": 2, "tiga": 3, "empat": 4, "lima": 5, "enam": 6,
+    "tujuh": 7, "delapan": 8, "sembilan": 9, "sepuluh": 10,
+    # Filipino
+    "isa": 1, "dalawa": 2, "tatlo": 3, "apat": 4, "anim": 6, "pito": 7,
+    "walo": 8, "siyam": 9, "sampu": 10,
+}
+LOCAL_SCALES = {
+    # Indonesian
+    "ratus": 100, "seratus": 100, "ribu": 1000, "seribu": 1000,
+    "juta": 1_000_000, "sejuta": 1_000_000,
+    # Filipino
+    "daan": 100, "raan": 100, "libo": 1000, "milyon": 1_000_000,
+    # English, folded the same way so the markets are scored alike. Without
+    # this "sixty thousand" stays two tokens while "dua juta" becomes one,
+    # and English is marked down for a difference in the scoring.
+    "hundred": 100, "thousand": 1000, "million": 1_000_000,
+}
+# The Filipino linker, so "isang libo" reads as "isa" then "libo".
+LINKED = {f"{word}ng": word for word in LOCAL_UNITS}
+
+
+def _fold_local_numerals(words: list[str]) -> list[str]:
+    """Collapse a spoken amount into the single number it means."""
+    out: list[str] = []
+    index = 0
+    while index < len(words):
+        total, current, consumed, scaled = 0, 0, 0, False
+        while index + consumed < len(words):
+            word = LINKED.get(words[index + consumed], words[index + consumed])
+            if word in LOCAL_UNITS:
+                current += LOCAL_UNITS[word]
+            elif word.isdigit():
+                current += int(word)
+            elif word in LOCAL_SCALES:
+                scale = LOCAL_SCALES[word]
+                scaled = True
+                if scale >= 1000:
+                    total += max(current, 1) * scale
+                    current = 0
+                else:
+                    current = max(current, 1) * scale
+            else:
+                break
+            consumed += 1
+
+        # Only folded where a scale word was involved. Without that rule a
+        # string of bare digits, which is how somebody reads out an account
+        # number, would be added together into one meaningless figure.
+        if consumed >= 2 and scaled:
+            out.append(str(total + current))
+            index += consumed
+            continue
+        out.append(words[index])
+        index += 1
+    return out
+
 
 def normalise(text: str) -> list[str]:
+    lowered = text.lower()
+    # Currency and thousands separators, so Rp2.300.000 becomes 2300000.
+    lowered = re.sub(r"\brp\.?\s*", "", lowered)
+    lowered = re.sub(r"(\d)[.,](?=\d{3}(?!\d))", r"\1", lowered)
+
     words = [NUMBER_WORDS.get(w, w)
-             for w in re.findall(r"[a-z0-9']+", text.lower())]
+             for w in re.findall(r"[a-z0-9']+", lowered)]
     merged, index = [], 0
     while index < len(words):
         current = words[index]
@@ -133,7 +218,7 @@ def normalise(text: str) -> list[str]:
             continue
         merged.append(current)
         index += 1
-    return merged
+    return _fold_local_numerals(merged)
 
 
 def score(expected: str, actual: str) -> tuple[float, list[str]]:
@@ -144,6 +229,69 @@ def score(expected: str, actual: str) -> tuple[float, list[str]]:
         return 0.0, []
     missed = [w for w in wanted if w not in got and w not in joined]
     return 1 - len(missed) / len(wanted), missed
+
+
+# Regional vocabulary, used to tell a regional miss from an ordinary one. A
+# recogniser losing "nuwun" is a different problem from losing "bayar", and
+# counting them together produces an accuracy figure that hides which.
+REGIONAL_WORDS = {
+    "javanese": {"nuwun", "sewu", "kulo", "dereng", "saget", "mbayar", "niki",
+                 "nggih", "monggo", "sampun", "wingi", "sonten", "matur",
+                 "panjenengan", "mboten"},
+    "sundanese": {"punten", "abdi", "teh", "can", "tiasa", "mayar", "ayeuna",
+                  "muhun", "bade", "payun", "hatur", "nuhun", "mangga", "sae"},
+}
+
+
+def similar(word: str, candidates: list[str]) -> str:
+    """The heard word a lost one most likely turned into.
+
+    Deliberately crude. The point is to separate a word that came back
+    misspelt from one that vanished, not to score the resemblance.
+    """
+    best, score_ = "", 0.0
+    for other in candidates:
+        if abs(len(other) - len(word)) > max(3, len(word) // 2):
+            continue
+        aligned = sum(1 for a, b in zip(word, other) if a == b)
+        ratio = aligned / max(len(word), len(other))
+        # Letters in common regardless of position, which catches a word run
+        # together with its neighbour: "ma-lapse" came back as "malaps", where
+        # nothing lines up but almost every letter is still there.
+        if len(word) >= 4:
+            shared = sum(min(word.count(c), other.count(c)) for c in set(word))
+            ratio = max(ratio, shared / max(len(word), len(other)))
+        if ratio > score_:
+            best, score_ = other, ratio
+    return best if score_ >= 0.6 else ""
+
+
+def classify(word: str, result: Result) -> str:
+    """Why one word did not survive."""
+    case = result.case
+    heard = normalise(result.heard)
+
+    if not heard:
+        return "whole utterance lost"
+    if word in REGIONAL_WORDS.get(case.accent, set()):
+        near = similar(word, heard)
+        return f"regional word, heard as {near}" if near else "regional word, dropped"
+
+    expected = detect_code_switching(case.said)
+    got = detect_code_switching(result.heard)
+    if expected.switched and not got.switched:
+        # The other half of the sentence is simply not there. This is the
+        # failure that word accuracy alone describes worst, because what does
+        # come back is fluent.
+        return "one language dropped"
+
+    if word.isdigit() or any(c.isdigit() for c in word):
+        return "number"
+
+    near = similar(word, heard)
+    if near:
+        return f"heard as {near}"
+    return "dropped"
 
 
 def run() -> list[Result]:
@@ -215,6 +363,48 @@ def write_report(results: list[Result]) -> None:
             else settings.deepgram_model
         lines.append(f"| {provider} | `{model}` | {accuracy:.0%} | {median:.0f} ms |")
 
+    # Regional speech pulled out of the average. Both providers are weakest
+    # here, and an average across every case reports it as a rounding error.
+    lines += ["", "## Standard against regional speech", "",
+              "Averaging these together hides the case that matters. Javanese "
+              "and Sundanese are first languages for well over half of "
+              "Indonesia, and neither provider handles them as well as it "
+              "handles Jakarta Indonesian.", "",
+              "| Provider | Standard | Regional |",
+              "| --- | --- | --- |"]
+    for provider in sorted(by_provider):
+        group = by_provider[provider]
+        standard = [r.accuracy for r in group if r.case.accent == "standard"]
+        regional = [r.accuracy for r in group if r.case.accent != "standard"]
+        lines.append(
+            f"| {provider} | {statistics.mean(standard):.0%} "
+            f"({len(standard)} cases) | "
+            f"{statistics.mean(regional):.0%} ({len(regional)} cases) |")
+
+    # What kind of thing goes wrong, rather than how much. The counts matter
+    # less than the categories: they say which failures are worth engineering
+    # around and which are noise.
+    lines += ["", "## Observed errors", "",
+              "Every word that did not survive, and why. Grouped by kind "
+              "rather than listed, because the kind is what can be acted on.",
+              ""]
+
+    for provider in sorted(by_provider):
+        kinds: dict[str, list[str]] = {}
+        for r in by_provider[provider]:
+            for word in r.missed:
+                kinds.setdefault(classify(word, r), []).append(
+                    f"{word} ({r.case.kind})")
+        lines += [f"**{provider}**", ""]
+        if not kinds:
+            lines += ["Nothing lost.", ""]
+            continue
+        lines += ["| Kind | Count | Examples |", "| --- | --- | --- |"]
+        for kind, words in sorted(kinds.items(), key=lambda kv: -len(kv[1])):
+            shown = ", ".join(words[:4])
+            lines.append(f"| {kind} | {len(words)} | {shown} |")
+        lines.append("")
+
     lines += ["", "## Where words were lost", ""]
     any_missed = False
     for r in results:
@@ -227,7 +417,9 @@ def write_report(results: list[Result]) -> None:
                 f"- heard: {r.heard or '(nothing)'}",
             ]
             if r.missed:
-                lines.append(f"- lost: {', '.join(r.missed)}")
+                lines.append(
+                    "- lost: " + ", ".join(f"{w} ({classify(w, r)})"
+                                           for w in r.missed))
             if r.error:
                 lines.append(f"- error: {r.error}")
             lines.append("")
@@ -284,22 +476,27 @@ def main() -> int:
 
     results = run()
 
-    print(f"\n{'market':<22}{'case':<20}{'groq':>8}{'deepgram':>10}  heard (groq)")
+    print(f"\n{'market':<22}{'case':<20}{'accent':<11}"
+          f"{'groq':>7}{'deepgram':>10}  heard (groq)")
     print("-" * 96)
     for case in CASES:
         pair = {r.provider: r for r in results if r.case is case}
         groq, deepgram = pair.get("groq"), pair.get("deepgram")
         print(f"{config_for(case.unit).label:<22}{case.kind:<20}"
-              f"{groq.accuracy:>7.0%}{deepgram.accuracy:>10.0%}  "
-              f"{(groq.heard or '(nothing)')[:34]}")
+              f"{case.accent:<11}"
+              f"{groq.accuracy:>6.0%}{deepgram.accuracy:>10.0%}  "
+              f"{(groq.heard or '(nothing)')[:26]}")
 
     print(f"\n{'=' * 96}")
     for provider in ("groq", "deepgram"):
         group = [r for r in results if r.provider == provider]
-        accuracy = statistics.mean(r.accuracy for r in group)
+        standard = [r.accuracy for r in group if r.case.accent == "standard"]
+        regional = [r.accuracy for r in group if r.case.accent != "standard"]
         latencies = [r.milliseconds for r in group if r.milliseconds]
-        print(f"  {provider:<10}mean accuracy {accuracy:>5.0%}   median latency "
-              f"{statistics.median(latencies) if latencies else 0:>6.0f} ms")
+        print(f"  {provider:<10}overall {statistics.mean(r.accuracy for r in group):>4.0%}"
+              f"   standard {statistics.mean(standard):>4.0%}"
+              f"   regional {statistics.mean(regional):>4.0%}"
+              f"   median latency {statistics.median(latencies) if latencies else 0:>6.0f} ms")
 
     failures = [r for r in results if r.error]
     if failures:
