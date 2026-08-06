@@ -81,6 +81,11 @@ class Conversation:
     escalated_to: str = ""
     assessment: Assessment | None = None
     corrections: list[str] = field(default_factory=list)
+    # How many times each slot has been asked. A question that keeps coming
+    # back because the answer was not recognised is the most irritating thing
+    # a phone agent does, so after two attempts it moves on.
+    asked: dict = field(default_factory=dict)
+    gave_up_on: list[str] = field(default_factory=list)
     started_at: float = field(default_factory=time.time)
 
     @property
@@ -474,8 +479,28 @@ class Agent:
             timings=watch.marks,
         )
         self.conversation.turns.append(turn)
+        self._note_what_was_asked()
         self._reassess()
         return turn
+
+    def _note_what_was_asked(self) -> None:
+        """Count how many times each slot has been asked, and give up at two.
+
+        A caller who has answered twice and is asked a third time concludes
+        nobody is listening, which is worse than proceeding without the answer.
+        """
+        asked = self._last_question_asked()
+        if not asked:
+            return
+
+        counts = self.conversation.asked
+        counts[asked] = counts.get(asked, 0) + 1
+
+        if (counts[asked] >= 2 and asked not in self.conversation.slots
+                and asked not in self.conversation.gave_up_on):
+            self.conversation.gave_up_on.append(asked)
+            log.info("asked twice without an answer, moving on",
+                     extra={"slot": asked})
 
     def _build_prompt(self, caller_text: str, context: str) -> str:
         parts = []
@@ -490,10 +515,23 @@ class Agent:
                 + "\n".join(f"- {k}: {v}" for k, v in known.items()))
 
         outstanding = [s for s in self.pack.required_slots
-                       if s.name not in self.conversation.slots]
+                       if s.name not in self.conversation.slots
+                       and s.name not in self.conversation.gave_up_on]
         if outstanding:
             parts.append(f"Still needed: {outstanding[0].name}. "
                          f"Ask it once the current point is dealt with.")
+
+        # Naming what has already been asked matters more than naming what is
+        # left. Without it the model re-asks a question whose answer was not
+        # recognised, and the caller repeats themselves into a loop.
+        already = [name for name, count in self.conversation.asked.items()
+                   if count >= 1]
+        if already:
+            parts.append(
+                "You have already asked about: " + ", ".join(already)
+                + ". Do not ask any of these again in the same words. If you "
+                  "did not catch an answer, ask once more differently, then "
+                  "move on without it.")
 
         if self.conversation.assessment and self.conversation.assessment.decided:
             parts.append("Eligibility outcome to convey when the moment fits: "

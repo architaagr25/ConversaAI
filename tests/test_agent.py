@@ -215,6 +215,40 @@ class TestSlotCorrection:
         assert agent._extract_slots("sorry, forty two") == {}
 
 
+class TestNotRepeatingQuestions:
+    def _asked_about(self, agent, question_text):
+        agent.conversation.turns.append(Turn(caller="", agent=question_text))
+        agent._note_what_was_asked()
+
+    def test_asking_once_is_recorded(self):
+        agent = Agent("health_shield_en")
+        self._asked_about(agent, "Are you currently living in the Philippines?")
+        assert agent.conversation.asked.get("residency") == 1
+        assert "residency" not in agent.conversation.gave_up_on
+
+    def test_asking_twice_without_an_answer_moves_on(self):
+        # A caller asked a third time concludes nobody is listening, which is
+        # worse than proceeding without the answer.
+        agent = Agent("health_shield_en")
+        for _ in range(2):
+            self._asked_about(agent, "Are you currently living in the Philippines?")
+        assert "residency" in agent.conversation.gave_up_on
+
+    def test_a_slot_that_was_answered_is_never_given_up_on(self):
+        agent = Agent("health_shield_en")
+        agent.conversation.slots["residency"] = "PH"
+        for _ in range(3):
+            self._asked_about(agent, "Are you currently living in the Philippines?")
+        assert "residency" not in agent.conversation.gave_up_on
+
+    def test_what_was_asked_reaches_the_prompt(self):
+        agent = Agent("health_shield_en")
+        self._asked_about(agent, "Are you currently living in the Philippines?")
+        prompt = agent._build_prompt("yes", "no records")
+        assert "already asked" in prompt.lower()
+        assert "residency" in prompt
+
+
 class TestConversationRecord:
     def test_citations_are_collected_without_duplicates(self):
         conversation = Conversation(pack_id="p", business_unit="u")

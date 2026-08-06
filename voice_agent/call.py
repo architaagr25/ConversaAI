@@ -278,6 +278,12 @@ class CallSession:
         yield Event("transcript", text=turn.agent,
                     detail={"speaker": "agent", "grounded": turn.grounded,
                             "sought_knowledge": turn.sought_knowledge,
+                            # Whether the agent actually declined to answer, as
+                            # opposed to simply not needing a record for this
+                            # turn. Retrieval runs on nearly every turn now, so
+                            # "nothing matched" on a slot answer is normal and
+                            # flagging it made an ordinary call look broken.
+                            "refused": turn.said_it_did_not_know,
                             "citations": turn.citations})
 
         self.state = CallState.SPEAKING
@@ -323,8 +329,13 @@ class CallSession:
 
     # -- ending ---------------------------------------------------------------
 
-    async def close(self) -> AsyncIterator[Event]:
-        """Say goodbye and finish."""
+    async def close(self, say_goodbye: bool = True) -> AsyncIterator[Event]:
+        """Finish the call, optionally with a closing line.
+
+        A caller who pressed hang up has decided they are done, and
+        synthesising a goodbye for them takes several seconds during which
+        nothing else happens, including writing the lead.
+        """
         if self.state is CallState.ENDED:
             return
 
@@ -338,10 +349,11 @@ class CallSession:
                 self.record.add("caller", transcript.text, note="at hang up")
 
         closing = self.agent.closing_line()
-        self.record.add("agent", closing)
-        self.state = CallState.SPEAKING
-        async for event in self._speak(closing):
-            yield event
+        self.record.add("agent", closing, spoken=say_goodbye)
+        if say_goodbye:
+            self.state = CallState.SPEAKING
+            async for event in self._speak(closing):
+                yield event
 
         self.state = CallState.ENDED
         yield Event("state", state=self.state.value)

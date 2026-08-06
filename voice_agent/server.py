@@ -119,7 +119,9 @@ async def call(socket: WebSocket) -> None:
             if (text := message.get("text")) is not None:
                 command = json.loads(text).get("command")
                 if command == "hangup":
-                    async for event in session.close():
+                    # No spoken goodbye. The caller has gone, and synthesising
+                    # one delays writing the lead by several seconds.
+                    async for event in session.close(say_goodbye=False):
                         await emit(event)
                     break
 

@@ -116,6 +116,7 @@ let playing = false;
 let currentSource = null;  // so an interruption can stop it mid-sentence
 let pendingLabel = '';
 let firstLine = true;
+let hangingUp = false;     // ignore anything still arriving after the button
 
 function setState(name) {
   els.dot.className = 'dot ' + name;
@@ -129,11 +130,14 @@ function addLine(who, text, opts = {}) {
   if (firstLine) { els.log.innerHTML = ''; firstLine = false; }
   const div = document.createElement('div');
   div.className = 'line ' + who;
+  // Only marked where it means something. Retrieval runs on nearly every
+  // turn, so "nothing matched" on a plain answer is normal and flagging it
+  // made an ordinary call look like it was failing throughout.
   let flag = '';
-  if (who === 'agent' && opts.grounded === true)
+  if (who === 'agent' && opts.grounded === true && (opts.citations || []).length)
     flag = '<span class="flag grounded">from knowledge base</span>';
-  if (who === 'agent' && opts.grounded === false)
-    flag = '<span class="flag ungrounded">no supporting record</span>';
+  else if (who === 'agent' && opts.refused === true)
+    flag = '<span class="flag ungrounded">said it did not know</span>';
   let cites = '';
   if (opts.citations && opts.citations.length)
     cites = '<div class="cites">' +
@@ -211,6 +215,7 @@ function stopPlayback() {
 async function start() {
   els.start.disabled = true;
   els.pack.disabled = true;
+  hangingUp = false;
   setState('idle');
 
   try {
@@ -242,11 +247,15 @@ async function start() {
 
   socket.onmessage = (event) => {
     if (typeof event.data !== 'string') {
+      // Audio still in flight when the caller hung up is not played.
+      if (hangingUp) return;
       queue.push(event.data.slice(0));
       playNext();
       return;
     }
     const msg = JSON.parse(event.data);
+    // The summary is still wanted after hanging up; nothing else is.
+    if (hangingUp && msg.kind !== 'summary') return;
     if (msg.kind === 'state') setState(msg.state);
     else if (msg.kind === 'speaking') pendingLabel = msg.text;
     else if (msg.kind === 'transcript')
@@ -317,10 +326,21 @@ function finish() {
 }
 
 els.start.onclick = start;
+
+// Hanging up stops everything at once. Waiting for a goodbye to be
+// synthesised and played means several more seconds of a voice the caller has
+// already decided they are done with, which is not what the button says.
+// The socket is left to close on its own so the server still writes the lead.
 els.stop.onclick = () => {
-  if (socket && socket.readyState === WebSocket.OPEN)
+  hangingUp = true;
+  stopPlayback();
+  if (micStream) micStream.getTracks().forEach(t => t.stop());
+  addNote('call ended');
+  if (socket && socket.readyState === WebSocket.OPEN) {
     socket.send(JSON.stringify({ command: 'hangup' }));
-  else finish();
+    setTimeout(() => { try { socket.close(); } catch (e) {} }, 50);
+  }
+  finish();
 };
 </script>
 </body>

@@ -49,6 +49,7 @@ class StubTurn:
         self.caller = ""
         self.grounded = grounded
         self.sought_knowledge = grounded
+        self.said_it_did_not_know = False
         self.citations = ["src#x"] if grounded else []
         self.escalated_to = escalated_to
         self.timings = {}
