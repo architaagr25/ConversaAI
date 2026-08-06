@@ -250,6 +250,15 @@ closing:
     Saya sambungkan ke rekan saya ya. Semua yang Bapak atau Ibu sampaikan sudah
     saya catat.
 
+# Said when the system has a problem rather than the business. Formal register,
+# because this is the one line the agent says without knowing anything about
+# who it is talking to, and formal is safe with everybody.
+service:
+  not_understood: Mohon maaf, kurang terdengar. Bisa diulangi, Pak atau Bu?
+  trouble: >
+    Mohon maaf, ada kendala di sistem kami. Mohon tunggu sebentar, lalu
+    silakan diulangi.
+
 speech_conventions:
   amounts:
     - >

@@ -245,6 +245,16 @@ closing:
     Ikokonekta ko na po kayo sa isa sa mga kasamahan namin. Nasa kanila na po
     lahat ng nasabi ninyo.
 
+# Said when the system has a problem rather than the business. Kept in Taglish
+# for the same reason as everything else here: switching to English at the
+# moment the caller is already struggling to be understood is the worst
+# possible time to stop speaking their language.
+service:
+  not_understood: Pasensya na po, hindi ko po nakuha. Pwede po bang ulitin?
+  trouble: >
+    Pasensya na po, may problema po sa system namin. Sandali lang po, tapos
+    pakiulit po.
+
 # How numbers, dates and money are said out loud in this market. Written down
 # because they are the details that give away a translated script.
 speech_conventions:

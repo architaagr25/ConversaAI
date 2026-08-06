@@ -67,17 +67,25 @@ class StubAgent:
             "citations": [],
         })()
         self.escalate_next = ""
+        # Set to make responding fail, for the paths that only happen when the
+        # model is unreachable.
+        self.fail_on_respond = False
 
     def greeting(self):
         return "Hello, this is a test call. Is now a good time?"
 
     def respond(self, text, trace=""):
+        if self.fail_on_respond:
+            raise RuntimeError("both providers unavailable")
         reply = self.replies.pop(0) if self.replies else "Alright."
         turn = StubTurn(reply, escalated_to=self.escalate_next)
         self.conversation.turns.append(turn)
         if self.escalate_next:
             self.conversation.escalated_to = self.escalate_next
         return turn
+
+    def service_line(self, kind):
+        return self.pack.service[kind]
 
     def closing_line(self):
         return "Thanks for your time."

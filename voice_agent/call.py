@@ -28,7 +28,7 @@ from core.timing import Stopwatch
 from voice_agent.agent import Agent
 from voice_agent.audio import SAMPLE_RATE, SAMPLE_WIDTH, Endpointer, Utterance
 from voice_agent.speak import Speaker
-from voice_agent.transcribe import Transcriber, hint_for
+from voice_agent.asr import MarketTranscriber
 
 log = logging.getLogger(__name__)
 
@@ -96,11 +96,13 @@ class CallSession:
 
     def __init__(self, pack_id: str = "health_shield_en",
                  agent: Agent | None = None,
-                 transcriber: Transcriber | None = None,
+                 transcriber: MarketTranscriber | None = None,
                  speaker: Speaker | None = None,
                  allow_barge_in: bool = False) -> None:
         self.agent = agent or Agent(pack_id)
-        self.transcriber = transcriber or Transcriber()
+        # Recognition settings come from the market rather than from here, so
+        # the language hint and the domain terms are decided in one place.
+        self.transcriber = transcriber or MarketTranscriber()
         self.speaker = speaker or Speaker(self.agent.pack.language)
 
         self.endpointer = Endpointer()
@@ -238,7 +240,7 @@ class CallSession:
 
         transcript = self.transcriber.transcribe(
             utterance.wav,
-            prompt=hint_for(self.agent.pack.business_unit),
+            business_unit=self.agent.pack.business_unit,
             audio_ms=utterance.duration_ms,
             trace=turn_trace,
         )
@@ -256,7 +258,7 @@ class CallSession:
             # right response; dropping the line is not.
             self.record.failed_recognitions += 1
             log.info("nothing recognised", extra={"reason": transcript.error})
-            reply = "Sorry, I did not catch that. Could you say it again?"
+            reply = self.agent.service_line("not_understood")
             self.record.add("agent", reply, note="recognition failed")
             self.state = CallState.SPEAKING
             yield Event("state", state=self.state.value)
@@ -271,7 +273,30 @@ class CallSession:
                         audio_ms=round(utterance.duration_ms))
         yield Event("transcript", text=transcript.text, detail={"speaker": "caller"})
 
-        turn = self.agent.respond(transcript.text, trace=turn_trace)
+        # Two ways this fails, and both end with the caller hearing nothing.
+        # Either both providers are gone and it raises, or one answers with an
+        # empty string and it does not. Silence reads as the call having
+        # dropped, so both get a line in the caller's own language. Neither is
+        # recorded as an answer, because neither is one.
+        turn = None
+        try:
+            turn = self.agent.respond(transcript.text, trace=turn_trace)
+        except Exception:
+            log.exception("could not produce a reply")
+
+        if turn is None or not turn.agent.strip():
+            if turn is not None:
+                log.error("the model returned an empty reply")
+            reply = self.agent.service_line("trouble")
+            self.record.add("agent", reply, note="model unavailable")
+            self.state = CallState.SPEAKING
+            yield Event("state", state=self.state.value)
+            async for event in self._speak(reply):
+                yield event
+            self.state = CallState.LISTENING
+            yield Event("state", state=self.state.value)
+            return
+
         self.record.add("agent", turn.agent, grounded=turn.grounded,
                         citations=turn.citations, escalated=turn.escalated_to,
                         timings=turn.timings)
@@ -344,7 +369,8 @@ class CallSession:
         leftover = self.endpointer.flush()
         if leftover:
             transcript = self.transcriber.transcribe(
-                leftover.wav, audio_ms=leftover.duration_ms)
+                leftover.wav, business_unit=self.agent.pack.business_unit,
+                audio_ms=leftover.duration_ms)
             if transcript:
                 self.record.add("caller", transcript.text, note="at hang up")
 

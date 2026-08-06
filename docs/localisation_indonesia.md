@@ -120,7 +120,33 @@ call. Markers for a different variety now switch it.
 
 ---
 
-## 3. What could not be done
+## 3. The lines said when something breaks
+
+Two lines are said by the system rather than by the business: when the
+recogniser returns nothing, and when the model cannot be reached. Both were
+English literals inside the call loop, so an Indonesian call would switch to
+English at the moment the caller was already having trouble being understood.
+Both now come from the pack:
+
+| Situation | Said |
+| --- | --- |
+| Nothing recognised | Mohon maaf, kurang terdengar. Bisa diulangi, Pak atau Bu? |
+| Model unreachable | Mohon maaf, ada kendala di sistem kami. Mohon tunggu sebentar, lalu silakan diulangi. |
+
+Both are formal. This is the one moment the agent speaks without knowing
+anything about who it is talking to, and formal is safe with everybody where
+casual is not — the same reason the call opens formal and follows the customer
+down.
+
+A pack without them is refused at load rather than discovered on a live call.
+
+The handover note for the collections team is in Bahasa Indonesia, quoting the
+customer verbatim, so *"lagi susah bulan ini"* reaches the person who picks it
+up in the words it was said in.
+
+---
+
+## 4. What could not be done
 
 **Regional accent in the audio, as opposed to regional language.** The brief
 asks for a regional accent outside standard Jakarta speech. The available

@@ -139,9 +139,44 @@ The handover line itself stays in Taglish. Switching to English at the moment
 of handing over is the point where a caller most notices they have been talking
 to a machine.
 
+The handover note written for the adviser is in Filipino, and quotes the
+caller's own words verbatim. Before, no language was specified at all and the
+model chose, which meant the note came out in whatever language the transcript
+happened to be in. Undetermined is the defect there, not the choice.
+
 ---
 
-## 4. What is not localised, and known gaps
+## 4. The lines said when something breaks
+
+Everything above concerns the conversation going well. What broke the illusion
+in testing was the conversation going badly.
+
+Two lines are said by the system rather than by the business: when the
+recogniser returns nothing, and when the model cannot be reached. Both were
+English literals inside the call loop, so a Taglish call would switch to
+English at the precise moment the caller was already struggling to be
+understood. Both now come from the pack:
+
+| Situation | Said |
+| --- | --- |
+| Nothing recognised | Pasensya na po, hindi ko po nakuha. Pwede po bang ulitin? |
+| Model unreachable | Pasensya na po, may problema po sa system namin. Sandali lang po, tapos pakiulit po. |
+
+A pack without them is refused at load. Discovering it mid-call means finding
+out when a caller is on the line, and the symptom is the agent going quiet.
+
+The model failing produced silence in two different ways, only one of which
+raised: both providers unreachable, and one provider answering with an empty
+string. The caller hears the same thing either way, and reads it as the call
+having dropped, so both now produce the line above.
+
+The voice is checked against the market rather than assumed. An English voice
+reading Taglish is still fluent-sounding audio, which makes it harder to notice
+than no audio at all.
+
+---
+
+## 5. What is not localised, and known gaps
 
 **No native speaker has reviewed this.** The mechanical checks pass, and
 mechanical checks only prove nothing is obviously broken. Whether it sounds

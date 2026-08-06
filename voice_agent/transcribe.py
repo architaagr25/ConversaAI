@@ -176,27 +176,15 @@ class Transcriber:
                           audio_ms=audio_ms, error=last[:160])
 
 
-# Words the recogniser would otherwise render phonetically. Kept per market
-# because a Philippine prompt full of Indonesian terms makes English worse.
-DOMAIN_HINTS = {
-    "health_ph_en": (
-        "Solara Health Shield, premium, waiting period, pre-existing condition, "
-        "rider, deductible, accredited hospital, Essential, Plus, Max"
-    ),
-    # magkano and lapse are here because the recogniser got both wrong without
-    # them, rendering "magkano" as "magkana" and "ma-lapse" as "malapsi". Both
-    # are common enough in this flow to be worth naming.
-    "life_ph": (
-        "Solara Life, magkano, premium, hulog, bayad, benepisyaryo, beneficiary, "
-        "rider, ma-lapse, lapse, reinstatement, bancassurance, sum assured, "
-        "kada buwan, takdang araw"
-    ),
-    "multifinance_id": (
-        "Solara Multifinance, cicilan, angsuran, tenor, denda, jatuh tempo, "
-        "DP, uang muka, pembiayaan, BPKB, plafon, restrukturisasi"
-    ),
-}
-
-
 def hint_for(business_unit: str) -> str:
-    return DOMAIN_HINTS.get(business_unit, "")
+    """The domain terms to prime the recogniser with for a market.
+
+    The table itself lives with the rest of the per-market recognition
+    settings. It used to be duplicated here, and the copies had already
+    drifted: this one never gained the regional Indonesian politeness words,
+    so the call loop was running on the weaker of the two without any sign
+    that a better one existed.
+    """
+    from voice_agent.asr import config_for
+
+    return config_for(business_unit).prompt

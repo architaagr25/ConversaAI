@@ -300,6 +300,17 @@ closing:
     I am putting you through to a colleague now. They will have everything you
     have told me.
 
+# Said when the system has a problem rather than the business: the recogniser
+# returned nothing, or the model could not be reached. These live in the pack
+# so they are in the caller's language. A line hardcoded in the call loop is
+# fine here and switches to English mid-call on the other two markets, at the
+# one moment the caller is already having trouble being understood.
+service:
+  not_understood: Sorry, I did not catch that. Could you say it again?
+  trouble: >
+    Sorry, I am having trouble at my end. Give me one moment and please say
+    that again.
+
 # Things that end the call badly if they happen, listed so they can be checked
 # against a transcript afterwards rather than only hoped for.
 must_never:

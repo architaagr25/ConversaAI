@@ -610,6 +610,16 @@ class Agent:
 
     # -- closing -------------------------------------------------------------
 
+    def service_line(self, kind: str) -> str:
+        """What to say when the system, not the business, has a problem.
+
+        Comes from the pack so it is in the language the rest of the call is
+        in. The agent is not asked to write one: these are said at the moment
+        the model or the recogniser has just failed, which is the moment least
+        able to produce them.
+        """
+        return clean_for_speech(self.pack.service[kind])
+
     def closing_line(self) -> str:
         conversation = self.conversation
         if conversation.escalated_to:

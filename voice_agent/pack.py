@@ -65,6 +65,7 @@ class Pack:
     escalation: dict
     business_action: dict
     closing: dict
+    service: dict
     must_never: list[str]
     # Only the localised packs carry these; English needs neither.
     speech_conventions: dict = field(default_factory=dict)
@@ -100,8 +101,13 @@ class PackError(ValueError):
 REQUIRED_TOP_LEVEL = [
     "pack_id", "version", "business_unit", "language", "persona", "opening",
     "slots", "flow", "grounding", "objections", "escalation",
-    "business_action", "closing", "must_never",
+    "business_action", "closing", "service", "must_never",
 ]
+
+# What the agent says when the system fails rather than the business. Required,
+# because a pack without them leaves the call loop with nothing to say in the
+# caller's language at the exact moment something has gone wrong.
+SERVICE_LINES = ["not_understood", "trouble"]
 
 
 def load_pack(pack_id: str) -> Pack:
@@ -129,6 +135,13 @@ def load_pack(pack_id: str) -> Pack:
     if not data["escalation"].get("immediate"):
         raise PackError(f"{pack_id} lists no escalation triggers")
 
+    absent = [line for line in SERVICE_LINES if not (data["service"] or {}).get(line)]
+    if absent:
+        raise PackError(
+            f"{pack_id} has no {', '.join(absent)} line. Without it the agent "
+            "falls back to English when something goes wrong."
+        )
+
     slots = [Slot(**s) for s in data["slots"]]
     known = {s.name for s in slots}
     for state in data["flow"]:
@@ -153,6 +166,7 @@ def load_pack(pack_id: str) -> Pack:
         escalation=data["escalation"],
         business_action=data["business_action"],
         closing=data["closing"],
+        service={k: " ".join(v.split()) for k, v in data["service"].items()},
         must_never=data["must_never"],
         speech_conventions=data.get("speech_conventions") or {},
         regional=data.get("regional") or {},

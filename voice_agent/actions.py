@@ -100,6 +100,22 @@ def redact_lead(lead: Lead) -> dict:
     return data
 
 
+# The working language of the team that picks the lead up. Stated rather than
+# left to the model, which otherwise writes the note in whatever language the
+# transcript happened to be in and produces a CRM full of mixed records. The
+# note goes to a colleague in the same market, so it follows the market.
+NOTE_LANGUAGE = {"en": "English", "fil": "Filipino", "id": "Bahasa Indonesia"}
+
+
+def note_language(lead: Lead) -> str:
+    from voice_agent.pack import load_pack
+
+    try:
+        return NOTE_LANGUAGE[load_pack(lead.pack_id).language]
+    except Exception:
+        return "English"
+
+
 def build_summary(transcript: str, lead: Lead) -> str:
     """A short note for whoever picks this up next.
 
@@ -124,6 +140,9 @@ def build_summary(transcript: str, lead: Lead) -> str:
 
     prompt = (
         "Write a handover note for the adviser who picks this lead up.\n\n"
+        f"Write the note in {note_language(lead)}. Quote anything the caller "
+        "said in their own words exactly as they said it, even where that is "
+        "a different language.\n\n"
         "Three or four sentences, no bullet points, no headings. Say what the "
         "caller wants, what was established, and what to do next. Plain "
         "language, no sales tone.\n\n"

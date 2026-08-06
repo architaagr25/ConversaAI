@@ -39,6 +39,13 @@ VOICES = {
     "id": settings.tts_voice_id,
 }
 
+# The locale each voice must actually be from. A voice is only native if its
+# name starts with the right locale, and checking that is worth doing because
+# the failure is silent: an English voice reading Taglish is still audio, still
+# fluent-sounding, and completely wrong. It mispronounces every Tagalog word
+# while sounding confident, which is harder to notice than no audio at all.
+NATIVE_LOCALE = {"en": "en-", "fil": "fil-PH-", "tl": "fil-PH-", "id": "id-ID-"}
+
 
 @dataclass
 class Speech:
@@ -97,14 +104,34 @@ def split_for_speech(text: str) -> list[str]:
 
 
 def voice_for(language: str) -> str:
-    return VOICES.get(language, settings.tts_voice_en)
+    """The native voice for a language, or English if there is not one.
+
+    Falling back is the right behaviour, since a call with an accented voice
+    beats a call with no voice. Saying so in the log is the other half: a
+    market quietly running on an English voice is a defect, not a setting.
+    """
+    voice = VOICES.get(language)
+    if not voice:
+        log.error("no native voice, falling back to English",
+                  extra={"language": language})
+        return settings.tts_voice_en
+    return voice
+
+
+def is_native(language: str, voice: str) -> bool:
+    prefix = NATIVE_LOCALE.get(language)
+    return bool(prefix) and voice.startswith(prefix)
 
 
 class Speaker:
     """Turns text into audio, a sentence at a time."""
 
     def __init__(self, language: str = "en", voice: str | None = None) -> None:
+        self.language = language
         self.voice = voice or voice_for(language)
+        if not is_native(language, self.voice):
+            log.warning("voice is not native to the market",
+                        extra={"language": language, "voice": self.voice})
 
     async def _synthesise(self, text: str, voice: str | None = None) -> Speech:
         import edge_tts
