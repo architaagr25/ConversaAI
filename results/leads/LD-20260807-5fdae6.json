@@ -1,0 +1,28 @@
+{
+  "lead_id": "LD-20260807-5fdae6",
+  "created_at": "2026-08-07T05:09:55+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {},
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [
+    "age",
+    "currently_admitted",
+    "residency"
+  ],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [
+    "documents/health_shield_policy_wording.pdf#1 Definitions",
+    "documents/health_shield_policy_wording.pdf#2 Waiting periods"
+  ],
+  "summary": "The caller contacted Solara Health Shield to inquire about health coverage, mentioning \"pre-existing condition, bancassurance, and the\" and was interested in understanding how pre-existing conditions are handled. It was established that the caller wanted to know about the waiting period for pre-existing conditions, which is twenty-four months for declared conditions. The caller's eligibility for a health plan could not be determined due to missing information, including age, current admission status, and residency, and it was decided that not enough was collected to make a decision. The next step is for the adviser to follow up with the caller to gather the necessary information and discuss their health coverage options further.",
+  "next_action": "Call back to complete qualification. Still needed: age, currently_admitted, residency.",
+  "turns": 1,
+  "contact_held": false
+}

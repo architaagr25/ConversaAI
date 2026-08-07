@@ -1,0 +1,25 @@
+{
+  "lead_id": "LD-20260807-1b7a16",
+  "created_at": "2026-08-07T05:06:42+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {},
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [
+    "age",
+    "currently_admitted",
+    "residency"
+  ],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [],
+  "summary": "The caller initially responded with \"Ss\" when asked if it was a good time for questions, which was unclear, and the agent was unable to understand what they meant by that. It was established that the caller needs further assistance, so a callback has been arranged. The caller's eligibility decision was previously made as \"Not enough was collected to decide\" due to missing information, including age, current admission status, and residency. The next step is for the adviser to follow up with the caller to gather the necessary information and proceed with their inquiry, quoting the caller's response as \"Ss\" when discussing their initial interaction.",
+  "next_action": "Call back to complete qualification. Still needed: age, currently_admitted, residency.",
+  "turns": 1,
+  "contact_held": false
+}

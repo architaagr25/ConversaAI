@@ -1,0 +1,33 @@
+{
+  "lead_id": "LD-20260807-9a7943",
+  "created_at": "2026-08-07T04:55:49+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {
+    "age": 35
+  },
+  "corrections": [
+    "age: 25 -> 35"
+  ],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [
+    "currently_admitted",
+    "residency"
+  ],
+  "escalated_to": "ESC-REQUEST",
+  "unanswered": [
+    "What's the weather in Manila tomorrow?"
+  ],
+  "citations": [
+    "documents/health_shield_policy_wording.pdf#2 Waiting periods",
+    "web/health-shield-plans.html#Waiting periods"
+  ],
+  "summary": "The caller wants to know \"how long is the waiting period for a pre-existing condition\" and also asked \"What's the weather in Manila tomorrow?\". It was established that the caller lives in Manila and is 35 years old, though they initially stated they were 25. Please answer their question about the weather in Manila, address their query regarding the pre-existing condition waiting period, and proceed with the ESC-REQUEST transfer.",
+  "next_action": "Handed to a person during the call. No callback needed.",
+  "turns": 10,
+  "contact_held": false
+}

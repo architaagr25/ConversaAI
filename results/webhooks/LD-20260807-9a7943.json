@@ -1,0 +1,15 @@
+{
+  "event": "escalation",
+  "lead_id": "LD-20260807-9a7943",
+  "at": "2026-08-07T04:55:51+00:00",
+  "trigger": "ESC-REQUEST",
+  "business_unit": "health_ph_en",
+  "collected": {
+    "age": 35
+  },
+  "unanswered": [
+    "What's the weather in Manila tomorrow?"
+  ],
+  "summary": "The caller wants to know \"how long is the waiting period for a pre-existing condition\" and also asked \"What's the weather in Manila tomorrow?\". It was established that the caller lives in Manila and is 35 years old, though they initially stated they were 25. Please answer their question about the weather in Manila, address their query regarding the pre-existing condition waiting period, and proceed with the ESC-REQUEST transfer.",
+  "next_action": "Handed to a person during the call. No callback needed."
+}

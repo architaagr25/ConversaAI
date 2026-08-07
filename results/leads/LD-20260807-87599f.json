@@ -1,0 +1,21 @@
+{
+  "lead_id": "LD-20260807-87599f",
+  "created_at": "2026-08-07T04:51:13+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {},
+  "corrections": [],
+  "eligible": null,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [],
+  "summary": "The caller answered the phone, but the call ended immediately after the introductory greeting before any information could be gathered. Because the call was cut short, it was not possible to establish what the caller wants or collect any details to determine their eligibility. The next step is to call the customer back to find out what they are looking for and gather the necessary information to assess their eligibility.",
+  "next_action": "Call back to complete qualification. Still needed: the remaining questions.",
+  "turns": 0,
+  "contact_held": false
+}

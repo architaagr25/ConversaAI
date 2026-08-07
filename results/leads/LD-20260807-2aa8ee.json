@@ -1,0 +1,25 @@
+{
+  "lead_id": "LD-20260807-2aa8ee",
+  "created_at": "2026-08-07T05:05:13+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {},
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [
+    "age",
+    "currently_admitted",
+    "residency"
+  ],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [],
+  "summary": "The caller stated, \"I live in Manila,\" but when asked for their age, they replied \"Fife\" and the call ended before this could be clarified. Because the call cut short, there was not enough information collected to make an eligibility decision, as the caller's age, residency, and whether they are currently admitted remain missing. The next adviser needs to call the customer back to gather these missing details and determine their eligibility.",
+  "next_action": "Call back to complete qualification. Still needed: age, currently_admitted, residency.",
+  "turns": 2,
+  "contact_held": false
+}

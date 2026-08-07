@@ -1,0 +1,25 @@
+{
+  "lead_id": "LD-20260807-95d12a",
+  "created_at": "2026-08-07T05:08:14+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {},
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [
+    "age",
+    "currently_admitted",
+    "residency"
+  ],
+  "escalated_to": "",
+  "unanswered": [],
+  "citations": [],
+  "summary": "The caller from Vanilla wants to find out which health plan fits them, but their eligibility could not be determined due to missing information, including their age, current admission status, and residency. It was established that they are currently living in Vanilla, and when asked if they are living in the Philippines, no response was recorded. The caller was informed that someone would call them back, and the next step is to follow up with them to gather the necessary information to proceed. The caller did not express any further concerns or questions that were not addressed during the initial call.",
+  "next_action": "Call back to complete qualification. Still needed: age, currently_admitted, residency.",
+  "turns": 1,
+  "contact_held": false
+}

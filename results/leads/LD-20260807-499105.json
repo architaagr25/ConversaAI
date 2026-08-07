@@ -1,0 +1,32 @@
+{
+  "lead_id": "LD-20260807-499105",
+  "created_at": "2026-08-07T05:13:43+00:00",
+  "business_unit": "health_ph_en",
+  "pack_id": "health_shield_en",
+  "collected": {
+    "age": 35,
+    "residency": "PH"
+  },
+  "corrections": [],
+  "eligible": true,
+  "decided": false,
+  "decline_reason": "",
+  "decided_by_rule": "",
+  "requirements": [],
+  "missing": [
+    "currently_admitted"
+  ],
+  "escalated_to": "",
+  "unanswered": [
+    "weather in manila tomorrow."
+  ],
+  "citations": [
+    "documents/health_shield_policy_wording.pdf#2 Waiting periods",
+    "documents/health_shield_policy_wording.pdf#1 Definitions",
+    "web/health-shield-plans.html#Waiting periods"
+  ],
+  "summary": "The caller, who is 30 years old and based in Manila, is inquiring about a health plan and asked about the waiting period for a pre-existing condition, which was explained to be 24 months. It was established that the caller's eligibility decision is that not enough information was collected to decide, with the current admission status being unknown. The caller also asked about the weather in Manila tomorrow, which could not be answered by the agent. The next step is to clarify whether the caller is currently in the hospital or receiving any medical treatment, as they did not provide a clear answer to this question, saying \"and a lot of the conditions\" when asked to confirm.",
+  "next_action": "Call back to complete qualification. Still needed: currently_admitted.",
+  "turns": 7,
+  "contact_held": false
+}
